@@ -1,19 +1,14 @@
-import logo from './logo.svg';
-import './App.css';
+import ApiButtons  from './components/apiButtons.jsx';
 import './scripts/api.js';
-import { fetchData, sendData } from './scripts/api.js';
+import HomePage from './pages/home.jsx';
 
 function App() {
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className='text-6xl'>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <button onClick={()=>sendData("Test")}>sendData</button>
-        <button onClick={()=>fetchData()}>fetchData</button>
-      </header>
+      
+        <HomePage/>
+
     </div>
   );
 }

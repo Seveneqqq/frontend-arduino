@@ -1,14 +1,14 @@
-export const fetchData = async () => {
+
+export const getData = async () => {
     try {
       const response = await fetch('http://127.0.0.1:4000/api/getdata'); // Dodaj protokół HTTP
       const jsonData = await response.json();
       console.log(jsonData.message);
+      return `Odebrano: ${await jsonData.message}`;
     } catch (error) {
       console.error('Błąd:', error);
     }
   };
-
-
 
 export const sendData = async (textToSend) => {
     try {
@@ -22,6 +22,7 @@ export const sendData = async (textToSend) => {
       
       const responseData = await response.json(); // Odpowiedź serwera
       console.log('Odpowiedź serwera:', responseData);
+      return `Wyslano: ${responseData.message}`;
     } catch (error) {
       console.error('Błąd:', error); console.log({text:textToSend});
     }
