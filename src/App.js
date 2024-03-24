@@ -1,22 +1,18 @@
 import logo from './logo.svg';
 import './App.css';
+import './scripts/api.js';
+import { fetchData, sendData } from './scripts/api.js';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
+        <p className='text-6xl'>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <button onClick={()=>sendData("Test")}>sendData</button>
+        <button onClick={()=>fetchData()}>fetchData</button>
       </header>
     </div>
   );
