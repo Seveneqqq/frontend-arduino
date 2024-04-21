@@ -18,7 +18,7 @@ export default function ApiButtons(){
 
         let sendDataToApi = () =>{
             if(content === "" || content.includes('Odebrano')){
-                sendData("cos").then((value) => setContent(value));
+                sendData("cos2").then((value) => setContent(value));
             }
             else{
                 setContent("");
