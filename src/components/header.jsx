@@ -3,7 +3,7 @@ export default function Header(){
 
     return(
         <>
-            <div className="bg-[#04041A] h-[7vh] w-[42vw] justify-center rounded-full my-5 text-white text-md items-center px-5 flex z-3">                
+            <div className="bg-[#04041A] h-[7vh] w-[fit-content] text-nowrap justify-center rounded-full my-5 text-white text-md items-center px-5 flex z-3">                
                     <ListItems/>
             </div>
 
