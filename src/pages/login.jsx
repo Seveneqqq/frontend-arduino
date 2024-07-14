@@ -2,7 +2,7 @@ import Header from '../components/header.jsx';
 import CircularInfoPanel from '../components/circularInfoPanel.jsx';
 import LoginPanel from '../components/loginPanel.jsx';
 
-export default function HomePage(){
+export default function LoginPage(){
 
 
     return(
