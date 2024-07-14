@@ -6,7 +6,7 @@ export default function Header(){
             <div className="bg-[#04041A] h-[7vh] w-[fit-content] text-nowrap justify-center rounded-full my-5 text-white text-md items-center px-5 flex z-3">                
                     <ListItems/>
             </div>
-
+           
             <div className="absolute top-[1vw] left-[0vw] z-0">
             <div className="w-[19vw] h-[19vw] rounded-full bg-[#9773E2] opacity-[45%] blur-[6vw] z-0"></div>
             </div>

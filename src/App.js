@@ -8,20 +8,28 @@ import Home from "./pages/home.jsx";
 // import Database from "../pages/database.jsx";
 import Login from "./pages/login.jsx";
 
-function App() {
+
+import { Button } from 'primereact/button';
+import { Calendar } from 'primereact/calendar';
+import { useState } from 'react';
+
+export default function App() {
+
     return (
         <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/home" element={<Home />} />
-                {/* <Route path="/author" element={<Author />} />
-                <Route path="/speech-api" element={<SpeechApi />} />
-                <Route path="/stack" element={<Stack />} />
-                <Route path="/database" element={<Database />} />*/}
-                <Route path="/login" element={<Login />} /> 
-            </Routes>
+           <Routes>
+               <Route path="/" element={<Home />} />
+               <Route path="/home" element={<Home />} />
+               {/* <Route path="/author" element={<Author />} />
+               <Route path="/speech-api" element={<SpeechApi />} />
+               <Route path="/stack" element={<Stack />} />
+               <Route path="/database" element={<Database />} />*/}
+               <Route path="/login" element={<Login />} /> 
+               </Routes>
         </BrowserRouter>
     );
 }
 
-export default App;
+
+
+
