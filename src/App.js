@@ -7,6 +7,7 @@ import Home from "./pages/home.jsx";
 // import Stack from "../pages/stack.jsx";
 // import Database from "../pages/database.jsx";
 import Login from "./pages/login.jsx";
+import '@fontsource/inter';
 
 
 import { Button } from 'primereact/button';
