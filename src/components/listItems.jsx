@@ -46,11 +46,78 @@ export default function ListItem() {
     const [visible, setVisible] = useState(false);
     const [singIn, setSingIn] = useState(false);
 
+
+
+    async function submitLogin() {
+
+        let username = document.querySelector('#username').value;
+        let password = document.querySelector('#password').value;
+
+        console.log(username);
+        console.log(password);
+
+        const request = new Request("http://localhost:4000/api/login", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                login: username,
+                password: password
+            }),
+          });
+          
+          const response = await fetch(request);
+          const data = response.json();
+          console.log(data);
+          
+    }
+    async function submitRegister(){
+
+        let username = document.querySelector('#username').value;
+        let email = document.querySelector('#email').value;
+        let password = document.querySelector('#password').value;
+        let repeatPassword = document.querySelector('#repeat-password').value;
+
+        console.log(username);
+        console.log(email);
+        console.log(password);
+        console.log(repeatPassword);
+
+
+        try{
+            const request = new Request("http://localhost:4000/api/register", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    email: email,
+                    username: username,
+                    password: password,
+                    repeatPassword: repeatPassword 
+                }),
+              });
+
+              const response = await fetch(request);
+              const data = await response.json();
+              console.log(data);
+              console.log(data.success);
+
+        }
+        catch(error){
+            console.error('Error', error);
+            return;
+        }
+    
+
+    }
+    
     return (
         <ul className="flex flex-row justify-between h-full w-full gap-6 items-center z-3">
             {items.map(item => {
                 return (
-                    <Link to={item.path} className="flex flex-col text-[16px] font-bold items-center text-larablue py-1 justify-center w-[6vw] h-[85%] rounded-[100px] focus:shadow-menuActive hover:bg-[#35363C] active:bg-[#35363C] z-3">   
+                    <Link to={item.path} className="flex flex-col text-[16px] transition duration-500 hover:duration-500 font-bold items-center text-larablue py-1 justify-center w-[6vw] h-[85%] rounded-[100px] focus:shadow-menuActive hover:bg-[#35363C] active:bg-[#35363C] z-3">   
                         <li key={item.path}>
                             {item.text} 
                         </li>
@@ -79,9 +146,9 @@ export default function ListItem() {
                             <InputText id="password" label="Password" className="bg-white-alpha-20 border-none p-3 text-primary-50" type="password"></InputText>
                         </div>
                         <div className="flex items-center gap-4">
-                            <Button label="Login" onClick={()=>{}} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
-                            <Button label="Sign-In" onClick={() => setSingIn(true)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
-                            <Button label="Cancel" onClick={(e) => hide(e)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Login" onClick={()=>{submitLogin()}} className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Sign In" onClick={() => setSingIn(true)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Cancel" onClick={(e) => hide(e)} text  className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                         </div>
                     </div>
                 )}> 
@@ -119,7 +186,7 @@ export default function ListItem() {
                             <InputText id="repeat-password" label="Repeat-password" className="bg-white-alpha-20 border-none p-3 text-primary-50" type="password"></InputText>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button label="Sign-in" onClick={()=>{}} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Sign-in" onClick={()=>{submitRegister()}} className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                             <Button label="Login" onClick={() => setSingIn(false)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                             <Button label="Cancel" onClick={(e) => hide(e)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                         </div>

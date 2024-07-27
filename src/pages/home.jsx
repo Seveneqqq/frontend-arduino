@@ -16,10 +16,10 @@ export default function HomePage(){
                     <Calendar value={date} onChange={(e) => setDate(e.value)} />
                     <Button label='dziala'/>
                     <div className="card flex justify-content-center">
-            <Knob value={value} onChange={(e) =>  setValue(e.value)} min={-50} max={50} />
-        </div>  
+                    <Knob value={value} onChange={(e) =>  setValue(e.value)} min={-50} max={50} />
+                    </div>  
                 </div>
-            </div>
+        </div>
     );
 
 }
