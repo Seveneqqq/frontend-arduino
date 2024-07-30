@@ -53,9 +53,10 @@ export default function ListItem() {
         let username = document.querySelector('#username').value;
         let password = document.querySelector('#password').value;
 
-        console.log(username);
-        console.log(password);
+        // console.log(username);
+        // console.log(password);
 
+    try{
         const request = new Request("http://localhost:4000/api/login", {
             method: "POST",
             headers: {
@@ -68,9 +69,20 @@ export default function ListItem() {
           });
           
           const response = await fetch(request);
-          const data = response.json();
-          console.log(data);
-          
+          const data = await response.json();
+          //console.log(data);
+
+            if(data.error != undefined || data.error != 0) {
+                console.log(data.error);
+            }
+            if(data.success != undefined || data.success != "") {
+                console.log(data.success);
+            }
+        }   
+        catch(error){
+            console.error('Error', error);
+            return;
+        }
     }
     async function submitRegister(){
 
@@ -79,10 +91,10 @@ export default function ListItem() {
         let password = document.querySelector('#password').value;
         let repeatPassword = document.querySelector('#repeat-password').value;
 
-        console.log(username);
-        console.log(email);
-        console.log(password);
-        console.log(repeatPassword);
+        // console.log(username);
+        // console.log(email);
+        // console.log(password);
+        // console.log(repeatPassword);
 
 
         try{
@@ -101,16 +113,20 @@ export default function ListItem() {
 
               const response = await fetch(request);
               const data = await response.json();
-              console.log(data);
-              console.log(data.success);
+              //console.log(data);
+              
+                if(data.error != undefined || data.error != ""){
+                    console.log(data.error);    
+                }
+                if(data.success != undefined || data.success != ""){
+                    console.log(data.success);    
+                }
 
         }
         catch(error){
             console.error('Error', error);
             return;
         }
-    
-
     }
     
     return (
