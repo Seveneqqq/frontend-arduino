@@ -4,11 +4,12 @@ import database from "../icons/database.svg";
 import home from "../icons/home.svg";
 import login from "../icons/login.svg";
 import mic from "../icons/mic.svg";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { useState } from "react";
 import {InputText } from 'primereact/inputtext';
+
 
 const items = [
     {
@@ -45,7 +46,7 @@ export default function ListItem() {
 
     const [visible, setVisible] = useState(false);
     const [singIn, setSingIn] = useState(false);
-
+    const navigate = useNavigate();
 
 
     async function submitLogin() {
@@ -72,11 +73,12 @@ export default function ListItem() {
           const data = await response.json();
           //console.log(data);
 
-            if(data.error != undefined || data.error != 0) {
+            if(data.error) {
                 console.log(data.error);
             }
-            if(data.success != undefined || data.success != "") {
+            if(data.success) {
                 console.log(data.success);
+                navigate('/app-home');
             }
         }   
         catch(error){
@@ -115,10 +117,10 @@ export default function ListItem() {
               const data = await response.json();
               //console.log(data);
               
-                if(data.error != undefined || data.error != ""){
+                if(data.error){
                     console.log(data.error);    
                 }
-                if(data.success != undefined || data.success != ""){
+                if(data.success){
                     console.log(data.success);    
                 }
 

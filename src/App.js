@@ -2,6 +2,7 @@ import React from "react";
 import Header from './components/header.jsx';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home.jsx";
+import AppHome from "./pages/app-home.jsx";
 // import Author from "../pages/author";
 // import SpeechApi from "../pages/speechApi.jsx";
 // import Stack from "../pages/stack.jsx";
@@ -26,6 +27,7 @@ export default function App() {
                <Route path="/stack" element={<Stack />} />
                <Route path="/database" element={<Database />} />*/}
                <Route path="/login" element={<Login />} /> 
+               <Route path="/app-home" element={<AppHome />} />
                </Routes>
         </BrowserRouter>
     );
