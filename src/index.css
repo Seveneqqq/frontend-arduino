@@ -1,3 +1,5 @@
+
+
 @layer tailwind-base, primereact, tailwind-utilities;
 
 /* IMPORTANT: Styled mode you must add the PrimeReact Theme here. Do not include in unstyled mode */
@@ -16,13 +18,13 @@
 
 body {
   margin: 0;
-  font-family: 'JetBrains Mono', monospace; /* Ustawienie JetBrains Mono jako domyślnej czcionki */
+  font-family: 'Inter var', sans-serif; /* Ustawienie JetBrains Mono jako domyślnej czcionki */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  font-family: 'JetBrains Mono', monospace; /* Ustawienie JetBrains Mono dla odnośników */
+  font-family: 'Inter var', sans-serif; /* Ustawienie JetBrains Mono dla odnośników */
 }
 
 code {

@@ -8,7 +8,7 @@ import App from './App';
 import './index.css';
 import 'primeicons/primeicons.css';
 //import 'primereact/resources/primereact.css';
-import 'primereact/resources/themes/lara-light-blue/theme.css'
+import 'primereact/resources/themes/lara-dark-blue/theme.css'
 
 import Tailwind from 'primereact/passthrough/tailwind';
 
