@@ -7,7 +7,6 @@ import AppHome from "./pages/app-home.jsx";
 // import SpeechApi from "../pages/speechApi.jsx";
 // import Stack from "../pages/stack.jsx";
 // import Database from "../pages/database.jsx";
-import Login from "./pages/login.jsx";
 import '@fontsource/inter';
 
 
@@ -26,7 +25,6 @@ export default function App() {
                <Route path="/speech-api" element={<SpeechApi />} />
                <Route path="/stack" element={<Stack />} />
                <Route path="/database" element={<Database />} />*/}
-               <Route path="/login" element={<Login />} /> 
                <Route path="/app-home" element={<AppHome />} />
                </Routes>
         </BrowserRouter>

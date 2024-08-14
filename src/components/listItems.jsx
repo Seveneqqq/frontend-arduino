@@ -2,7 +2,6 @@ import author from "../icons/author.svg";
 import code from "../icons/code.svg";
 import database from "../icons/database.svg";
 import home from "../icons/home.svg";
-import login from "../icons/login.svg";
 import mic from "../icons/mic.svg";
 import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
@@ -132,7 +131,7 @@ export default function ListItem() {
     }
     
     return (
-        <ul className="flex flex-row justify-between h-full w-full gap-6 items-center z-3">
+        <ul className=" flex-row justify-between h-full w-full gap-6 items-center z-3 flex">
             {items.map(item => {
                 return (
                     <Link to={item.path} className="flex flex-col text-[16px] transition duration-500 hover:duration-500 font-bold items-center text-larablue py-1 justify-center w-[6vw] h-[85%] rounded-[100px] focus:shadow-menuActive hover:bg-[#35363C] active:bg-[#35363C] z-3">   
