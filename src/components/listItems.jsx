@@ -77,7 +77,7 @@ export default function ListItem() {
             }
             if(data.success) {
                 console.log(data.success);
-                navigate('/app-home');
+                navigate('/login-app-home');
             }
         }   
         catch(error){
@@ -120,7 +120,8 @@ export default function ListItem() {
                     console.log(data.error);    
                 }
                 if(data.success){
-                    console.log(data.success);    
+                    console.log(data.success);
+                    navigate('/register-app-home');    
                 }
 
         }

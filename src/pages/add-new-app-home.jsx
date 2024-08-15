@@ -5,7 +5,8 @@ import { Button } from 'primereact/button';
 import { Panel } from '../components/panel';
 import { InputText } from "primereact/inputtext";
 
-export default function AppHome(){
+
+export default function AddNewAppHome(){
 
     const stepperRef = useRef(null);
     
@@ -31,13 +32,13 @@ export default function AppHome(){
                                         <h2>Name of new house</h2>
                                         <InputText placeholder="Name" maxLength={15}/>
                                         <h2>Or</h2>
-                                        <Button label="Join with Code" icon="pi pi-user-plus" onClick={()=>changeToInput()}/>
+                                        <Button label="Join with Code" icon="pi pi-sign-in  " onClick={()=>changeToInput()}/>
                                         
                                     </>
                                     : 
                                     <>
                                         <h2>Join to existing house</h2>
-                                            <InputText keyfilter="int" placeholder="#123456" maxLength={15}/>
+                                            <InputText keyfilter="int" placeholder="#123456" maxLength={6}/>
                                             <Button label="Join" icon="pi pi-plus" />
                                         <h2>Or</h2>
                                             <div className="flex flex-col gap-5">
