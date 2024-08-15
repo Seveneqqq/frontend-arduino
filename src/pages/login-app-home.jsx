@@ -18,7 +18,7 @@ export default function LoginAppHome(){
         navigate('/add-new-app-home');
     }
 
-
+    //panele takie jak w netflixie, a pod spodem przeycisk dokoncz rejestracje
 
     return (
     <div className="card flex justify-content-center h-[100vh] w-[100vw] !bg-slate-800" >
