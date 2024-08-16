@@ -30,3 +30,6 @@ a {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace; /* Zachowanie specjalnej czcionki dla kodu */
 }
+.p-stepper .p-stepper-panels {
+  background: unset;
+}
