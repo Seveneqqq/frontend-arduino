@@ -123,7 +123,7 @@ export default function ListItem() {
                 if(data.success){
                     console.log(data.success);
                     sessionStorage.setItem('AuthToken',data.token);
-                    navigate('/register-app-home');    
+                    navigate('/add-new-app-home');    
                 }
 
         }
