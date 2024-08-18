@@ -72,6 +72,7 @@ export default function AddNewAppHome(){
                 </div>
                 <div className="flex pt-4 justify-between">
                     <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
+                    <Button label="Save" icon="pi pi-save" iconPos="right" />
                 </div>
             </StepperPanel>
         </Stepper>
