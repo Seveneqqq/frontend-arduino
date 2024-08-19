@@ -1,4 +1,4 @@
-import React, { useState,useRef } from "react";
+import React, { useState,useEffect,useRef } from "react";
 import { Stepper } from 'primereact/stepper';
 import { StepperPanel } from 'primereact/stepperpanel';
 import { Button } from 'primereact/button';
@@ -11,11 +11,26 @@ export default function AddNewAppHome(){
     const stepperRef = useRef(null);
     
     const [isClicked,clickedButton] = useState(false);
+    const [valueHomeName,setValueOfHomeName] = useState('');
+
+    useEffect(() => {
+        const storedValue = sessionStorage.getItem('ValueOfHomeName');
+        if (storedValue) {
+            setValueOfHomeName(storedValue);
+        }
+    }, []);
 
     function changeToInput(e){
         
         clickedButton(!isClicked);
     }
+    function onChangeSaveData(value){
+
+        setValueOfHomeName(value);
+        sessionStorage.setItem('ValueOfHomeName',value);
+
+    }
+
 
 
     return (
@@ -30,7 +45,7 @@ export default function AddNewAppHome(){
                                     {!isClicked ?
                                     <>
                                         <h2>Name of new house</h2>
-                                        <InputText placeholder="Name" maxLength={15}/>
+                                        <InputText placeholder="Name" value={valueHomeName} maxLength={15} onChange={(event)=>onChangeSaveData(event.target.value)}/>
                                         <h2>Or</h2>
                                         <Button label="Join with Code" icon="pi pi-sign-in  " onClick={()=>changeToInput()}/>
                                         
@@ -72,6 +87,7 @@ export default function AddNewAppHome(){
                 </div>
                 <div className="flex pt-4 justify-between">
                     <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
+                    <Button label="Save" icon="pi pi-save" iconPos="right" />
                 </div>
             </StepperPanel>
         </Stepper>

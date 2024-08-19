@@ -77,6 +77,7 @@ export default function ListItem() {
             }
             if(data.success) {
                 console.log(data.success);
+                sessionStorage.setItem('AuthToken',data.token);
                 navigate('/login-app-home');
             }
         }   
@@ -121,7 +122,8 @@ export default function ListItem() {
                 }
                 if(data.success){
                     console.log(data.success);
-                    navigate('/register-app-home');    
+                    sessionStorage.setItem('AuthToken',data.token);
+                    navigate('/add-new-app-home');    
                 }
 
         }
