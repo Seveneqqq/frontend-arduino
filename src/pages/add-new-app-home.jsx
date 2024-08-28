@@ -14,7 +14,9 @@ export default function AddNewAppHome(){
     const [valueHomeName,setValueOfHomeName] = useState('');
 
     useEffect(() => {
+
         const storedValue = sessionStorage.getItem('ValueOfHomeName');
+        
         if (storedValue) {
             setValueOfHomeName(storedValue);
         }
@@ -31,7 +33,20 @@ export default function AddNewAppHome(){
 
     }
 
+    async function joinToHouse(){
 
+        try {
+
+            let joinCode = document.getElementById('inviteCode').value;
+            let userId = sessionStorage.getItem('UserId');
+
+            let response = await fetch();
+
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }
 
     return (
     <div className="card flex justify-content-center h-[100vh] w-[100vw] !bg-slate-800" >
@@ -53,8 +68,8 @@ export default function AddNewAppHome(){
                                     : 
                                     <>
                                         <h2>Join to existing house</h2>
-                                            <InputText keyfilter="int" placeholder="#123456" maxLength={6}/>
-                                            <Button label="Join" icon="pi pi-plus" />
+                                            <InputText keyfilter="int" id="inviteCode" placeholder="#123456" maxLength={6}/>
+                                            <Button label="Join" icon="pi pi-plus" onClick={()=>joinToHouse()}/>
                                         <h2>Or</h2>
                                             <div className="flex flex-col gap-5">
                                                 <Button label="Back" icon="pi pi-arrow-left" onClick={()=>changeToInput()}/>
