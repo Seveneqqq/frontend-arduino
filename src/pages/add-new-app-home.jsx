@@ -61,11 +61,16 @@ export default function AddNewAppHome(){
 
             if( response.ok){
                 let data = await response.json();
-                showSuccess();
+                console.log(data);
+                if(data.success){
+                    showSuccess();
+                }
+                else{
+                    showError();
+                }
                 //navigate to login-app-home
             }
             else{
-                //error
                 showError();
             }
 
