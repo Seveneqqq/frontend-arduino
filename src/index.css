@@ -13,6 +13,8 @@
   @tailwind components;
   @tailwind utilities;
 }
+
+
 .p-toast-message-content {
   @apply border-0;
 }

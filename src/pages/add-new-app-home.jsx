@@ -4,7 +4,7 @@ import { StepperPanel } from 'primereact/stepperpanel';
 import { Button } from 'primereact/button';
 import { Panel } from '../components/panel';
 import { InputText } from "primereact/inputtext";
-import { Toast } from 'primereact/toast';
+import { Toast } from 'primereact/toast';  
 
 export default function AddNewAppHome(){
 
@@ -14,7 +14,10 @@ export default function AddNewAppHome(){
     const [valueHomeName,setValueOfHomeName] = useState('');
 
     const showSuccess = () => {
-        toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 111000,});
+        toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
+    }
+    const showError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
     }
 
     useEffect(() => {
@@ -59,9 +62,11 @@ export default function AddNewAppHome(){
             if( response.ok){
                 let data = await response.json();
                 showSuccess();
+                //navigate to login-app-home
             }
             else{
                 //error
+                showError();
             }
 
 
@@ -78,7 +83,7 @@ export default function AddNewAppHome(){
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                             <div className="flex flex-col items-center w-[100%] gap-5 justify-center">
-                                <Toast ref={toast}/>
+                                <Toast ref={toast} />
                                 
                                     {!isClicked ?
                                     <>

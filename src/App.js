@@ -10,7 +10,6 @@ import LoginAppHome from "./pages/login-app-home.jsx";
 // import Database from "../pages/database.jsx";
 import '@fontsource/inter';
 
-
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { useState } from 'react';
