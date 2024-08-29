@@ -78,6 +78,7 @@ export default function ListItem() {
             if(data.success) {
                 console.log(data.success);
                 sessionStorage.setItem('AuthToken',data.token);
+                sessionStorage.setItem('UserId',data.user);
                 navigate('/login-app-home');
             }
         }   
@@ -123,6 +124,7 @@ export default function ListItem() {
                 if(data.success){
                     console.log(data.success);
                     sessionStorage.setItem('AuthToken',data.token);
+                    sessionStorage.setItem('UserId',data.user);
                     navigate('/add-new-app-home');    
                 }
 

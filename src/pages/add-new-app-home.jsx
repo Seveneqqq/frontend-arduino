@@ -4,17 +4,26 @@ import { StepperPanel } from 'primereact/stepperpanel';
 import { Button } from 'primereact/button';
 import { Panel } from '../components/panel';
 import { InputText } from "primereact/inputtext";
-
+import { Toast } from 'primereact/toast';  
 
 export default function AddNewAppHome(){
 
     const stepperRef = useRef(null);
-    
+    const toast = useRef(null);
     const [isClicked,clickedButton] = useState(false);
     const [valueHomeName,setValueOfHomeName] = useState('');
 
+    const showSuccess = () => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
+    }
+    const showError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
+    }
+
     useEffect(() => {
+
         const storedValue = sessionStorage.getItem('ValueOfHomeName');
+        
         if (storedValue) {
             setValueOfHomeName(storedValue);
         }
@@ -31,7 +40,46 @@ export default function AddNewAppHome(){
 
     }
 
+    async function joinToHouse(){
 
+        try {
+
+            let joinCode = document.getElementById('inviteCode').value;
+            let userId = sessionStorage.getItem('UserId');
+            console.log('Bearer ' + sessionStorage.getItem('AuthToken'));
+            let response = await fetch('http://localhost:4000/api/join-to-home', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', 
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                },
+                body: JSON.stringify({
+                    "user_id": userId,
+                    "home_invite_code": joinCode
+                })
+            });
+
+            if( response.ok){
+                let data = await response.json();
+                console.log(data);
+                if(data.success){
+                    showSuccess();
+                }
+                else{
+                    showError();
+                }
+                //navigate to login-app-home
+            }
+            else{
+                showError();
+            }
+
+
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }
 
     return (
     <div className="card flex justify-content-center h-[100vh] w-[100vw] !bg-slate-800" >
@@ -40,7 +88,7 @@ export default function AddNewAppHome(){
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                             <div className="flex flex-col items-center w-[100%] gap-5 justify-center">
-
+                                <Toast ref={toast} />
                                 
                                     {!isClicked ?
                                     <>
@@ -53,8 +101,8 @@ export default function AddNewAppHome(){
                                     : 
                                     <>
                                         <h2>Join to existing house</h2>
-                                            <InputText keyfilter="int" placeholder="#123456" maxLength={6}/>
-                                            <Button label="Join" icon="pi pi-plus" />
+                                            <InputText keyfilter="int" id="inviteCode" placeholder="#123456" maxLength={6}/>
+                                            <Button label="Join" icon="pi pi-plus" onClick={()=>joinToHouse()}/>
                                         <h2>Or</h2>
                                             <div className="flex flex-col gap-5">
                                                 <Button label="Back" icon="pi pi-arrow-left" onClick={()=>changeToInput()}/>
