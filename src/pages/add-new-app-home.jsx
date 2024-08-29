@@ -77,10 +77,8 @@ export default function AddNewAppHome(){
             else{
                 showError();
             }
-
-
         } catch (error) {
-            console.log(error);
+            showError();
         }
         
     }
