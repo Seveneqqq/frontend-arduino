@@ -27,7 +27,7 @@ export default function App() {
                <Route path="/database" element={<Database />} />*/}
                <Route path="/add-new-app-home" element={<AddNewAppHome />} />
                <Route path="/login-app-home" element={<LoginAppHome />} />
-               </Routes>
+            </Routes>
         </BrowserRouter>
     );
 }
