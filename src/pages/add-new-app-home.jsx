@@ -5,9 +5,11 @@ import { Button } from 'primereact/button';
 import { Panel } from '../components/panel';
 import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';  
+import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 
 export default function AddNewAppHome(){
 
+    const navigate = useNavigate();
     const stepperRef = useRef(null);
     const toast = useRef(null);
     const [isClicked,clickedButton] = useState(false);
@@ -64,11 +66,13 @@ export default function AddNewAppHome(){
                 console.log(data);
                 if(data.success){
                     showSuccess();
+                    setTimeout(() => {
+                        navigate('/login-app-home');
+                    }, 1000);
                 }
                 else{
                     showError();
                 }
-                //navigate to login-app-home
             }
             else{
                 showError();
