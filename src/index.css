@@ -18,11 +18,29 @@
 .p-toast-message-content {
   @apply border-0;
 }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; 
+}
 
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent ; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-blue-500 rounded-md;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-blue-700; 
+}
+.custom-scrollbar {
+  padding-bottom: 36px;
+  box-sizing: content-box;
+}
 
 body {
   margin: 0;
-  font-family: 'Inter var', sans-serif; /* Ustawienie JetBrains Mono jako domyślnej czcionki */
+  font-family: 'Inter var', sans-serif; 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

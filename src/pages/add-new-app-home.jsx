@@ -5,13 +5,16 @@ import { Button } from 'primereact/button';
 import { Panel } from '../components/panel';
 import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';  
+import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 
 export default function AddNewAppHome(){
 
+    const navigate = useNavigate();
     const stepperRef = useRef(null);
     const toast = useRef(null);
     const [isClicked,clickedButton] = useState(false);
     const [valueHomeName,setValueOfHomeName] = useState('');
+    const [inviteCode, setInviteCode] = useState('');
 
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
@@ -46,7 +49,7 @@ export default function AddNewAppHome(){
 
             let joinCode = document.getElementById('inviteCode').value;
             let userId = sessionStorage.getItem('UserId');
-            console.log('Bearer ' + sessionStorage.getItem('AuthToken'));
+            
             let response = await fetch('http://localhost:4000/api/join-to-home', {
                 method: 'POST',
                 headers: {
@@ -64,20 +67,21 @@ export default function AddNewAppHome(){
                 console.log(data);
                 if(data.success){
                     showSuccess();
+                    setTimeout(() => {
+                        navigate('/login-app-home');
+                    }, 1000);
                 }
                 else{
                     showError();
                 }
-                //navigate to login-app-home
             }
             else{
                 showError();
             }
-
-
         } catch (error) {
             showError();
             console.log(error);
+
         }
         
     }
@@ -102,7 +106,7 @@ export default function AddNewAppHome(){
                                     : 
                                     <>
                                         <h2>Join to existing house</h2>
-                                            <InputText keyfilter="int" id="inviteCode" placeholder="#123456" maxLength={6}/>
+                                            <InputText keyfilter="int" value={inviteCode} id="inviteCode" placeholder="#123456" maxLength={6} onChange={(event) => setInviteCode(event.target.value)}/>
                                             <Button label="Join" icon="pi pi-plus" onClick={()=>joinToHouse()}/>
                                         <h2>Or</h2>
                                             <div className="flex flex-col gap-5">
