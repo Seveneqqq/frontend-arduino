@@ -80,6 +80,8 @@ export default function AddNewAppHome(){
             }
         } catch (error) {
             showError();
+            console.log(error);
+
         }
         
     }
