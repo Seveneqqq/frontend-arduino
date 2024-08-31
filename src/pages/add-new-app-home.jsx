@@ -6,6 +6,9 @@ import { Panel } from '../components/panel';
 import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';  
 import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
+import { DataScroller } from 'primereact/datascroller';
+import { Tag } from 'primereact/tag';
+
 
 export default function AddNewAppHome(){
 
@@ -22,6 +25,186 @@ export default function AddNewAppHome(){
     const showError = () => {
         toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
     }
+
+    //------------------------------------------------------------------------------
+
+    const products = [
+        {
+        name: 'test1',
+        description: 'test2',
+        category: 'oświetlenie',
+        image: 'test',
+        },
+        {
+        name: 'test1',
+        description: 'test2',
+        category: 'oświetlenie',
+        image: 'test',
+        },
+        {
+        name: 'test1',
+        description: 'test2',
+        category: 'oświetlenie',
+        image: 'test',
+        },
+        {
+        name: 'test1',
+        description: 'test2',
+        category: 'oświetlenie',
+        image: 'test',
+        },
+        {
+        name: 'test1',
+        description: 'test2',
+        category: 'oświetlenie',
+        image: 'test',
+        },
+        {
+        name: 'test1',
+        description: 'test2',
+        category: 'oświetlenie',
+        image: 'test',
+        },
+        {
+        name: 'test1',
+        description: 'test2',
+        category: 'oświetlenie',
+        image: 'test',
+        },
+        {
+        name: 'test1',
+        description: 'test2',
+        category: 'oświetlenie',
+        image: 'test',
+        },
+        {
+            name: 'test1',
+            description: 'test2',
+            category: 'oświetlenie',
+            image: 'test',
+            },
+            {
+            name: 'test1',
+            description: 'test2',
+            category: 'oświetlenie',
+            image: 'test',
+            },
+            {
+            name: 'test1',
+            description: 'test2',
+            category: 'oświetlenie',
+            image: 'test',
+            },
+            {
+            name: 'test1',
+            description: 'test2',
+            category: 'oświetlenie',
+            image: 'test',
+            },
+            {
+            name: 'test1',
+            description: 'test2',
+            category: 'oświetlenie',
+            image: 'test',
+            },
+            {
+            name: 'test1',
+            description: 'test2',
+            category: 'oświetlenie',
+            image: 'test',
+            },
+            {
+            name: 'test1',
+            description: 'test2',
+            category: 'oświetlenie',
+            image: 'test',
+            },
+            {
+            name: 'test1',
+            description: 'test2',
+            category: 'oświetlenie',
+            image: 'test',
+            },
+            {
+                name: 'test1',
+                description: 'test2',
+                category: 'oświetlenie',
+                image: 'test',
+                },
+                {
+                name: 'test1',
+                description: 'test2',
+                category: 'oświetlenie',
+                image: 'test',
+                },
+                {
+                name: 'test1',
+                description: 'test2',
+                category: 'oświetlenie',
+                image: 'test',
+                },
+                {
+                name: 'test1',
+                description: 'test2',
+                category: 'oświetlenie',
+                image: 'test',
+                },
+                {
+                name: 'test1',
+                description: 'test2',
+                category: 'oświetlenie',
+                image: 'test',
+                },
+                {
+                name: 'test1',
+                description: 'test2',
+                category: 'oświetlenie',
+                image: 'test',
+                },
+                {
+                name: 'test1',
+                description: 'test2',
+                category: 'oświetlenie',
+                image: 'test',
+                },
+                {
+                name: 'test1',
+                description: 'test2',
+                category: 'oświetlenie',
+                image: 'test',
+                }
+    ];
+
+
+    const itemTemplate = (data) => {
+        return (
+            <div className="col-12 custom-scrollbar">
+                <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4 ">
+                    <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" src={`https://primefaces.org/cdn/primereact/images/product/gaming-set.jpg`} alt={data.name} />
+                    <div className="flex flex-column lg:flex-row justify-content-between align-items-center xl:align-items-start lg:flex-1 gap-4">
+                        <div className="flex flex-column align-items-center lg:align-items-start gap-3">
+                            <div className="flex flex-column gap-1">
+                                <div className="text-2xl font-bold text-900">{data.name}</div>
+                                <div className="text-700">{data.description}</div>
+                            </div>
+                            <div className="flex flex-column gap-2">
+                                <span className="flex align-items-center gap-2">
+                                    <i className="pi pi-tag product-category-icon"></i>
+                                    <span className="font-semibold">{data.category}</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex flex-row lg:flex-column align-items-center lg:align-items-end gap-4 lg:gap-2">
+                            <Button icon="pi pi-shopping-cart" label="Add to Cart"></Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    //-------------------------------------------------------------------
+
 
     useEffect(() => {
 
@@ -123,7 +306,9 @@ export default function AddNewAppHome(){
             <StepperPanel header="Wybierz urządzenia">
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-                            Content II
+                            
+                        <DataScroller value={products} itemTemplate={itemTemplate} rows={9999} inline scrollHeight="500px"/>      
+
                         </div>
                 </div>
                 <div className="flex pt-4 justify-between">
