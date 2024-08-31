@@ -115,7 +115,8 @@ export default function AddNewAppHome(){
                             </div>
                         </div>
                 </div>
-                <div className="flex pt-4 justify-end">
+                <div className="flex pt-4 justify-between">
+                    <Button label="Choose home" icon="pi pi-home" iconPos="left" onClick={() => navigate('/login-app-home')} />
                     <Button label="Next" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
                 </div>
             </StepperPanel>
