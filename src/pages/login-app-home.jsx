@@ -1,4 +1,4 @@
-import React, { useState,useRef } from "react";
+import React, { useState,useRef, useEffect } from "react";
 import { Stepper } from 'primereact/stepper';
 import { StepperPanel } from 'primereact/stepperpanel';
 import { Button } from 'primereact/button';
@@ -8,10 +8,38 @@ import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-do
 
 export default function LoginAppHome(){
 
+    const [fetchData, setFetchData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isClicked,clickedButton] = useState(false);
+
     const stepperRef = useRef(null);
     const navigate = useNavigate();
 
-    const [isClicked,clickedButton] = useState(false);
+    useEffect(() =>{
+        const getDataFromApi = async () =>{
+            const response = await fetch('http://localhost:4000/api/user-homes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', 
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                },
+                body: JSON.stringify({
+                    "user_id": sessionStorage.getItem('UserId'),
+                })
+            });
+
+            setFetchData(await response.json());
+            console.log(await fetchData);
+            setLoading(false);
+        };
+        getDataFromApi();
+    },[]);
+
+    if(loading){
+        return(
+            <h1>Ładowanie</h1>
+        );
+    }
 
     function goToRegister(){
         
