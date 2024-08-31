@@ -39,6 +39,13 @@ export default function LoginAppHome(){
         navigate('/add-new-app-home');
     }
 
+    function homeSelected(homeId,homeName){
+        sessionStorage.setItem('selected-home-id',homeId);
+        sessionStorage.setItem('selected-home-name',homeName);
+
+        navigate('/panel-dashboard');
+    }
+
     const itemCount = fetchData.length;
     const alignContentClass = itemCount <= 4 ? 'content-center' : 'content-start';
 
@@ -50,7 +57,10 @@ export default function LoginAppHome(){
                 <div className="px-[20%]">
                 <div className={`custom-scrollbar flex gap-[2vw] flex-col ${alignContentClass} justify-center mx-auto flex-wrap max-h-56 overflow-y-auto`}>
                     { fetchData && fetchData.map(el =>(
-                    <div className="md:w-56 w-36 md:h-56 h-36 bg-slate-500"></div>
+                    <div className="md:w-56 w-36 md:h-56 h-36 bg-slate-500 flex flex-col justify-end hover:bg-slate-600" onClick={() => homeSelected(el.home_id,el.name)}>
+                        <p className="text-xl">Nazwa :{el.name}</p>
+                        <p className="text-xl">ID : {el.home_id}</p>
+                    </div>
                     ))}
                 </div>
             </div>

@@ -32,7 +32,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-[#93c5fd] ; 
+  @apply bg-[#93c5fd]; 
 }
 .custom-scrollbar {
   padding-bottom: 36px;
