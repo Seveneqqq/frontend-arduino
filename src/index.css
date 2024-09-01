@@ -20,6 +20,7 @@
 }
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px; 
+  height: 10px; 
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -27,11 +28,11 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-blue-500 rounded-md;
+  @apply bg-[#60a5fa] rounded-md;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-blue-700; 
+  @apply bg-[#93c5fd]; 
 }
 .custom-scrollbar {
   padding-bottom: 36px;
