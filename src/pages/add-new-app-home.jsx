@@ -36,6 +36,15 @@ export default function AddNewAppHome(){
         }
     }, []);
 
+
+    function findDevices(){
+        setPanelVisible1(true);
+    }
+    function AddManually(){
+        setPanelVisible2(true);
+    }
+
+
     function changeToInput(e){
         
         clickedButton(!isClicked);
@@ -128,17 +137,16 @@ export default function AddNewAppHome(){
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%]">
                             
-                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => setPanelVisible1(true)}>
+                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => findDevices()}>
                             <i class="pi pi-search text-9xl w-[100%] h-[65%]"></i>
                             <p className="text-xl mb-5">Find devices</p>
                         </div>
-                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => setPanelVisible2(true)}>
+                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => AddManually()}>
                             <i class="pi pi-plus text-9xl w-[100%] h-[65%]"></i>
                             <p className="text-xl mb-5">Add manually</p>
                         </div>
 
-
-                        <Dialog header="Header" visible={panelVisible1} style={{ width: '50vw' }} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }} onBlur={() => { if (!panelVisible1) return; setPanelVisible1(false); }}>
+                        <Dialog header="Header" visible={panelVisible1} style={{ width: '50vw' }} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
                             <p className="mb-5">
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
                                 consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -151,7 +159,7 @@ export default function AddNewAppHome(){
                             </p>
                         </Dialog>
 
-                        <Dialog header="Header" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} onBlur={() => { if (!panelVisible2) return; setPanelVisible2(false); }}>
+                        <Dialog header="Header" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
                             <p className="mb-5">
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
                                 consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -163,9 +171,6 @@ export default function AddNewAppHome(){
                                 ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
                             </p>
                         </Dialog>
-
-
-
 
                         </div>
                 </div>
