@@ -16,6 +16,9 @@ export default function AddNewAppHome(){
     const [isClicked,clickedButton] = useState(false);
     const [valueHomeName,setValueOfHomeName] = useState('');
     const [inviteCode, setInviteCode] = useState('');
+    const [loading, setLoading] = useState('hidden');
+    const [blur, setBlur] = useState('');
+
 
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
@@ -28,10 +31,10 @@ export default function AddNewAppHome(){
     }
 
     const connected = () =>{
-        toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully founded devices',life: 2000,});
+        toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully founded devices',life: 1000,});
     }
     const notConnected = () =>{
-        toast.current.show({severity:'error', summary: 'Error', detail:'Cannot find any device',life: 2000,});
+        toast.current.show({severity:'error', summary: 'Error', detail:'Cannot find any device',life: 1000,});
     }
 
     useEffect(() => {
@@ -46,6 +49,9 @@ export default function AddNewAppHome(){
 
     async function findDevices(){
         
+        setBlur('blur-sm');
+        setLoading('');
+
         console.log(sessionStorage.getItem('AuthToken'))
 
         try{
@@ -64,8 +70,16 @@ export default function AddNewAppHome(){
             console.log(data);
             if(data.connection == "true"){
                 console.log(data.connection);
-                connected();
-                setPanelVisible1(true);
+                
+                setTimeout(() => {
+                    connected();
+                }, 200);
+                
+
+                setTimeout(() => {
+                    setPanelVisible1(true);
+                }, 1250);
+                
                 //tutaj reszta
             }
             else{
@@ -79,6 +93,10 @@ export default function AddNewAppHome(){
         
         console.log('1' +error);
         notConnected();
+    }
+    finally{
+        setBlur('');
+        setLoading('hidden');
     }
 }
 
@@ -181,11 +199,15 @@ export default function AddNewAppHome(){
                 </div>
             </StepperPanel>
             <StepperPanel header="Wybierz urządzenia">
-                <div className="flex flex-column h-[80vh]">
-                        <div className="!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%]">
+                
+                <div className="flex flex-column h-[80vh] items-center justify-center">
+                            <div className={`absolute w-[100%] h-[100%] ${loading}`}>
+                                <ProgressSpinner strokeWidth={5} className={`absolute flex z-50 top-[45%] ${loading} `}/>
+                            </div>
+                        <div className={`!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%] ${blur}`}>
                             
                             <Toast ref={toast} />
-
+                            
                         <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => findDevices()}>
                             <i class="pi pi-search text-9xl w-[100%] h-[65%]"></i>
                             <p className="text-xl mb-5">Find devices</p>
