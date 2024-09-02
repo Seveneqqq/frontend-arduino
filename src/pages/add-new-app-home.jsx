@@ -6,7 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';  
 import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
-
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function AddNewAppHome(){
 
@@ -46,7 +46,7 @@ export default function AddNewAppHome(){
 
     async function findDevices(){
         
-        console.log(sessionStorage.getItem('AuthToken'));
+        console.log(sessionStorage.getItem('AuthToken'))
 
         try{
 
@@ -62,7 +62,7 @@ export default function AddNewAppHome(){
 
             let data = await response.json();
             console.log(data);
-            if(data.connection){
+            if(data.connection == "true"){
                 console.log(data.connection);
                 connected();
                 setPanelVisible1(true);
