@@ -5,7 +5,7 @@ import { Button } from 'primereact/button';
 import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';  
 import { useNavigate } from "react-router-dom";
-
+import { Dialog } from 'primereact/dialog';
 
 
 export default function AddNewAppHome(){
@@ -16,6 +16,9 @@ export default function AddNewAppHome(){
     const [isClicked,clickedButton] = useState(false);
     const [valueHomeName,setValueOfHomeName] = useState('');
     const [inviteCode, setInviteCode] = useState('');
+
+    let [panelVisible1, setPanelVisible1] = useState(false);
+    let [panelVisible2, setPanelVisible2] = useState(false);
 
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
@@ -125,14 +128,44 @@ export default function AddNewAppHome(){
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%]">
                             
-                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600">
+                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => setPanelVisible1(true)}>
                             <i class="pi pi-search text-9xl w-[100%] h-[65%]"></i>
                             <p className="text-xl mb-5">Find devices</p>
                         </div>
-                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600">
+                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => setPanelVisible2(true)}>
                             <i class="pi pi-plus text-9xl w-[100%] h-[65%]"></i>
                             <p className="text-xl mb-5">Add manually</p>
                         </div>
+
+
+                        <Dialog header="Header" visible={panelVisible1} style={{ width: '50vw' }} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }} onBlur={() => { if (!panelVisible1) return; setPanelVisible1(false); }}>
+                            <p className="mb-5">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                            <p className="mb-5">
+                                "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
+                                adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid
+                                ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+                            </p>
+                        </Dialog>
+
+                        <Dialog header="Header" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} onBlur={() => { if (!panelVisible2) return; setPanelVisible2(false); }}>
+                            <p className="mb-5">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                            <p className="mb-5">
+                                "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
+                                adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid
+                                ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+                            </p>
+                        </Dialog>
+
+
+
 
                         </div>
                 </div>
