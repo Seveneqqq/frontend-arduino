@@ -27,6 +27,13 @@ export default function AddNewAppHome(){
         toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
     }
 
+    const connected = () =>{
+        toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully founded devices',life: 2000,});
+    }
+    const notConnected = () =>{
+        toast.current.show({severity:'error', summary: 'Error', detail:'Cannot find any device',life: 2000,});
+    }
+
     useEffect(() => {
 
         const storedValue = sessionStorage.getItem('ValueOfHomeName');
@@ -37,11 +44,50 @@ export default function AddNewAppHome(){
     }, []);
 
 
-    function findDevices(){
-        setPanelVisible1(true);
+    async function findDevices(){
+        
+        console.log(sessionStorage.getItem('AuthToken'));
+
+        try{
+
+        let response = await fetch('http://localhost:4000/api/find-devices', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+        });
+        
+        if( response.ok){
+
+            let data = await response.json();
+            console.log(data);
+            if(data.connection){
+                console.log(data.connection);
+                connected();
+                setPanelVisible1(true);
+                //tutaj reszta
+            }
+            else{
+                notConnected();
+            }
+        }
+        else{
+            notConnected();
+        }
+    } catch (error) {
+        
+        console.log('1' +error);
+        notConnected();
     }
-    function AddManually(){
+}
+
+    async function AddManually(){
         setPanelVisible2(true);
+
+
+
+
     }
 
 
@@ -49,6 +95,7 @@ export default function AddNewAppHome(){
         
         clickedButton(!isClicked);
     }
+
     function onChangeSaveData(value){
 
         setValueOfHomeName(value);
@@ -137,6 +184,8 @@ export default function AddNewAppHome(){
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%]">
                             
+                            <Toast ref={toast} />
+
                         <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => findDevices()}>
                             <i class="pi pi-search text-9xl w-[100%] h-[65%]"></i>
                             <p className="text-xl mb-5">Find devices</p>
