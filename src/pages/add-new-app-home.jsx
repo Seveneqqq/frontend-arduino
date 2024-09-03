@@ -201,10 +201,10 @@ export default function AddNewAppHome(){
             <StepperPanel header="Wybierz urządzenia">
                 
                 <div className="flex flex-column h-[80vh] items-center justify-center">
-                            <div className={`absolute w-[100%] h-[100%] ${loading}`}>
-                                <ProgressSpinner strokeWidth={5} className={`absolute flex z-50 top-[45%] ${loading} `}/>
+                            <div className={`absolute w-[100%] h-[100%] flex justify-center ${loading}`}>
+                                <ProgressSpinner strokeWidth={5} className={`absolute flex z-50 top-[45%] ${loading}`}/>
                             </div>
-                        <div className={`!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%] ${blur}`}>
+                        <div className={`!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%]`}>
                             
                             <Toast ref={toast} />
                             
