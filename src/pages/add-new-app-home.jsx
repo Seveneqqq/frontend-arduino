@@ -165,7 +165,7 @@ export default function AddNewAppHome(){
     return (
     <div className="card flex justify-content-center h-[100vh] w-[100vw] !bg-slate-800" >
         <Stepper ref={stepperRef}  className="w-[100vw] h-[100vh] px-96  !bg-slate-800" >
-            <StepperPanel header="Wybierz dom lub mieszkanie">
+            <StepperPanel header="Select home">
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                             <div className="flex flex-col items-center w-[100%] gap-5 justify-center">
@@ -198,7 +198,7 @@ export default function AddNewAppHome(){
                     <Button label="Next" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
                 </div>
             </StepperPanel>
-            <StepperPanel header="Wybierz urządzenia">
+            <StepperPanel header="Add devices">
                 
                 <div className="flex flex-column h-[80vh] items-center justify-center">
                             <div className={`absolute w-[100%] h-[100%] flex justify-center ${loading}`}>
@@ -250,7 +250,7 @@ export default function AddNewAppHome(){
                     <Button label="Next" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
                 </div>
             </StepperPanel>
-            <StepperPanel header="Dodaj domowników">
+            <StepperPanel header="Confirm">
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                             Content III
