@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
+
 export default function AddNewAppHome(){
 
     const navigate = useNavigate();
@@ -18,8 +19,8 @@ export default function AddNewAppHome(){
     const [inviteCode, setInviteCode] = useState('');
     const [loading, setLoading] = useState('hidden');
     const [blur, setBlur] = useState('');
-
-
+    const [devices, setDevices] = useState('');
+    
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
 
@@ -67,11 +68,12 @@ export default function AddNewAppHome(){
         if( response.ok){
 
             let data = await response.json();
-            
+
             if(data.connection == "true"){
-                console.log(data);
-                console.log(data.connection);
                 
+                console.log(data);
+                setDevices(data.devices);
+
                 setTimeout(() => {
                     connected();
                 }, 200);
@@ -220,8 +222,15 @@ export default function AddNewAppHome(){
 
                         <Dialog header="Header" visible={panelVisible1} style={{ width: '50vw' }} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
                             <p className="mb-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+                                {devices=="" ? 
+                                <h1>Loading...</h1> 
+                                :
+                                devices.map(el=>{
+                                    return <h1>{el.name}</h1>
+                                })
+                                }
+
                             </p>
                             <p className="mb-5">
                                 "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
