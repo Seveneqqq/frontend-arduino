@@ -20,6 +20,7 @@ export default function AddNewAppHome(){
     const [loading, setLoading] = useState('hidden');
     const [blur, setBlur] = useState('');
     const [devices, setDevices] = useState('');
+    const [label, setLabel] = useState('');
     
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
@@ -123,6 +124,9 @@ export default function AddNewAppHome(){
         sessionStorage.setItem('ValueOfHomeName',value);
 
     }
+    const handleInputChange = (e) => {
+        setLabel(e.target.value);
+      };
 
     async function joinToHouse(){
 
@@ -163,6 +167,13 @@ export default function AddNewAppHome(){
             showError();
         }
         
+    }
+
+
+
+    function setFields(name,status){
+        console.log(name,status);
+        setLabel(name,status);
     }
 
     return (
@@ -229,14 +240,16 @@ export default function AddNewAppHome(){
                                         <>
                                         <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
                                         {devices.map(el=>{
-                                            return <div className="grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 "><p>{el.name}</p><p>{el.status}</p></div>
+                                            return <div className="grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 " onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
                                         })}
                                         </>
                                     }
                                 </div>
-                                <div>
+                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
                                     
-                                    inputy here
+                                    <p class="font-semibold">Set your devices</p>
+
+                                    <InputText label="dd" value={label} onChange={handleInputChange} />
 
                                 </div>
                             </div>
