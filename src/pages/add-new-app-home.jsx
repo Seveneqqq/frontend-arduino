@@ -220,24 +220,26 @@ export default function AddNewAppHome(){
                             <p className="text-xl mb-5">Add manually</p>
                         </div>
 
-                        <Dialog header="Header" visible={panelVisible1} style={{ width: '50vw' }} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
-                            <p className="mb-5">
+                        <Dialog header="Founded devices"  visible={panelVisible1} style={{ width: '50vw'}} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
+                            <div className="flex flex-row w-[100%]">
+                                <div className="w-[40%]">
+                                    {devices=="" ? 
+                                        <h1>Loading...</h1> 
+                                        :
+                                        <>
+                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
+                                        {devices.map(el=>{
+                                            return <div className="grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 "><p>{el.name}</p><p>{el.status}</p></div>
+                                        })}
+                                        </>
+                                    }
+                                </div>
+                                <div>
+                                    
+                                    inputy here
 
-                                {devices=="" ? 
-                                <h1>Loading...</h1> 
-                                :
-                                devices.map(el=>{
-                                    return <h1>{el.name}</h1>
-                                })
-                                }
-
-                            </p>
-                            <p className="mb-5">
-                                "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-                                adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid
-                                ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-                            </p>
+                                </div>
+                            </div>
                         </Dialog>
 
                         <Dialog header="Header" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
