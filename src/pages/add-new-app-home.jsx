@@ -67,8 +67,9 @@ export default function AddNewAppHome(){
         if( response.ok){
 
             let data = await response.json();
-            console.log(data);
+            
             if(data.connection == "true"){
+                console.log(data);
                 console.log(data.connection);
                 
                 setTimeout(() => {
