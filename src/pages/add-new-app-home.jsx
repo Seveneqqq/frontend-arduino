@@ -176,7 +176,11 @@ export default function AddNewAppHome(){
         if(userDevices.length == devices.length && devices.length != 0) {
             alert('dziala');
             
-
+            //walidacja
+            //wyslanie do api
+            //blokowanie urzadzen i opcji 
+            //zrobienie sprawdzenia, jezeli urzadzenia zostaly zapsane a bedzie ponowne wejscie 
+            //to wtedy alert alert o tym ze to wyczysci urzadzenia i wyczyszczenie wszystkich stanow
         }
 
     }, [userDevices]);
