@@ -40,6 +40,7 @@ export default function AddNewAppHome(){
     
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
+    let [userDevices, setUserDevices] = useState([]);
 
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
@@ -152,9 +153,33 @@ export default function AddNewAppHome(){
         setLabel(e.target.value);
     }
 
-    const saveDevice = () =>{
-        console.log(name,status,label,command_on,command_off,selectedRoom);
-    }
+    const saveDevice = () => {
+        const newDevice = {
+            name: name,
+            status: status,
+            label: label,
+            command_on: command_on,
+            command_off: command_off,
+            selectedRoom: selectedRoom
+        };
+    
+        setUserDevices(prevDevices => {
+            const updatedDevices = [...prevDevices, newDevice];
+            //console.log(updatedDevices); 
+            return updatedDevices;
+        });        
+    };
+    
+    useEffect(() => {
+        console.log('Updated userDevices:', userDevices);
+
+        if(userDevices.length == devices.length && devices.length != 0) {
+            alert('dziala');
+            
+
+        }
+
+    }, [userDevices]);
 
     async function joinToHouse(){
 
