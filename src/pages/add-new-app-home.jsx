@@ -7,6 +7,7 @@ import { Toast } from 'primereact/toast';
 import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { Dropdown } from 'primereact/dropdown';
 
 
 export default function AddNewAppHome(){
@@ -20,7 +21,22 @@ export default function AddNewAppHome(){
     const [loading, setLoading] = useState('hidden');
     const [blur, setBlur] = useState('');
     const [devices, setDevices] = useState('');
+    const [name, setName] = useState('');
+    const [status, setStatus] = useState('');
     const [label, setLabel] = useState('');
+    const [command_on, setCommand_on] = useState('');
+    const [command_off, setCommand_off] = useState('');
+    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [formVisible, setFormVisible] = useState(false);
+    const rooms = [
+        'Kitchen',
+        'Living room', 
+        'Bathroom', 
+        'Garden', 
+        'Childrens room', 
+        'Garage', 
+        'Office',
+    ];
     
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
@@ -124,9 +140,21 @@ export default function AddNewAppHome(){
         sessionStorage.setItem('ValueOfHomeName',value);
 
     }
-    const handleInputChange = (e) => {
+
+
+    const onChangeSetTurnOn = (e) =>{
+        setCommand_on(e.target.value);
+    }
+    const onChangeSetTurnOff = (e) =>{
+        setCommand_off(e.target.value);
+    }
+    const onChangeSetLabel = (e) =>{
         setLabel(e.target.value);
-      };
+    }
+
+    const saveDevice = () =>{
+        console.log(name,status,label,command_on,command_off,selectedRoom);
+    }
 
     async function joinToHouse(){
 
@@ -172,8 +200,10 @@ export default function AddNewAppHome(){
 
 
     function setFields(name,status){
+        setFormVisible(true);
         console.log(name,status);
-        setLabel(name,status);
+        setName(name);
+        setStatus(status);
     }
 
     return (
@@ -247,9 +277,22 @@ export default function AddNewAppHome(){
                                 </div>
                                 <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
                                     
-                                    <p class="font-semibold">Set your devices</p>
+                                    {formVisible && 
+                                    <>
+                                        <p class="font-semibold">Set your devices - {name}</p>
 
-                                    <InputText label="dd" value={label} onChange={handleInputChange} />
+                                        <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
+
+                                        <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
+                                            placeholder="Select room" className="w-full md:w-14rem" />
+
+                                        <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
+
+                                        <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
+
+                                        <Button label="Save" onClick={saveDevice}/>
+                                    </>
+                                    }
 
                                 </div>
                             </div>
