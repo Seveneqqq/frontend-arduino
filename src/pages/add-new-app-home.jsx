@@ -7,6 +7,8 @@ import { Toast } from 'primereact/toast';
 import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { Dropdown } from 'primereact/dropdown';
+
 
 export default function AddNewAppHome(){
 
@@ -18,10 +20,27 @@ export default function AddNewAppHome(){
     const [inviteCode, setInviteCode] = useState('');
     const [loading, setLoading] = useState('hidden');
     const [blur, setBlur] = useState('');
-
-
+    const [devices, setDevices] = useState('');
+    const [name, setName] = useState('');
+    const [status, setStatus] = useState('');
+    const [label, setLabel] = useState('');
+    const [command_on, setCommand_on] = useState('');
+    const [command_off, setCommand_off] = useState('');
+    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [formVisible, setFormVisible] = useState(false);
+    const rooms = [
+        'Kitchen',
+        'Living room', 
+        'Bathroom', 
+        'Garden', 
+        'Childrens room', 
+        'Garage', 
+        'Office',
+    ];
+    
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
+    let [userDevices, setUserDevices] = useState([]);
 
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
@@ -29,7 +48,9 @@ export default function AddNewAppHome(){
     const showError = () => {
         toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
     }
-
+    const devicesSaved = () => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully devices are saved',life: 1000,});
+    }
     const connected = () =>{
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully founded devices',life: 1000,});
     }
@@ -67,10 +88,12 @@ export default function AddNewAppHome(){
         if( response.ok){
 
             let data = await response.json();
-            console.log(data);
+
             if(data.connection == "true"){
-                console.log(data.connection);
                 
+                console.log(data);
+                setDevices(data.devices);
+
                 setTimeout(() => {
                     connected();
                 }, 200);
@@ -121,6 +144,66 @@ export default function AddNewAppHome(){
 
     }
 
+
+    const onChangeSetTurnOn = (e) =>{
+        setCommand_on(e.target.value);
+    }
+    const onChangeSetTurnOff = (e) =>{
+        setCommand_off(e.target.value);
+    }
+    const onChangeSetLabel = (e) =>{
+        setLabel(e.target.value);
+    }
+
+    const saveDevice = () => {
+
+        let foundDevice = devices.find(device => device.name === name);
+        
+        foundDevice.hidden="true";
+        setLabel('');          
+        setCommand_on('');     
+        setCommand_off('');     
+        setSelectedRoom(null); 
+
+        const newDevice = {
+            name: name,
+            status: status,
+            label: label,
+            command_on: command_on,
+            command_off: command_off,
+            selectedRoom: selectedRoom
+        };
+    
+
+
+        setUserDevices(prevDevices => {
+            const updatedDevices = [...prevDevices, newDevice];
+            //console.log(updatedDevices); 
+            return updatedDevices;
+        });        
+    };
+    
+    useEffect(() => {
+        console.log('Updated userDevices:', userDevices);
+
+        if(userDevices.length == devices.length && devices.length != 0) {
+            
+            setPanelVisible1(false);
+            
+            setTimeout(() => {
+                devicesSaved(); 
+            }, 500);
+            
+            
+            //walidacja
+            //wyslanie do api
+            //blokowanie urzadzen i opcji 
+            //zrobienie sprawdzenia, jezeli urzadzenia zostaly zapsane a bedzie ponowne wejscie 
+            //to wtedy alert alert o tym ze to wyczysci urzadzenia i wyczyszczenie wszystkich stanow
+        }
+
+    }, [userDevices]);
+
     async function joinToHouse(){
 
         try {
@@ -164,10 +247,19 @@ export default function AddNewAppHome(){
         
     }
 
+
+
+    function setFields(name,status){
+        setFormVisible(true);
+        console.log(name,status);
+        setName(name);
+        setStatus(status);
+    }
+
     return (
     <div className="card flex justify-content-center h-[100vh] w-[100vw] !bg-slate-800" >
         <Stepper ref={stepperRef}  className="w-[100vw] h-[100vh] px-96  !bg-slate-800" >
-            <StepperPanel header="Wybierz dom lub mieszkanie">
+            <StepperPanel header="Select home">
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                             <div className="flex flex-col items-center w-[100%] gap-5 justify-center">
@@ -200,11 +292,11 @@ export default function AddNewAppHome(){
                     <Button label="Next" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
                 </div>
             </StepperPanel>
-            <StepperPanel header="Wybierz urządzenia">
+            <StepperPanel header="Add devices">
                 
                 <div className="flex flex-column h-[80vh] items-center justify-center">
-                            <div className={`absolute w-[100%] h-[100%] ${loading}`}>
-                                <ProgressSpinner strokeWidth={5} className={`absolute flex z-50 top-[45%] ${loading} `}/>
+                            <div className={`absolute w-[100%] h-[100%] flex justify-center ${loading}`}>
+                                <ProgressSpinner strokeWidth={5} className={`absolute flex z-50 top-[45%] ${loading}`}/>
                             </div>
                         <div className={`!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%] ${blur}`}>
                             
@@ -219,17 +311,41 @@ export default function AddNewAppHome(){
                             <p className="text-xl mb-5">Add manually</p>
                         </div>
 
-                        <Dialog header="Header" visible={panelVisible1} style={{ width: '50vw' }} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
-                            <p className="mb-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                            <p className="mb-5">
-                                "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-                                adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid
-                                ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-                            </p>
+                        <Dialog header="Founded devices"  visible={panelVisible1} style={{ width: '50vw'}} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
+                            <div className="flex flex-row w-[100%]">
+                                <div className="w-[40%]">
+                                    {devices=="" ? 
+                                        <h1>Loading...</h1> 
+                                        :
+                                        <>
+                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
+                                        {devices.map(el=>{
+                                            return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 ${el.hidden ? "hidden" : ""}`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
+                                        })}
+                                        </>
+                                    }
+                                </div>
+                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
+                                    
+                                    {formVisible && 
+                                    <>
+                                        <p class="font-semibold">Set your devices - {name}</p>
+
+                                        <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
+
+                                        <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
+                                            placeholder="Select room" className="w-full md:w-14rem" />
+
+                                        <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
+
+                                        <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
+
+                                        <Button label="Save" onClick={saveDevice}/>
+                                    </>
+                                    }
+
+                                </div>
+                            </div>
                         </Dialog>
 
                         <Dialog header="Header" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
@@ -252,7 +368,7 @@ export default function AddNewAppHome(){
                     <Button label="Next" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
                 </div>
             </StepperPanel>
-            <StepperPanel header="Dodaj domowników">
+            <StepperPanel header="Confirm">
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                             Content III
