@@ -105,8 +105,7 @@ export default function AddNewAppHome(){
                 setTimeout(() => {
                     setPanelVisible1(true);
                 }, 1250);
-                
-                //tutaj reszta
+
             }
             else{
                 
@@ -115,7 +114,6 @@ export default function AddNewAppHome(){
         }
         else{
             accesForbidden();
-            //notConnected();
         }
     } catch (error) {
         
@@ -170,13 +168,17 @@ export default function AddNewAppHome(){
         setCommand_off('');     
         setSelectedRoom(null); 
 
+        let selectedRoomId;
+
+        // tutaj musi być switch który będzie uzupelnial id pokoju
+
         const newDevice = {
             name: name,
             status: status,
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoom
+            selectedRoom: selectedRoomId
         };
     
 
