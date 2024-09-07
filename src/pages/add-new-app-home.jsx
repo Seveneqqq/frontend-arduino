@@ -48,7 +48,9 @@ export default function AddNewAppHome(){
     const showError = () => {
         toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
     }
-
+    const devicesSaved = () => {
+        toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully devices are saved',life: 1000,});
+    }
     const connected = () =>{
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully founded devices',life: 1000,});
     }
@@ -154,6 +156,15 @@ export default function AddNewAppHome(){
     }
 
     const saveDevice = () => {
+
+        let foundDevice = devices.find(device => device.name === name);
+        
+        foundDevice.hidden="true";
+        setLabel('');          
+        setCommand_on('');     
+        setCommand_off('');     
+        setSelectedRoom(null); 
+
         const newDevice = {
             name: name,
             status: status,
@@ -163,6 +174,8 @@ export default function AddNewAppHome(){
             selectedRoom: selectedRoom
         };
     
+
+
         setUserDevices(prevDevices => {
             const updatedDevices = [...prevDevices, newDevice];
             //console.log(updatedDevices); 
@@ -174,7 +187,13 @@ export default function AddNewAppHome(){
         console.log('Updated userDevices:', userDevices);
 
         if(userDevices.length == devices.length && devices.length != 0) {
-            alert('dziala');
+            
+            setPanelVisible1(false);
+            
+            setTimeout(() => {
+                devicesSaved(); 
+            }, 500);
+            
             
             //walidacja
             //wyslanie do api
@@ -299,7 +318,7 @@ export default function AddNewAppHome(){
                                         <>
                                         <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
                                         {devices.map(el=>{
-                                            return <div className="grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 " onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
+                                            return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 ${el.hidden ? "hidden" : ""}`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
                                         })}
                                         </>
                                     }
