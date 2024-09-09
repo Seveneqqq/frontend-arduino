@@ -45,6 +45,9 @@ export default function AddNewAppHome(){
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
     }
+    const accesForbidden = () => {
+        toast.current.show({severity:'error', summary: 'Dennied', detail:'Forbdden, please log in.',life: 2000,});
+    }
     const showError = () => {
         toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
     }
@@ -73,7 +76,7 @@ export default function AddNewAppHome(){
         setBlur('blur-sm');
         setLoading('');
 
-        console.log(sessionStorage.getItem('AuthToken'))
+        //console.log(sessionStorage.getItem('AuthToken'))
 
         try{
 
@@ -102,15 +105,15 @@ export default function AddNewAppHome(){
                 setTimeout(() => {
                     setPanelVisible1(true);
                 }, 1250);
-                
-                //tutaj reszta
+
             }
             else{
+                
                 notConnected();
             }
         }
         else{
-            notConnected();
+            accesForbidden();
         }
     } catch (error) {
         
@@ -165,13 +168,17 @@ export default function AddNewAppHome(){
         setCommand_off('');     
         setSelectedRoom(null); 
 
+        let selectedRoomId;
+
+        // tutaj musi być switch który będzie uzupelnial id pokoju
+
         const newDevice = {
             name: name,
             status: status,
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoom
+            selectedRoom: selectedRoomId
         };
     
 
@@ -189,7 +196,7 @@ export default function AddNewAppHome(){
         if(userDevices.length == devices.length && devices.length != 0) {
             
             setPanelVisible1(false);
-            
+
             setTimeout(() => {
                 devicesSaved(); 
             }, 500);
