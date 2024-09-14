@@ -81,8 +81,21 @@ export default function AddNewAppHome(){
 
         try {
             
-            console.log();
+            fetchDeviceList();
 
+            async function fetchDeviceList(){
+
+                let response = await fetch("http://localhost:4000/api/devices-list", {
+                    headers: {
+                        'Content-Type': 'application/json', 
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                    },
+                });
+
+                let devicesList = await response.json();
+                console.log(await devicesList);
+
+            }
         } catch (error) {
             
             showError();
