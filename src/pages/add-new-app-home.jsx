@@ -41,6 +41,7 @@ export default function AddNewAppHome(){
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
     let [userDevices, setUserDevices] = useState([]);
+    let [devicesList, setDevicesList] = useState([]);
 
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
@@ -92,9 +93,17 @@ export default function AddNewAppHome(){
                     },
                 });
 
-                let devicesList = await response.json();
-                console.log(await devicesList);
+                let list = await response.json();
+                let devicesArr = list.devices;
+                //console.log(await devicesList.devices);
 
+                devicesArr.forEach(el=>{
+                    
+                    
+
+                });                
+
+                console.log(`lista : ${devicesList}`);
             }
         } catch (error) {
             
