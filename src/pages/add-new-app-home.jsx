@@ -78,7 +78,7 @@ export default function AddNewAppHome(){
         setBlur('blur-sm');
         setLoading('');
 
-        //setPanelVisible2(true);
+        setPanelVisible2(true);
 
         try {
             
@@ -95,15 +95,9 @@ export default function AddNewAppHome(){
 
                 let list = await response.json();
                 let devicesArr = list.devices;
-                //console.log(await devicesList.devices);
+                setDevicesList(devicesArr);
 
-                devicesArr.forEach(el=>{
-                    
-                    
-
-                });                
-
-                console.log(`lista : ${devicesList}`);
+                console.log(await devicesList);
             }
         } catch (error) {
             
