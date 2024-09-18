@@ -41,6 +41,7 @@ export default function AddNewAppHome(){
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
     let [userDevices, setUserDevices] = useState([]);
+    let [devicesList, setDevicesList] = useState([]);
 
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
@@ -69,6 +70,76 @@ export default function AddNewAppHome(){
             setValueOfHomeName(storedValue);
         }
     }, []);
+
+
+
+    async function AddManually(){
+
+        setBlur('blur-sm');
+        setLoading('');
+
+        setPanelVisible2(true);
+
+        try {
+            
+            fetchDeviceList();
+
+            async function fetchDeviceList(){
+
+                let response = await fetch("http://localhost:4000/api/devices-list", {
+                    headers: {
+                        'Content-Type': 'application/json', 
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                    },
+                });
+
+                let list = await response.json();
+                let devicesArr = list.devices;
+                setDevicesList(devicesArr);
+
+                console.log(await devicesList);
+            }
+        } catch (error) {
+            
+            showError();
+            console.error(error);
+
+        }finally{
+            setBlur('');
+            setLoading('hidden');
+        }
+
+
+        
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     async function findDevices(){
@@ -125,15 +196,6 @@ export default function AddNewAppHome(){
         setLoading('hidden');
     }
 }
-
-    async function AddManually(){
-        setPanelVisible2(true);
-
-
-
-
-    }
-
 
     function changeToInput(e){
         
@@ -356,16 +418,10 @@ export default function AddNewAppHome(){
                         </Dialog>
 
                         <Dialog header="Header" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
-                            <p className="mb-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                            <p className="mb-5">
-                                "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-                                adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid
-                                ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-                            </p>
+                            
+
+
+
                         </Dialog>
 
                         </div>
