@@ -75,6 +75,27 @@ export default function AddNewAppHome(){
 
     const showFormFields = () => {
         
+        if(selectedProtocol){
+            switch (selectedProtocol) {
+
+                case 'Zigbee':
+                    return zigbeeProtocol();
+                break;
+                case 'Wifi':
+                    return wifiProtocol();
+                break;
+                case 'Bluetooth':
+                    return bluetoothProtocol();
+                break;
+                case 'Z-Wave':
+                    return zwaveProtocol();
+                break;
+                case 'MQTT':
+                    return mqttProtocol();
+                break;
+            
+            }
+        }
     };
 
     const zigbeeProtocol = () =>{
@@ -311,7 +332,8 @@ export default function AddNewAppHome(){
         setLabel('');          
         setCommand_on('');     
         setCommand_off('');     
-        setSelectedRoom(null); 
+        setSelectedRoom(null);
+        setSelectedProtocol(''); 
 
         let selectedRoomId;
 
@@ -400,6 +422,8 @@ export default function AddNewAppHome(){
 
 
     function setFields(name,status){
+        setSelectedRoom(null);
+        setSelectedProtocol(''); 
         setFormVisible(true);
         console.log(name,status);
         setName(name);
