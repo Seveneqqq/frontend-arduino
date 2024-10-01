@@ -108,39 +108,7 @@ export default function AddNewAppHome(){
             setBlur('');
             setLoading('hidden');
         }
-
-
-        
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     async function findDevices(){
         
@@ -223,6 +191,38 @@ export default function AddNewAppHome(){
     const saveDevice = () => {
 
         let foundDevice = devices.find(device => device.name === name);
+        
+        foundDevice.hidden="true";
+        setLabel('');          
+        setCommand_on('');     
+        setCommand_off('');     
+        setSelectedRoom(null); 
+
+        let selectedRoomId;
+
+        // tutaj musi być switch który będzie uzupelnial id pokoju
+
+        const newDevice = {
+            name: name,
+            status: status,
+            label: label,
+            command_on: command_on,
+            command_off: command_off,
+            selectedRoom: selectedRoomId
+        };
+    
+
+
+        setUserDevices(prevDevices => {
+            const updatedDevices = [...prevDevices, newDevice];
+            //console.log(updatedDevices); 
+            return updatedDevices;
+        });        
+    };
+
+    const saveDeviceManually = () => {
+
+        let foundDevice = devicesList.find(device => device.name === name);
         
         foundDevice.hidden="true";
         setLabel('');          
@@ -417,9 +417,41 @@ export default function AddNewAppHome(){
 
                         <Dialog header="Header" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
                             
+                        <div className="flex flex-row w-[100%]">
+                                <div className="w-[40%]">
+                                    {devicesList=="" ? 
+                                        <h1>Loading...</h1> 
+                                        :
+                                        <>
+                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
+                                        {devicesList.map(el=>{
+                                            el.status = "not-active";
+                                            return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 ${el.hidden ? "hidden" : ""}`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
+                                        })}
+                                        </>
+                                    }
+                                </div>
+                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
+                                    
+                                    {formVisible && 
+                                    <>
+                                        <p class="font-semibold">Set your devices - {name}</p>
 
+                                        <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
 
+                                        <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
+                                            placeholder="Select room" className="w-full md:w-14rem" />
 
+                                        <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
+
+                                        <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
+
+                                        <Button label="Save" onClick={saveDeviceManually}/>
+                                    </>
+                                    }
+
+                                </div>
+                            </div>
                         </Dialog>
 
                         </div>
@@ -431,8 +463,12 @@ export default function AddNewAppHome(){
             </StepperPanel>
             <StepperPanel header="Confirm">
                 <div className="flex flex-column h-[80vh]">
-                        <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-                            Content III
+                        <div className="!bg-slate-800 surface-ground flex flex-col justify-center items-center font-medium w-[100%]">
+                            
+                                {userDevices && userDevices.map(device => {
+                                    return <h1>{device.name}</h1>;
+                                })}
+
                         </div>
                 </div>
                 <div className="flex pt-4 justify-between">
