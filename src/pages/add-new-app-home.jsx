@@ -29,6 +29,28 @@ export default function AddNewAppHome(){
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [selectedProtocol, setSelectedProtocol] = useState(null);
     const [formVisible, setFormVisible] = useState(false);
+    const [zigbeeId, setZigbeeId] = useState('');
+    const [zigbeeChannel, setZigbeeChannel] = useState('');
+    const [zigbeeGroupId, setZigbeeGroupId] = useState('');
+    const [zigbeeHub, setZigbeeHub] = useState('');
+
+    const [ipAddress, setIpAddress] = useState('');
+    const [macAddress, setMacAddress] = useState('');
+    const [ssid, setSsid] = useState('');
+    const [password, setPassword] = useState('');
+
+    const [bleUuid, setBleUuid] = useState('');
+    const [bleConnection, setBleConnection] = useState('');
+
+    const [zwaveDeviceId, setZwaveDeviceId] = useState('');
+    const [zwaveNetworkKey, setZwaveNetworkKey] = useState('');
+    const [zwaveGroupId, setZwaveGroupId] = useState('');
+
+    const [mqttBrokerUrl, setMqttBrokerUrl] = useState('');
+    const [mqttTopicOn, setMqttTopicOn] = useState('');
+    const [mqttTopicOff, setMqttTopicOff] = useState('');
+    const [mqttDeviceId, setMqttDeviceId] = useState('');
+
     const rooms = [
         'Kitchen',
         'Living room', 
@@ -55,7 +77,10 @@ export default function AddNewAppHome(){
     const zigbeeProtocol = () =>{
         return(
             <>
-                <InputText placeholder="Name" value={valueHomeName} maxLength={15} onChange={(event)=>onChangeSaveData(event.target.value)}/>
+                <InputText placeholder="Zigbee ID" value={zigbeeId} maxLength={15} onChange={(event) => setZigbeeId(event.target.value)} />
+                <InputText placeholder="Zigbee channel" value={zigbeeChannel} maxLength={30} onChange={(event) => setZigbeeChannel(event.target.value)} />
+                <InputText placeholder="Zigbee group ID" value={zigbeeGroupId} maxLength={15} onChange={(event) => setZigbeeGroupId(event.target.value)} />
+                <InputText placeholder="Zigbee binding central hub" value={zigbeeHub} maxLength={30} onChange={(event) => setZigbeeHub(event.target.value)} />
             </>
         );
     }
@@ -63,28 +88,37 @@ export default function AddNewAppHome(){
     const wifiProtocol = () =>{
         return(
             <>
-            
+                <InputText placeholder="WiFi IP address" value={ipAddress} maxLength={50} onChange={(event) => setIpAddress(event.target.value)} />
+                <InputText placeholder="WiFi MAC address" value={macAddress} maxLength={50} onChange={(event) => setMacAddress(event.target.value)} />
+                <InputText placeholder="WiFi SSID" value={ssid} maxLength={50} onChange={(event) => setSsid(event.target.value)} />
+                <InputText placeholder="WiFi password" value={password} maxLength={50} onChange={(event) => setPassword(event.target.value)} />
             </>
         );
     }
     const bluetoothProtocol = () =>{
         return(
             <>
-            
+                <InputText placeholder="Bluetooth BLE UUID" value={bleUuid} maxLength={30} onChange={(event) => setBleUuid(event.target.value)} />
+                <InputText placeholder="Bluetooth connection" value={bleConnection} maxLength={30} onChange={(event) => setBleConnection(event.target.value)} />
             </>
         );
     }
     const zwaveProtocol = () =>{
         return(
             <>
-            
+                <InputText placeholder="Z-wave device ID" value={zwaveDeviceId} maxLength={15} onChange={(event) => setZwaveDeviceId(event.target.value)} />
+                <InputText placeholder="Z-wave network key" value={zwaveNetworkKey} maxLength={30} onChange={(event) => setZwaveNetworkKey(event.target.value)} />
+                <InputText placeholder="Z-wave group ID" value={zwaveGroupId} maxLength={15} onChange={(event) => setZwaveGroupId(event.target.value)} />
             </>
         );
     }
     const mqttProtocol = () =>{
         return(
             <>
-            
+                <InputText placeholder="MQTT broker URL" value={mqttBrokerUrl} maxLength={150} onChange={(event) => setMqttBrokerUrl(event.target.value)} />
+                <InputText placeholder="MQTT topic ON" value={mqttTopicOn} maxLength={50} onChange={(event) => setMqttTopicOn(event.target.value)} />
+                <InputText placeholder="MQTT topic OFF" value={mqttTopicOff} maxLength={50} onChange={(event) => setMqttTopicOff(event.target.value)} />
+                <InputText placeholder="MQTT device ID" value={mqttDeviceId} maxLength={15} onChange={(event) => setMqttDeviceId(event.target.value)} />
             </>
         );
     }
@@ -494,7 +528,7 @@ export default function AddNewAppHome(){
                                         
                                         <Dropdown value={selectedProtocol} onChange={(e) => setSelectedProtocol(e.value)} options={protocols} id="protocol_id" optionLabel="Protocol" 
                                             placeholder="Select protocol" className="w-full md:w-14rem" />
-
+                                        {selectedProtocol}
                                         <Button label="Save" onClick={saveDeviceManually}/>
                                     </>
                                     }
