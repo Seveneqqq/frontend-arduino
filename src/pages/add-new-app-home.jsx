@@ -27,6 +27,7 @@ export default function AddNewAppHome(){
     const [command_on, setCommand_on] = useState('');
     const [command_off, setCommand_off] = useState('');
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [selectedProtocol, setSelectedProtocol] = useState(null);
     const [formVisible, setFormVisible] = useState(false);
     const rooms = [
         'Kitchen',
@@ -37,11 +38,56 @@ export default function AddNewAppHome(){
         'Garage', 
         'Office',
     ];
+    const protocols = [
+        'Zigbee',
+        'Wifi', 
+        'Bluetooth',  
+        'Z-Wave', 
+        'MQTT', 
+    ];
     
     let [panelVisible1, setPanelVisible1] = useState(false);
     let [panelVisible2, setPanelVisible2] = useState(false);
     let [userDevices, setUserDevices] = useState([]);
     let [devicesList, setDevicesList] = useState([]);
+
+
+    const zigbeeProtocol = () =>{
+        return(
+            <>
+                <InputText placeholder="Name" value={valueHomeName} maxLength={15} onChange={(event)=>onChangeSaveData(event.target.value)}/>
+            </>
+        );
+    }
+    
+    const wifiProtocol = () =>{
+        return(
+            <>
+            
+            </>
+        );
+    }
+    const bluetoothProtocol = () =>{
+        return(
+            <>
+            
+            </>
+        );
+    }
+    const zwaveProtocol = () =>{
+        return(
+            <>
+            
+            </>
+        );
+    }
+    const mqttProtocol = () =>{
+        return(
+            <>
+            
+            </>
+        );
+    }
 
     const showSuccess = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully joined into house.',life: 2000,});
@@ -445,6 +491,9 @@ export default function AddNewAppHome(){
                                         <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
 
                                         <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
+                                        
+                                        <Dropdown value={selectedProtocol} onChange={(e) => setSelectedProtocol(e.value)} options={protocols} id="protocol_id" optionLabel="Protocol" 
+                                            placeholder="Select protocol" className="w-full md:w-14rem" />
 
                                         <Button label="Save" onClick={saveDeviceManually}/>
                                     </>
