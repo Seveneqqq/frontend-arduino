@@ -73,6 +73,9 @@ export default function AddNewAppHome(){
     let [userDevices, setUserDevices] = useState([]);
     let [devicesList, setDevicesList] = useState([]);
 
+    const showFormFields = () => {
+        
+    };
 
     const zigbeeProtocol = () =>{
         return(
@@ -528,7 +531,7 @@ export default function AddNewAppHome(){
                                         
                                         <Dropdown value={selectedProtocol} onChange={(e) => setSelectedProtocol(e.value)} options={protocols} id="protocol_id" optionLabel="Protocol" 
                                             placeholder="Select protocol" className="w-full md:w-14rem" />
-                                        {selectedProtocol}
+                                        {selectedProtocol && showFormFields()}
                                         <Button label="Save" onClick={saveDeviceManually}/>
                                     </>
                                     }
