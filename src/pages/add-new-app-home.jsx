@@ -506,7 +506,7 @@ export default function AddNewAppHome(){
                             
                         <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => findDevices()}>
                             <i class="pi pi-search text-9xl w-[100%] h-[65%]"></i>
-                            <p className="text-xl mb-5">FIND ARDUINO</p>
+                            <p className="text-xl mb-5">FIND ARDUINO DEVICES</p>
                         </div>
                         <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => AddManually()}>
                             <i class="pi pi-plus text-9xl w-[100%] h-[65%]"></i>
