@@ -51,6 +51,30 @@ export default function AddNewAppHome(){
     const [mqttTopicOff, setMqttTopicOff] = useState('');
     const [mqttDeviceId, setMqttDeviceId] = useState('');
 
+    const clearFields = () => {
+        setZigbeeId('');
+        setZigbeeChannel('');
+        setZigbeeGroupId('');
+        setZigbeeHub('');
+      
+        setIpAddress('');
+        setMacAddress('');
+        setSsid('');
+        setPassword('');
+      
+        setBleUuid('');
+        setBleConnection('');
+      
+        setZwaveDeviceId('');
+        setZwaveNetworkKey('');
+        setZwaveGroupId('');
+      
+        setMqttBrokerUrl('');
+        setMqttTopicOn('');
+        setMqttTopicOff('');
+        setMqttDeviceId('');
+      };
+
     const rooms = [
         'Kitchen',
         'Living room', 
@@ -101,6 +125,7 @@ export default function AddNewAppHome(){
     const zigbeeProtocol = () =>{
         return(
             <>
+                {clearFields}
                 <InputText placeholder="Zigbee ID" value={zigbeeId} maxLength={15} onChange={(event) => setZigbeeId(event.target.value)} />
                 <InputText placeholder="Zigbee channel" value={zigbeeChannel} maxLength={30} onChange={(event) => setZigbeeChannel(event.target.value)} />
                 <InputText placeholder="Zigbee group ID" value={zigbeeGroupId} maxLength={15} onChange={(event) => setZigbeeGroupId(event.target.value)} />
@@ -112,6 +137,7 @@ export default function AddNewAppHome(){
     const wifiProtocol = () =>{
         return(
             <>
+                {clearFields}
                 <InputText placeholder="WiFi IP address" value={ipAddress} maxLength={50} onChange={(event) => setIpAddress(event.target.value)} />
                 <InputText placeholder="WiFi MAC address" value={macAddress} maxLength={50} onChange={(event) => setMacAddress(event.target.value)} />
                 <InputText placeholder="WiFi SSID" value={ssid} maxLength={50} onChange={(event) => setSsid(event.target.value)} />
@@ -122,6 +148,7 @@ export default function AddNewAppHome(){
     const bluetoothProtocol = () =>{
         return(
             <>
+                {clearFields}
                 <InputText placeholder="Bluetooth BLE UUID" value={bleUuid} maxLength={30} onChange={(event) => setBleUuid(event.target.value)} />
                 <InputText placeholder="Bluetooth connection" value={bleConnection} maxLength={30} onChange={(event) => setBleConnection(event.target.value)} />
             </>
@@ -130,6 +157,7 @@ export default function AddNewAppHome(){
     const zwaveProtocol = () =>{
         return(
             <>
+                {clearFields}
                 <InputText placeholder="Z-wave device ID" value={zwaveDeviceId} maxLength={15} onChange={(event) => setZwaveDeviceId(event.target.value)} />
                 <InputText placeholder="Z-wave network key" value={zwaveNetworkKey} maxLength={30} onChange={(event) => setZwaveNetworkKey(event.target.value)} />
                 <InputText placeholder="Z-wave group ID" value={zwaveGroupId} maxLength={15} onChange={(event) => setZwaveGroupId(event.target.value)} />
@@ -139,6 +167,7 @@ export default function AddNewAppHome(){
     const mqttProtocol = () =>{
         return(
             <>
+                {clearFields}
                 <InputText placeholder="MQTT broker URL" value={mqttBrokerUrl} maxLength={150} onChange={(event) => setMqttBrokerUrl(event.target.value)} />
                 <InputText placeholder="MQTT topic ON" value={mqttTopicOn} maxLength={50} onChange={(event) => setMqttTopicOn(event.target.value)} />
                 <InputText placeholder="MQTT topic OFF" value={mqttTopicOff} maxLength={50} onChange={(event) => setMqttTopicOff(event.target.value)} />
@@ -297,11 +326,6 @@ export default function AddNewAppHome(){
         let foundDevice = devices.find(device => device.name === name);
         
         foundDevice.hidden="true";
-        setLabel('');          
-        setCommand_on('');     
-        setCommand_off('');     
-        setSelectedRoom(null); 
-
         let selectedRoomId;
 
         // tutaj musi być switch który będzie uzupelnial id pokoju
@@ -315,7 +339,10 @@ export default function AddNewAppHome(){
             selectedRoom: selectedRoomId
         };
     
-
+        setLabel('');          
+        setCommand_on('');     
+        setCommand_off('');     
+        setSelectedRoom(null); 
 
         setUserDevices(prevDevices => {
             const updatedDevices = [...prevDevices, newDevice];
@@ -329,12 +356,7 @@ export default function AddNewAppHome(){
         let foundDevice = devicesList.find(device => device.name === name);
         
         foundDevice.hidden="true";
-        setLabel('');          
-        setCommand_on('');     
-        setCommand_off('');     
-        setSelectedRoom(null);
-        setSelectedProtocol(''); 
-
+        
         let selectedRoomId;
 
         // tutaj musi być switch który będzie uzupelnial id pokoju
@@ -348,6 +370,12 @@ export default function AddNewAppHome(){
             selectedRoom: selectedRoomId
         };
     
+        setLabel('');          
+        setCommand_on('');     
+        setCommand_off('');     
+        setSelectedRoom(null);
+        setSelectedProtocol(''); 
+        clearFields();
 
 
         setUserDevices(prevDevices => {
@@ -419,7 +447,7 @@ export default function AddNewAppHome(){
         
     }
 
-
+    //https://www.google.com/search?q=smarthome+dashboard+&sca_esv=05826a3c56c67289&sca_upv=1&udm=2&biw=1536&bih=762&sxsrf=ADLYWILD-SP5BW0JZ51WUhsa3bPcMyuN0Q%3A1727801186747&ei=Yif8ZvmkLeipwPAP64vIsAI&ved=0ahUKEwj53en_0O2IAxXoFBAIHesFEiYQ4dUDCBA&uact=5&oq=smarthome+dashboard+&gs_lp=Egxnd3Mtd2l6LXNlcnAiFHNtYXJ0aG9tZSBkYXNoYm9hcmQgMgQQABgeSOgXUNgFWJkXcAF4AJABAJgBTKAB_QWqAQIxMbgBA8gBAPgBAZgCC6ACjAbCAgQQIxgnwgIHEAAYgAQYE8ICCBAAGBMYCBgewgIGEAAYExgemAMAiAYBkgcCMTGgB4YT&sclient=gws-wiz-serp#vhid=tu-J8RDAJQML3M&vssid=mosaic
 
     function setFields(name,status){
         setSelectedRoom(null);
@@ -478,11 +506,11 @@ export default function AddNewAppHome(){
                             
                         <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => findDevices()}>
                             <i class="pi pi-search text-9xl w-[100%] h-[65%]"></i>
-                            <p className="text-xl mb-5">Find devices</p>
+                            <p className="text-xl mb-5">FIND ARDUINO</p>
                         </div>
                         <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => AddManually()}>
                             <i class="pi pi-plus text-9xl w-[100%] h-[65%]"></i>
-                            <p className="text-xl mb-5">Add manually</p>
+                            <p className="text-xl mb-5">ADD MANUALLY</p>
                         </div>
 
                         <Dialog header="Founded devices"  visible={panelVisible1} style={{ width: '50vw'}} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
@@ -533,7 +561,7 @@ export default function AddNewAppHome(){
                                         <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
                                         {devicesList.map(el=>{
                                             el.status = "not-active";
-                                            return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 ${el.hidden ? "hidden" : ""}`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
+                                            return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
                                         })}
                                         </>
                                     }
@@ -573,10 +601,13 @@ export default function AddNewAppHome(){
             </StepperPanel>
             <StepperPanel header="Confirm">
                 <div className="flex flex-column h-[80vh]">
-                        <div className="!bg-slate-800 surface-ground flex flex-col justify-center items-center font-medium w-[100%]">
-                            
+                        <div className="!bg-slate-800 surface-ground flex flex-col py-[150px] px-[250px] gap-5 font-medium w-[100%]">
+                                    
+                                <p className="text-2xl">House name : <strong>{valueHomeName}</strong></p>
+                                <p className="text-2xl">Devices : </p>
+
                                 {userDevices && userDevices.map(device => {
-                                    return <h1>{device.name}</h1>;
+                                    return <p className="text-xl px-[25px]">{device.name}</p>;
                                 })}
 
                         </div>
