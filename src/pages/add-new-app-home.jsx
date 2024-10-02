@@ -601,15 +601,19 @@ export default function AddNewAppHome(){
             </StepperPanel>
             <StepperPanel header="Confirm">
                 <div className="flex flex-column h-[80vh]">
-                        <div className="!bg-slate-800 surface-ground flex flex-col py-[150px] px-[250px] gap-5 font-medium w-[100%]">
-                                    
+                        <div className="!bg-slate-800 surface-ground flex flex-col justify-center items-center gap-5 font-medium w-[100%]">
+
+                            <div className="flex flex-col gap-5">    
+
                                 <p className="text-2xl">House name : <strong>{valueHomeName}</strong></p>
                                 <p className="text-2xl">Devices : </p>
 
                                 {userDevices && userDevices.map(device => {
-                                    return <p className="text-xl px-[25px]">{device.name}</p>;
+                                    return <li className="text-xl px-[25px]">{device.name}</li>;
                                 })}
 
+
+                            </div>
                         </div>
                 </div>
                 <div className="flex pt-4 justify-between">
