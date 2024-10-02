@@ -605,13 +605,12 @@ export default function AddNewAppHome(){
 
                             <div className="flex flex-col gap-5">    
 
-                                <p className="text-2xl">House name : <strong>{valueHomeName}</strong></p>
-                                <p className="text-2xl">Devices : </p>
+                                <p className="text-2xl">House name : <strong>{valueHomeName.length == 0 ? "Empty" : valueHomeName}</strong></p>
+                                <p className="text-2xl">Devices : {userDevices.length == 0 ? "empty" : ""}</p>
 
                                 {userDevices && userDevices.map(device => {
                                     return <li className="text-xl px-[25px]">{device.name}</li>;
                                 })}
-
 
                             </div>
                         </div>
