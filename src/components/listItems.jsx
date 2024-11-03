@@ -45,6 +45,7 @@ export default function ListItem() {
 
     const [visible, setVisible] = useState(false);
     const [singIn, setSingIn] = useState(false);
+    const [loginMessage, setLoginMessage] = useState("");
     const navigate = useNavigate();
 
 
@@ -74,6 +75,7 @@ export default function ListItem() {
 
             if(data.error) {
                 console.log(data.error);
+                setLoginMessage(data.error); 
             }
             if(data.success) {
                 console.log(data.success);
@@ -119,7 +121,7 @@ export default function ListItem() {
               //console.log(data);
               
                 if(data.error){
-                    console.log(data.error);    
+                    console.log(data.error);   
                 }
                 if(data.success){
                     console.log(data.success);
@@ -166,11 +168,12 @@ export default function ListItem() {
                                 Password
                             </label>
                             <InputText id="password" label="Password" className="bg-white-alpha-20 border-none p-3 text-primary-50" type="password"></InputText>
+                            <p className="text-red-600 text-sm">{loginMessage}</p>
                         </div>
                         <div className="flex items-center gap-4">
                             <Button label="Login" onClick={()=>{submitLogin()}} className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                             <Button label="Sign In" onClick={() => setSingIn(true)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
-                            <Button label="Cancel" onClick={(e) => hide(e)} text  className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Cancel" onClick={(e) => {hide(e); setLoginMessage("")}} text  className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                         </div>
                     </div>
                 )}> 
