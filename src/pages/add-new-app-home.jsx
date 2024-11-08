@@ -231,7 +231,7 @@ export default function AddNewAppHome(){
                 let devicesArr = list.devices;
                 setDevicesList(devicesArr);
 
-                console.log(await devicesList);
+                //console.log(await devicesList);
             }
         } catch (error) {
             
@@ -249,8 +249,6 @@ export default function AddNewAppHome(){
         setBlur('blur-sm');
         setLoading('');
 
-        //console.log(sessionStorage.getItem('AuthToken'))
-
         try{
 
         let response = await fetch('http://localhost:4000/api/find-devices', {
@@ -267,7 +265,6 @@ export default function AddNewAppHome(){
 
             if(data.connection == "true"){
                 
-                console.log(data);
                 setDevices(data.devices);
 
                 setTimeout(() => {
@@ -290,7 +287,7 @@ export default function AddNewAppHome(){
         }
     } catch (error) {
         
-        console.log('1' +error);
+        console.log(error);
         notConnected();
     }
     finally{
@@ -397,12 +394,6 @@ export default function AddNewAppHome(){
                 devicesSaved(); 
             }, 500);
             
-            
-            //walidacja
-            //wyslanie do api
-            //blokowanie urzadzen i opcji 
-            //zrobienie sprawdzenia, jezeli urzadzenia zostaly zapsane a bedzie ponowne wejscie 
-            //to wtedy alert alert o tym ze to wyczysci urzadzenia i wyczyszczenie wszystkich stanow
         }
 
     }, [userDevices]);
