@@ -552,17 +552,17 @@ export default function AddNewAppHome(){
                                         :
                                         <>
                                         <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
-                                            <div className="max-h-[450px]">
+                                            <div className="">
                                             {devicesList.map(el=>{
                                                 el.status = "not-active";
-                                                return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
+                                                return <div className={`grid grid-cols-2 px-2 gap-4 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
                                             })}
                                             </div>
                                         </>
                                     }
                                 </div>
-                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%] fixed right-6">
-                                    
+                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%] ">
+
                                     
                                     <>
                                         {formVisible ? <p class="font-semibold">Set your devices - {name}</p> : <p class="font-semibold">Select device</p>}
