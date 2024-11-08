@@ -24,6 +24,7 @@ export default function AddNewAppHome(){
     const [devices, setDevices] = useState('');
     const [name, setName] = useState('');
     const [status, setStatus] = useState('');
+    const [category, setCategory] = useState('');
     const [label, setLabel] = useState('');
     const [command_on, setCommand_on] = useState('');
     const [command_off, setCommand_off] = useState('');
@@ -361,7 +362,8 @@ export default function AddNewAppHome(){
 
         const newDevice = {
             name: name,
-            status: status,
+            category: category,
+            status: "not-active",
             label: label,
             command_on: command_on,
             command_off: command_off,
@@ -441,13 +443,14 @@ export default function AddNewAppHome(){
 
     //https://www.google.com/search?q=smarthome+dashboard+&sca_esv=05826a3c56c67289&sca_upv=1&udm=2&biw=1536&bih=762&sxsrf=ADLYWILD-SP5BW0JZ51WUhsa3bPcMyuN0Q%3A1727801186747&ei=Yif8ZvmkLeipwPAP64vIsAI&ved=0ahUKEwj53en_0O2IAxXoFBAIHesFEiYQ4dUDCBA&uact=5&oq=smarthome+dashboard+&gs_lp=Egxnd3Mtd2l6LXNlcnAiFHNtYXJ0aG9tZSBkYXNoYm9hcmQgMgQQABgeSOgXUNgFWJkXcAF4AJABAJgBTKAB_QWqAQIxMbgBA8gBAPgBAZgCC6ACjAbCAgQQIxgnwgIHEAAYgAQYE8ICCBAAGBMYCBgewgIGEAAYExgemAMAiAYBkgcCMTGgB4YT&sclient=gws-wiz-serp#vhid=tu-J8RDAJQML3M&vssid=mosaic
 
-    function setFields(name,status){
+    function setFields(name,status,category){
         setSelectedRoom(null);
         setSelectedProtocol(''); 
         setFormVisible(true);
         console.log(name,status);
         setName(name);
         setStatus(status);
+        setCategory(category);
     }
 
     return (
@@ -551,11 +554,10 @@ export default function AddNewAppHome(){
                                         <h1>Loading...</h1> 
                                         :
                                         <>
-                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
+                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Category</p></div>
                                             <div className="">
-                                            {devicesList.map(el=>{
-                                                el.status = "not-active";
-                                                return <div className={`grid grid-cols-2 px-2 gap-4 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
+                                            {devicesList.map(el=>{  // Tutaj beda sie wyswietlaly kategorie, po wybraniu kategorii dane urzadzenie
+                                                return <div className={`grid grid-cols-2 px-2 gap-6 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,"not-active",el.category)}><p>{el.name}</p><p>{el.category}</p></div>
                                             })}
                                             </div>
                                         </>
