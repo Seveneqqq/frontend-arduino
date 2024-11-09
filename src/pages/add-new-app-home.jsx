@@ -602,7 +602,7 @@ export default function AddNewAppHome(){
 
                             <div className="flex flex-col gap-5">    
 
-                            { (valueHomeName.length>0 && userDevices>0) ? 
+                            { (valueHomeName.length>0 && userDevices.length>0) ? 
                                     <>
                                         <p className="text-2xl">House name : <strong>{valueHomeName.length == 0 ? "Empty" : valueHomeName}</strong></p>
                                         <p className="text-2xl">Devices : {userDevices.length == 0 ? "empty" : ""}</p>
