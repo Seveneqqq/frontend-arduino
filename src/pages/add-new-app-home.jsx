@@ -29,6 +29,7 @@ export default function AddNewAppHome(){
     const [command_on, setCommand_on] = useState('');
     const [command_off, setCommand_off] = useState('');
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProtocol, setSelectedProtocol] = useState(null);
     const [formVisible, setFormVisible] = useState(false);
     const [zigbeeId, setZigbeeId] = useState('');
@@ -54,6 +55,7 @@ export default function AddNewAppHome(){
     const [mqttDeviceId, setMqttDeviceId] = useState('');
 
     const clearFields = () => {
+        
         setZigbeeId('');
         setZigbeeChannel('');
         setZigbeeGroupId('');
@@ -86,6 +88,14 @@ export default function AddNewAppHome(){
         'Garage', 
         'Office',
     ];
+    const categories = [
+        'Light',
+        'Security',
+        'Wifi',
+        'Kitchen devices',
+        'Heating',
+    ];
+
     const protocols = [
         'Zigbee',
         'Wifi', 
@@ -342,6 +352,7 @@ export default function AddNewAppHome(){
         setCommand_on('');     
         setCommand_off('');     
         setSelectedRoom(null); 
+        setSelectedCategory(null);
 
         setUserDevices(prevDevices => {
             const updatedDevices = [...prevDevices, newDevice];
@@ -532,6 +543,9 @@ export default function AddNewAppHome(){
 
                                         <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
                                             placeholder="Select room" className="w-full md:w-14rem" />
+
+                                        <Dropdown value={selectedCategory} onChange={(e) => setSelectedRoom(e.value)} options={categories} id="category_id" optionLabel="Device category" 
+                                            placeholder="Select device category" className="w-full md:w-14rem" />
 
                                         <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
 
