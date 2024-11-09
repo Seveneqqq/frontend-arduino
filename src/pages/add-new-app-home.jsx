@@ -94,6 +94,9 @@ export default function AddNewAppHome(){
         'Wifi',
         'Kitchen devices',
         'Heating',
+        'Camera',
+        'Vacuum devices',
+        'Multimedia devices'
     ];
 
     const protocols = [
