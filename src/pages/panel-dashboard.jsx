@@ -1,6 +1,9 @@
-
+import { Badge } from 'primereact/badge';
+import { useState } from 'react';
 
 export default function PanelDashboard(){
+
+    const [notifications, setNotifications] = useState([]);
 
     return(
         <div className="w-full bg-[#080808]">
@@ -22,15 +25,16 @@ export default function PanelDashboard(){
                         <p>Settings</p>
                     </li>
                 </ul>
-                <ul className="flex gap-8 xl:flex-row flex-col text-xl">
-                    <li className="px-4 py-5">
-                        <p>Theme</p>
+                <ul className="flex gap-3 xl:flex-row flex-col text-xl items-center justify-center ">
+                    <li className="bg-[#080808] rounded-[100%] p-2 w-[60px] h-[60px] flex items-center justify-center">  
+                            <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
+                                {!notifications.length>0?<Badge value={notifications.length} className='bg-[#C7EE7C] !text-[#080808] flex justify-center items-center text-[0.8rem]' />:''}
+                            </i>
                     </li>
-                    <li className="px-4 py-5 text-xl">
-                        <p>Notifications</p>
-                    </li>
-                    <li className="px-4 py-5 text-xl">
-                        <p>Account</p>
+                    <li className="bg-[#080808] rounded-[100%] p-2 w-[60px] h-[60px] flex items-center justify-center">  
+                            <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
+                                {/* <Badge value="0"></Badge> */}
+                            </i>
                     </li>
                 </ul>
             </header>
