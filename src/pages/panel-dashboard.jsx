@@ -103,14 +103,7 @@ export default function PanelDashboard(){
                         <FastAccesElement deviceName="1" category="Sensor" status="on" />
                         <FastAccesElement deviceName="2" category="Light" status="off" />
                         <FastAccesElement deviceName="1" category="Sensor" status="on" />
-                        <FastAccesElement deviceName="2" category="Light" status="off" />
-                        <FastAccesElement deviceName="2" category="Light" status="off" />
-
-                        <FastAccesElement deviceName="1" category="Sensor" status="on" />
-                        <FastAccesElement deviceName="2" category="Light" status="off" />
-                        <FastAccesElement deviceName="1" category="Sensor" status="on" />
-                        <FastAccesElement deviceName="2" category="Light" status="off" />
-                        <FastAccesElement deviceName="2" category="Light" status="off" />
+                        
                     </div>
                 </div>
                 
