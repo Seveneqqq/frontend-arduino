@@ -42,7 +42,7 @@ export default function FastAccessElement({deviceName,category,status}) {
     }
 
     return(
-        <div className={`rounded-xl p-10`} style={{backgroundColor: backgroundColor}}>
+        <div className='rounded-xl p-10 flex-grow basis-64 min-w-0 h-44' style={{backgroundColor: backgroundColor}}>
             <h1>{deviceName} {backgroundColor}</h1>
         </div>
     );

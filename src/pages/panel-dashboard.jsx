@@ -39,30 +39,43 @@ export default function PanelDashboard(){
                 </ul>
             </header>
 
-            <div className="my-0 px-7 py-7 h-[90vh] flex flex-col gap-5">
-                <div className="flex gap-5">
-                    <div className="w-full h-48 bg-[#151513] rounded-xl ">
-
-                    </div>
-                    <div className="w-full h-48 bg-[#151513] rounded-xl ">
-
-                    </div>
-                    <div className="w-full h-48 bg-[#151513] rounded-xl ">
-
-                    </div>
-                    <div className="w-full h-48 bg-[#151513] rounded-xl ">
-
-                    </div>
-                    <div className="w-full h-48 bg-[#151513] rounded-xl ">
-
+                    <div className="my-0 px-7 py-7 h-fit flex flex-col gap-5">
+                        <div className="flex flex-wrap gap-5">
+                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
+                            </div>
+                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
+                            </div>
+                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
+                            </div>
+                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
+                            </div>
+                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
+                                
                     </div>
                 </div>
 
-                <div className="w-full h-[75%] bg-[#151513] rounded-xl px-10 py-6">
+                <div className="w-full bg-[#151513] rounded-xl px-10 py-5">
                     <h2 className="text-xl">Fast access</h2>
 
-                    <FastAccesElement deviceName="1" category="Sensor" status="on" />
-                    <FastAccesElement deviceName="2" category="Light" status="off" />
+                    <div className="flex flex-wrap gap-2">
+                        <FastAccesElement deviceName="1" category="Sensor" status="on" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+                        <FastAccesElement deviceName="1" category="Sensor" status="on" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+
+                        <FastAccesElement deviceName="1" category="Sensor" status="on" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+                        <FastAccesElement deviceName="1" category="Sensor" status="on" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+
+                        <FastAccesElement deviceName="1" category="Sensor" status="on" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+                        <FastAccesElement deviceName="1" category="Sensor" status="on" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+                        <FastAccesElement deviceName="2" category="Light" status="off" />
+                    </div>
                 </div>
                 
             </div>
