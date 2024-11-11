@@ -1,4 +1,5 @@
 import { Badge } from 'primereact/badge';
+import { Avatar } from 'primereact/avatar';
 import { useState } from 'react';
 
 export default function PanelDashboard(){
@@ -26,15 +27,13 @@ export default function PanelDashboard(){
                     </li>
                 </ul>
                 <ul className="flex gap-3 xl:flex-row flex-col text-xl items-center justify-center ">
-                    <li className="bg-[#080808] rounded-[100%] p-2 w-[60px] h-[60px] flex items-center justify-center">  
+                    <li className="bg-[#080808] rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center">  
                             <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
-                                {!notifications.length>0?<Badge value={notifications.length} className='bg-[#C7EE7C] !text-[#080808] flex justify-center items-center text-[0.8rem]' />:''}
+                                {notifications.length>0?<Badge value={notifications.length} className='bg-[#C7EE7C] !text-[#080808] flex justify-center items-center text-[0.8rem]' />:''}
                             </i>
                     </li>
-                    <li className="bg-[#080808] rounded-[100%] p-2 w-[60px] h-[60px] flex items-center justify-center">  
-                            <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
-                                {/* <Badge value="0"></Badge> */}
-                            </i>
+                    <li className="bg-[#080808] rounded-[100%] w-[55px] h-[55px] flex items-center justify-center">  
+                        <Avatar label="S" shape='circle' className="w-full h-[100%] bg-transparent text-[#C7EE7C] text-[1.7rem]" />
                     </li>
                 </ul>
             </header>
