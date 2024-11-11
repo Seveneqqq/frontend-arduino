@@ -1,11 +1,34 @@
 import { Badge } from 'primereact/badge';
 import { Avatar } from 'primereact/avatar';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import FastAccesElement  from '../components/fastAccessElement';
 
 export default function PanelDashboard(){
 
     const [notifications, setNotifications] = useState([]);
+    const scrollRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+
+    const handleMouseDown = (e) => {
+      setIsDragging(true);
+      setStartX(e.pageX - scrollRef.current.offsetLeft);
+      setScrollLeft(scrollRef.current.scrollLeft);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - scrollRef.current.offsetLeft;
+      const walk = (x - startX) * 1.1;
+      scrollRef.current.scrollLeft = scrollLeft - walk;
+    };
+
 
     return(
         <div className="w-full bg-[#080808]">
@@ -39,18 +62,31 @@ export default function PanelDashboard(){
                 </ul>
             </header>
 
-                    <div className="my-0 px-7 py-7 h-fit flex flex-col gap-5">
-                        <div className="flex flex-wrap gap-5">
-                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
-                            </div>
-                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
-                            </div>
-                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
-                            </div>
-                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
-                            </div>
-                            <div className="flex-grow basis-80 min-w-0 h-48 bg-[#151513] rounded-xl">
-                                
+
+
+
+            <div className="my-0 px-7 py-7 h-fit flex flex-col gap-5">
+                <div 
+                  ref={scrollRef}
+                  className="flex gap-5 overflow-x-hidden select-none"
+                  onMouseDown={handleMouseDown}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  onMouseMove={handleMouseMove}
+                >
+                    <div className="flex-none w-80 h-48 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    </div>
+                    <div className="flex-none w-80 h-48 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    </div>
+                    <div className="flex-none w-80 h-48 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    </div>
+                    <div className="flex-none w-80 h-48 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    </div>
+                    <div className="flex-none w-80 h-48 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    </div>
+                    <div className="flex-none w-80 h-48 bg-[#5E85ED] rounded-xl cursor-grab active:cursor-grabbing">
+                    </div>
+                    <div className="flex-none w-80 h-48 bg-[#CB50CB] rounded-xl cursor-grab active:cursor-grabbing">
                     </div>
                 </div>
 
