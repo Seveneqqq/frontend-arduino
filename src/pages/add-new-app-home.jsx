@@ -10,6 +10,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dropdown } from 'primereact/dropdown';
 
 
+
 export default function AddNewAppHome(){
 
     const navigate = useNavigate();
@@ -23,10 +24,12 @@ export default function AddNewAppHome(){
     const [devices, setDevices] = useState('');
     const [name, setName] = useState('');
     const [status, setStatus] = useState('');
+    const [category, setCategory] = useState('');
     const [label, setLabel] = useState('');
     const [command_on, setCommand_on] = useState('');
     const [command_off, setCommand_off] = useState('');
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProtocol, setSelectedProtocol] = useState(null);
     const [formVisible, setFormVisible] = useState(false);
     const [zigbeeId, setZigbeeId] = useState('');
@@ -52,6 +55,7 @@ export default function AddNewAppHome(){
     const [mqttDeviceId, setMqttDeviceId] = useState('');
 
     const clearFields = () => {
+        
         setZigbeeId('');
         setZigbeeChannel('');
         setZigbeeGroupId('');
@@ -84,6 +88,20 @@ export default function AddNewAppHome(){
         'Garage', 
         'Office',
     ];
+    const categories = [
+        'Light',
+        'Sensor',
+        'Gate',
+        'Lock',
+        'Security',
+        'Wifi',
+        'Kitchen device',
+        'Heating',
+        'Camera',
+        'Vacuum device',
+        'Multimedia device'
+    ];
+
     const protocols = [
         'Zigbee',
         'Wifi', 
@@ -230,7 +248,7 @@ export default function AddNewAppHome(){
                 let devicesArr = list.devices;
                 setDevicesList(devicesArr);
 
-                console.log(await devicesList);
+                //console.log(await devicesList);
             }
         } catch (error) {
             
@@ -248,8 +266,6 @@ export default function AddNewAppHome(){
         setBlur('blur-sm');
         setLoading('');
 
-        //console.log(sessionStorage.getItem('AuthToken'))
-
         try{
 
         let response = await fetch('http://localhost:4000/api/find-devices', {
@@ -266,7 +282,6 @@ export default function AddNewAppHome(){
 
             if(data.connection == "true"){
                 
-                console.log(data);
                 setDevices(data.devices);
 
                 setTimeout(() => {
@@ -289,7 +304,7 @@ export default function AddNewAppHome(){
         }
     } catch (error) {
         
-        console.log('1' +error);
+        console.log(error);
         notConnected();
     }
     finally{
@@ -343,6 +358,7 @@ export default function AddNewAppHome(){
         setCommand_on('');     
         setCommand_off('');     
         setSelectedRoom(null); 
+        setSelectedCategory(null);
 
         setUserDevices(prevDevices => {
             const updatedDevices = [...prevDevices, newDevice];
@@ -363,7 +379,8 @@ export default function AddNewAppHome(){
 
         const newDevice = {
             name: name,
-            status: status,
+            category: category,
+            status: "not-active",
             label: label,
             command_on: command_on,
             command_off: command_off,
@@ -396,12 +413,6 @@ export default function AddNewAppHome(){
                 devicesSaved(); 
             }, 500);
             
-            
-            //walidacja
-            //wyslanie do api
-            //blokowanie urzadzen i opcji 
-            //zrobienie sprawdzenia, jezeli urzadzenia zostaly zapsane a bedzie ponowne wejscie 
-            //to wtedy alert alert o tym ze to wyczysci urzadzenia i wyczyszczenie wszystkich stanow
         }
 
     }, [userDevices]);
@@ -451,13 +462,14 @@ export default function AddNewAppHome(){
 
     //https://www.google.com/search?q=smarthome+dashboard+&sca_esv=05826a3c56c67289&sca_upv=1&udm=2&biw=1536&bih=762&sxsrf=ADLYWILD-SP5BW0JZ51WUhsa3bPcMyuN0Q%3A1727801186747&ei=Yif8ZvmkLeipwPAP64vIsAI&ved=0ahUKEwj53en_0O2IAxXoFBAIHesFEiYQ4dUDCBA&uact=5&oq=smarthome+dashboard+&gs_lp=Egxnd3Mtd2l6LXNlcnAiFHNtYXJ0aG9tZSBkYXNoYm9hcmQgMgQQABgeSOgXUNgFWJkXcAF4AJABAJgBTKAB_QWqAQIxMbgBA8gBAPgBAZgCC6ACjAbCAgQQIxgnwgIHEAAYgAQYE8ICCBAAGBMYCBgewgIGEAAYExgemAMAiAYBkgcCMTGgB4YT&sclient=gws-wiz-serp#vhid=tu-J8RDAJQML3M&vssid=mosaic
 
-    function setFields(name,status){
+    function setFields(name,status,category){
         setSelectedRoom(null);
         setSelectedProtocol(''); 
         setFormVisible(true);
         console.log(name,status);
         setName(name);
         setStatus(status);
+        setCategory(category);
     }
 
     return (
@@ -540,6 +552,9 @@ export default function AddNewAppHome(){
                                         <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
                                             placeholder="Select room" className="w-full md:w-14rem" />
 
+                                        <Dropdown value={selectedCategory} onChange={(e) => setSelectedRoom(e.value)} options={categories} id="category_id" optionLabel="Device category" 
+                                            placeholder="Select device category" className="w-full md:w-14rem" />
+
                                         <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
 
                                         <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
@@ -552,27 +567,29 @@ export default function AddNewAppHome(){
                             </div>
                         </Dialog>
 
-                        <Dialog header="Header" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
+                        <Dialog header="Add devices from list" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
                             
                         <div className="flex flex-row w-[100%]">
                                 <div className="w-[40%]">
+
                                     {devicesList=="" ? 
                                         <h1>Loading...</h1> 
                                         :
                                         <>
-                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
-                                        {devicesList.map(el=>{
-                                            el.status = "not-active";
-                                            return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
-                                        })}
+                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Category</p></div>
+                                            <div className="">
+                                            {devicesList.map(el=>{  // Tutaj beda sie wyswietlaly kategorie, po wybraniu kategorii dane urzadzenie
+                                                return <div className={`grid grid-cols-2 px-2 gap-6 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,"not-active",el.category)}><p>{el.name}</p><p>{el.category}</p></div>
+                                            })}
+                                            </div>
                                         </>
                                     }
                                 </div>
-                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
+                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%] ">
+
                                     
-                                    {formVisible && 
                                     <>
-                                        <p class="font-semibold">Set your devices - {name}</p>
+                                        {formVisible ? <p class="font-semibold">Set your devices - {name}</p> : <p class="font-semibold">Select device</p>}
 
                                         <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
 
@@ -586,9 +603,9 @@ export default function AddNewAppHome(){
                                         <Dropdown value={selectedProtocol} onChange={(e) => setSelectedProtocol(e.value)} options={protocols} id="protocol_id" optionLabel="Protocol" 
                                             placeholder="Select protocol" className="w-full md:w-14rem" />
                                         {selectedProtocol && showFormFields()}
-                                        <Button label="Save" onClick={saveDeviceManually}/>
+                                        {formVisible ? <Button label="Save" onClick={saveDeviceManually}/> : "" }
                                     </>
-                                    }
+                                    
 
                                 </div>
                             </div>
@@ -607,7 +624,7 @@ export default function AddNewAppHome(){
 
                             <div className="flex flex-col gap-5">    
 
-                            { (valueHomeName.length>0 && userDevices>0) ? 
+                            { (valueHomeName.length>0 && userDevices.length>0) ? 
                                     <>
                                         <p className="text-2xl">House name : <strong>{valueHomeName.length == 0 ? "Empty" : valueHomeName}</strong></p>
                                         <p className="text-2xl">Devices : {userDevices.length == 0 ? "empty" : ""}</p>

@@ -172,7 +172,7 @@ export default function ListItem() {
                         </div>
                         <div className="flex items-center gap-4">
                             <Button label="Login" onClick={()=>{submitLogin()}} className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
-                            <Button label="Sign In" onClick={() => setSingIn(true)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Sign In" onClick={() => setSingIn(true)} text className="p-3 w-full text-nowrap text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                             <Button label="Cancel" onClick={(e) => {hide(e); setLoginMessage("")}} text  className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                         </div>
                     </div>

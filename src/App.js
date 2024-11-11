@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home.jsx";
 import AddNewAppHome from "./pages/add-new-app-home.jsx";
 import LoginAppHome from "./pages/login-app-home.jsx";
+import PanelDashboard from "./pages/panel-dashboard.jsx";
 // import Author from "../pages/author";
 // import SpeechApi from "../pages/speechApi.jsx";
 // import Stack from "../pages/stack.jsx";
@@ -27,6 +28,7 @@ export default function App() {
                <Route path="/database" element={<Database />} />*/}
                <Route path="/add-new-app-home" element={<AddNewAppHome />} />
                <Route path="/login-app-home" element={<LoginAppHome />} />
+               <Route path="/panel-dashboard" element={<PanelDashboard/>} />
             </Routes>
         </BrowserRouter>
     );
