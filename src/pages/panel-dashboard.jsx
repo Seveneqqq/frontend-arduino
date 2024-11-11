@@ -1,6 +1,7 @@
 import { Badge } from 'primereact/badge';
 import { Avatar } from 'primereact/avatar';
 import { useState } from 'react';
+import FastAccesElement  from '../components/fastAccessElement';
 
 export default function PanelDashboard(){
 
@@ -59,6 +60,9 @@ export default function PanelDashboard(){
 
                 <div className="w-full h-[75%] bg-[#151513] rounded-xl px-10 py-6">
                     <h2 className="text-xl">Fast access</h2>
+
+                    <FastAccesElement deviceName="1" category="Sensor" status="on" />
+                    <FastAccesElement deviceName="2" category="Light" status="off" />
                 </div>
                 
             </div>

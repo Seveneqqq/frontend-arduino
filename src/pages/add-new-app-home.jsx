@@ -90,13 +90,16 @@ export default function AddNewAppHome(){
     ];
     const categories = [
         'Light',
+        'Sensor',
+        'Gate',
+        'Lock',
         'Security',
         'Wifi',
-        'Kitchen devices',
+        'Kitchen device',
         'Heating',
         'Camera',
-        'Vacuum devices',
-        'Multimedia devices'
+        'Vacuum device',
+        'Multimedia device'
     ];
 
     const protocols = [
