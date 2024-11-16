@@ -49,6 +49,9 @@ export default function PanelDashboard() {
                     </li>
                 </ul>
                 <ul className="flex gap-3 xl:flex-row flex-col text-xl items-center justify-center">
+                    <li className="bg-[#080808] rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center mx-5">
+                        <span>Mikrofon</span>
+                    </li>
                     <li className="bg-[#080808] rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center">
                         <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
                             {notifications.length > 0 ? (
@@ -97,13 +100,13 @@ export default function PanelDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-none lg:grid-rows-5 gap-4 bg-[#151513] rounded-xl px-5 py-5 flex-1">
                     <div className="bg-[#080808] rounded-xl p-4 min-h-[100px]">Losowa grupa urzadzen</div>
                     <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-1 lg:row-start-2">Losowa grupa urzadzen</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">6</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1">7</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:row-start-3">8</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-1 lg:row-start-5">9</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3">10</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">11</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-4 lg:row-start-5">12</div>
+                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Kamera z mozliwoscia przewijania na inne ?</div>
+                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1">Taski do zrobienia +dodac w uzytkowniku imie/pseudonim aby sie wyswietlal</div>
+                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:row-start-3">Jakies losowe urzadzenie w ktorym beda rozne opcje w zaleznosci od urzadzenia</div>
+                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
+                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3">Wykres czujnikow z przelaczaniem</div>
+                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
+                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-4 lg:row-start-5">Scenariusz</div>
                 </div>
             </div>
         </div>
