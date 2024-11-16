@@ -211,9 +211,9 @@ export default function ListItem() {
                             <InputText id="repeat-password" label="Repeat-password" className="bg-white-alpha-20 border-none p-3 text-primary-50" type="password"></InputText>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button label="Sign-in" onClick={()=>{submitRegister()}} className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
-                            <Button label="Login" onClick={() => setSingIn(false)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
-                            <Button label="Cancel" onClick={(e) => hide(e)} text className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Sign-in" onClick={()=>{submitRegister()}} className="p-3 w-full text-nowrap text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Login" onClick={() => setSingIn(false)} text className="p-3 w-full text-nowrap text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                            <Button label="Cancel" onClick={(e) => hide(e)} text className="p-3 w-full text-nowrap text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
                         </div>
                     </div>
                 )}> 
