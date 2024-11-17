@@ -56,8 +56,8 @@ export default function PanelDashboard() {
                     </li>
                 </ul>
                 <ul className="flex gap-3 xl:flex-row flex-col text-xl items-center justify-center">
-                    <li className={`${microphoneActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center mx-5 hover:cursor-pointer cursor-default`} onClick={microphoneActivate}>
-                        <i className='pi pi-microphone' style={{ fontSize: '1.5rem' }}/>
+                    <li className={`${microphoneActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center hover:cursor-pointer cursor-default transition ease-out delay-150 duration-500`} onClick={microphoneActivate}>
+                        <i className='pi pi-microphone transition before:ease-out before:delay-150 before:duration-150 text-[1.5em]' />
                     </li>
                     <li className="bg-[#080808] rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center">
                         <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
