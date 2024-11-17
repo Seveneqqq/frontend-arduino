@@ -9,6 +9,8 @@ export default function PanelDashboard() {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
+    const [microphoneActivated, setMicrophoneActivated] = useState(false);
+    const [microphoneActivatedColor, setMicrophoneActivatedColor] = useState('bg-[#080808]');
 
     const handleMouseDown = (e) => {
         setIsDragging(true);
@@ -27,6 +29,11 @@ export default function PanelDashboard() {
         const walk = (x - startX) * 1.1;
         scrollRef.current.scrollLeft = scrollLeft - walk;
     };
+
+    const microphoneActivate = () =>{
+        setMicrophoneActivated(!microphoneActivated);
+        setMicrophoneActivatedColor(microphoneActivated? 'bg-[#080808]' : 'bg-[#5E85ED]');
+    }
 
     return (
         <div className="w-full bg-[#080808] min-h-screen flex flex-col">
@@ -49,8 +56,8 @@ export default function PanelDashboard() {
                     </li>
                 </ul>
                 <ul className="flex gap-3 xl:flex-row flex-col text-xl items-center justify-center">
-                    <li className="bg-[#080808] rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center mx-5">
-                        <span>Mikrofon</span>
+                    <li className={`${microphoneActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center mx-5 hover:cursor-pointer cursor-default`} onClick={microphoneActivate}>
+                        <i className='pi pi-microphone' style={{ fontSize: '1.5rem' }}/>
                     </li>
                     <li className="bg-[#080808] rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center">
                         <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
@@ -109,6 +116,6 @@ export default function PanelDashboard() {
                     <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-4 lg:row-start-5">Scenariusz</div>
                 </div>
             </div>
-        </div>
+        </div>  
     );
 }
