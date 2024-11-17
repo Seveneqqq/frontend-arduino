@@ -3,7 +3,6 @@ import { Avatar } from 'primereact/avatar';
 import { useState, useRef } from 'react';
 import { OverlayPanel } from 'primereact/overlaypanel';
 
-
 import FastAccesElement from '../components/fastAccessElement';
 
 export default function PanelDashboard() {
@@ -17,17 +16,19 @@ export default function PanelDashboard() {
     const [scrollLeft, setScrollLeft] = useState(0);
     const [microphoneActivated, setMicrophoneActivated] = useState(false);
     const [microphoneActivatedColor, setMicrophoneActivatedColor] = useState('bg-[#080808]');
+    const [notificationsActivated, setNotificationsActivated] = useState(false);
+    const [notificationsActivatedColor, setNotificationsActivatedColor] = useState('bg-[#080808]');
     
 
     const handleMouseDown = (e) => {
         setIsDragging(true);
         setStartX(e.pageX - scrollRef.current.offsetLeft);
         setScrollLeft(scrollRef.current.scrollLeft);
-    };
+    }
 
     const handleMouseUp = () => {
         setIsDragging(false);
-    };
+    }
 
     const handleMouseMove = (e) => {
         if (!isDragging) return;
@@ -35,11 +36,17 @@ export default function PanelDashboard() {
         const x = e.pageX - scrollRef.current.offsetLeft;
         const walk = (x - startX) * 1.1;
         scrollRef.current.scrollLeft = scrollLeft - walk;
-    };
+    }
 
-    const microphoneActivate = () =>{
+    const microphoneActivate = () => {
         setMicrophoneActivated(!microphoneActivated);
         setMicrophoneActivatedColor(microphoneActivated? 'bg-[#080808]' : 'bg-[#5E85ED]');
+    }
+
+    const activateNofitications = (forceClose = false) => {
+        const newState = forceClose ? false : !notificationsActivated;
+        setNotificationsActivated(newState);
+        setNotificationsActivatedColor(newState ? 'bg-[#5E85ED]' : 'bg-[#080808]');
     }
 
     return (
@@ -63,10 +70,10 @@ export default function PanelDashboard() {
                     </li>
                 </ul>
                 <ul className="flex gap-3 xl:flex-row flex-col text-xl items-center justify-center">
-                    <li className={`${microphoneActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center hover:cursor-pointer cursor-default transition ease-out delay-150 duration-500`} onClick={microphoneActivate}>
+                    <li className={`${microphoneActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center hover:cursor-pointer cursor-default transition ease-out duration-500`} onClick={microphoneActivate}>
                         <i className='pi pi-microphone transition before:ease-out before:delay-150 before:duration-150 text-[1.5em]' />
                     </li>
-                    <li className="bg-[#080808] rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center" onClick={(e) => op.current.toggle(e)}>
+                    <li className={`bg-[#080808] ${notificationsActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center transition ease-out duration-500`} onClick={(e) => {op.current.toggle(e); activateNofitications();}}>
                         <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
                             {/* {notifications.length > 0 ? (
                                 <Badge 
@@ -74,8 +81,12 @@ export default function PanelDashboard() {
                                     className='bg-[#C7EE7C] !text-[#080808] flex justify-center items-center text-[0.8rem]' 
                                 />
                             ) : ''} */}
-                             <OverlayPanel ref={op} className='bg-[#151513]'>
-                                <div classname="flex flex-col">
+                            <OverlayPanel 
+                                ref={op} 
+                                className='bg-[#151513]'
+                                onHide={() => activateNofitications(true)}
+                            >
+                                <div className="flex flex-col">
                                     {notifications.length > 0 ? (
                                         <span className='text-[1rem]'>Notification 1</span>
                                     ) : (
@@ -105,18 +116,25 @@ export default function PanelDashboard() {
                     onMouseMove={handleMouseMove}
                 >
                     <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    
                     </div>
                     <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    
                     </div>
                     <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    
                     </div>
                     <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    
                     </div>
                     <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
+                    
                     </div>
                     <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#5E85ED] rounded-xl cursor-grab active:cursor-grabbing">
+                    
                     </div>
                     <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#CB50CB] rounded-xl cursor-grab active:cursor-grabbing">
+                    
                     </div>
                 </div>
 
@@ -131,7 +149,10 @@ export default function PanelDashboard() {
                     <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
                     <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-4 lg:row-start-5">Scenariusz</div>
                 </div>
+
+
             </div>
+
         </div>  
     );
 }
