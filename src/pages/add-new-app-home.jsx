@@ -525,7 +525,7 @@ export default function AddNewAppHome(){
                             <p className="text-xl mb-5">ADD MANUALLY</p>
                         </div>
 
-                        <Dialog header="Founded devices"  visible={panelVisible1} style={{ width: '50vw'}} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
+                        <Dialog header="Founded devices"  visible={panelVisible1} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
                             <div className="flex flex-row w-[100%]">
                                 <div className="w-[40%]">
                                     {devices=="" ? 
@@ -548,10 +548,10 @@ export default function AddNewAppHome(){
                                         <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
 
                                         <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
-                                            placeholder="Select room" className="w-full md:w-14rem" />
+                                            placeholder="Select room" className="w-56" />
 
                                         <Dropdown value={selectedCategory} onChange={(e) => setSelectedRoom(e.value)} options={categories} id="category_id" optionLabel="Device category" 
-                                            placeholder="Select device category" className="w-full md:w-14rem" />
+                                            placeholder="Select device category" className="w-56" />
 
                                         <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
 
@@ -565,7 +565,7 @@ export default function AddNewAppHome(){
                             </div>
                         </Dialog>
 
-                        <Dialog header="Add devices from list" visible={panelVisible2} style={{ width: '50vw' }} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
+                        <Dialog header="Add devices from list" visible={panelVisible2} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
                             
                         <div className="flex flex-row w-[100%]">
                                 <div className="w-[40%]">
@@ -592,14 +592,14 @@ export default function AddNewAppHome(){
                                         <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
 
                                         <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
-                                            placeholder="Select room" className="w-full md:w-14rem" />
+                                            placeholder="Select room" className="w-56" />
 
                                         <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
 
                                         <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
                                         
                                         <Dropdown value={selectedProtocol} onChange={(e) => setSelectedProtocol(e.value)} options={protocols} id="protocol_id" optionLabel="Protocol" 
-                                            placeholder="Select protocol" className="w-full md:w-14rem" />
+                                            placeholder="Select protocol" className="w-56" />
                                         {selectedProtocol && showFormFields()}
                                         {formVisible ? <Button label="Save" onClick={saveDeviceManually}/> : "" }
                                     </>
