@@ -471,8 +471,8 @@ export default function AddNewAppHome(){
     }
 
     return (
-    <div className="card flex justify-content-center h-[100vh] w-[100vw] !bg-slate-800" >
-        <Stepper ref={stepperRef}  className="w-[100vw] h-[100vh] px-96  !bg-slate-800" >
+    <div className="card flex justify-center h-[100vh] w-[100vw] !bg-slate-800" >
+        <Stepper ref={stepperRef}  className="md:w-[80vw] w-[100vw] h-[100vh] !bg-slate-800" >
             <StepperPanel header="Select home">
                 <div className="flex flex-column h-[80vh]">
                         <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
