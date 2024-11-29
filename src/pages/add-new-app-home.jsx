@@ -649,16 +649,18 @@ export default function AddNewAppHome(){
                                     <Column field="command_on" header="Turn On Command" />
                                     <Column field="command_off" header="Turn Off Command" />
                                     <Column 
-                                        body={(rowData) => (
-                                            <i 
-                                                className="pi pi-trash text-red-500 text-xl cursor-pointer hover:text-red-700"
-                                                onClick={() => {
-                                                    setUserDevices(userDevices.filter(device => device.name !== rowData.name));
-                                                }}
-                                            />
-                                        )}
-                                        header="Actions"
-                                        style={{ width: '50px', textAlign: 'center' }}
+                                       body={(rowData, rowIndex) => (
+                                           <i 
+                                               className="pi pi-trash text-red-500 text-xl cursor-pointer hover:text-red-700"
+                                               onClick={() => {
+                                                   const updatedDevices = [...userDevices];
+                                                   updatedDevices.splice(rowIndex, 1);
+                                                   setUserDevices(updatedDevices);
+                                               }}
+                                           />
+                                       )}
+                                       header="Actions"
+                                       style={{ width: '50px', textAlign: 'center' }}
                                     />
                                 </DataTable>
                             </>
