@@ -329,6 +329,13 @@ export default function AddNewAppHome(){
 
     }
 
+    const onChangeSetCategory = (e) =>{
+        selectedCategory(e.target.value);
+    }
+
+    const onChangeSelectedRoom = (e) =>{
+        setSelectedRoom(e.target.value);
+    }
 
     const onChangeSetTurnOn = (e) =>{
         setCommand_on(e.target.value);
@@ -355,9 +362,13 @@ export default function AddNewAppHome(){
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoomId
+            selectedRoom: selectedRoom,
+            category: selectedCategory
         };
     
+        console.log('11111');
+        console.log(newDevice);
+
         setLabel('');          
         setCommand_on('');     
         setCommand_off('');     
@@ -383,12 +394,12 @@ export default function AddNewAppHome(){
 
         const newDevice = {
             name: name,
-            category: category,
+            category: selectedCategory,
             status: "not-active",
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoomId
+            selectedRoom: selectedRoom
         };
     
         setLabel('');          
@@ -554,7 +565,7 @@ export default function AddNewAppHome(){
                                         <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
                                             placeholder="Select room" className="w-56" />
 
-                                        <Dropdown value={selectedCategory} onChange={(e) => setSelectedRoom(e.value)} options={categories} id="category_id" optionLabel="Device category" 
+                                        <Dropdown value={selectedCategory} onChange={(e) => setSelectedCategory(e.value)} options={categories} id="category_id" optionLabel="Device category" 
                                             placeholder="Select device category" className="w-56" />
 
                                         <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
@@ -622,14 +633,14 @@ export default function AddNewAppHome(){
             </StepperPanel>
             <StepperPanel header="Confirm">
             <div className="flex flex-column h-[80vh]">
-                    <div className="!bg-slate-800 surface-ground flex flex-col items-center gap-5 font-medium w-[100%] p-4">
+                    <div className=" surface-ground flex flex-col items-center gap-5 font-medium w-[100%] p-4">
                         {(valueHomeName.length > 0 && userDevices.length > 0) ? (
                             <>
                                 <h2 className="text-3xl mb-4">House: <strong>{valueHomeName}</strong></h2>
                                 
                                 <DataTable 
                                     value={userDevices} 
-                                    className="w-full md:w-[80%]"
+                                    className="w-full md:w-[80%] bg-transparent"
                                 >
                                     <Column field="name" header="Name" />
                                     <Column field="label" header="Label" />
