@@ -225,6 +225,62 @@ export default function AddNewAppHome(){
     }, []);
 
 
+    const saveAndCreateNewHome = async() => {
+
+        try{
+        const userId = sessionStorage.getItem('UserId');
+        const homeName = valueHomeName;
+
+        //userDevices
+
+        const responseNewHome = await fetch(`http://localhost:4000/api/new-home`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify({
+                "userId": userId,
+                "homeName": homeName
+            })
+        })
+
+        const dataNewHome = await responseNewHome.json();
+
+        const homeId = dataNewHome.home_id; 
+
+        console.log('Zwrocony homeId : ' +homeId);
+
+            const responseAddDevices = await fetch(`http://localhost:4000/api/add-new-devices`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', 
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                },
+                body: JSON.stringify({
+                    "homeId": homeId,
+                    "devices": userDevices
+                })
+            })
+
+            const dataAddDevices = await responseAddDevices.json();
+            console.log(dataAddDevices);
+
+        //stworzenie endpointu/polaczenie do istniejace ktory bedzie odpowiadal za stworzenie nowego domu, (dodanei do home i users_home), a nastepnie dodanie do devices urzadzen
+
+        // /api/new-home
+
+        // /api/add-new-devices
+
+        //todo: zapisz dane i przekieruj na strone tego domu
+
+        }
+        catch(error){
+            console.error('Error', error);
+        }
+
+    }
+
 
     async function AddManually(){
 
@@ -672,7 +728,7 @@ export default function AddNewAppHome(){
                 
                 <div className="flex pt-4 justify-between">
                     <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                    <Button label="Save" icon="pi pi-save" iconPos="right" />
+                    <Button label="Save" icon="pi pi-save" iconPos="right" onClick={saveAndCreateNewHome}/>
                 </div>
             </StepperPanel>
         </Stepper>
