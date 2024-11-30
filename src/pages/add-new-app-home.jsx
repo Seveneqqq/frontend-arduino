@@ -266,6 +266,14 @@ export default function AddNewAppHome(){
             const dataAddDevices = await responseAddDevices.json();
             console.log(dataAddDevices);
 
+            if( dataNewHome.success && dataAddDevices.success){
+
+                sessionStorage.setItem('selected-home-id',homeId);
+                sessionStorage.setItem('selected-home-name',homeName);
+
+                navigate(`/panel-dashboard`);
+            }
+
         //stworzenie endpointu/polaczenie do istniejace ktory bedzie odpowiadal za stworzenie nowego domu, (dodanei do home i users_home), a nastepnie dodanie do devices urzadzen
 
         // /api/new-home
@@ -442,15 +450,15 @@ export default function AddNewAppHome(){
 
         let foundDevice = devicesList.find(device => device.name === name);
         
+        const category = foundDevice.category;
+
         foundDevice.hidden="true";
         
         let selectedRoomId;
 
-        // tutaj musi być switch który będzie uzupelnial id pokoju
-
         const newDevice = {
             name: name,
-            category: selectedCategory,
+            category: category,
             status: "not-active",
             label: label,
             command_on: command_on,
