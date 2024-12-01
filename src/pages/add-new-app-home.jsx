@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dropdown } from 'primereact/dropdown';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 
 
@@ -223,6 +225,70 @@ export default function AddNewAppHome(){
     }, []);
 
 
+    const saveAndCreateNewHome = async() => {
+
+        try{
+        const userId = sessionStorage.getItem('UserId');
+        const homeName = valueHomeName;
+
+        //userDevices
+
+        const responseNewHome = await fetch(`http://localhost:4000/api/new-home`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify({
+                "userId": userId,
+                "homeName": homeName
+            })
+        })
+
+        const dataNewHome = await responseNewHome.json();
+
+        const homeId = dataNewHome.home_id; 
+
+        console.log('Zwrocony homeId : ' +homeId);
+
+            const responseAddDevices = await fetch(`http://localhost:4000/api/add-new-devices`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', 
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                },
+                body: JSON.stringify({
+                    "homeId": homeId,
+                    "devices": userDevices
+                })
+            })
+
+            const dataAddDevices = await responseAddDevices.json();
+            console.log(dataAddDevices);
+
+            if( dataNewHome.success && dataAddDevices.success){
+
+                sessionStorage.setItem('selected-home-id',homeId);
+                sessionStorage.setItem('selected-home-name',homeName);
+
+                navigate(`/panel-dashboard`);
+            }
+
+        //stworzenie endpointu/polaczenie do istniejace ktory bedzie odpowiadal za stworzenie nowego domu, (dodanei do home i users_home), a nastepnie dodanie do devices urzadzen
+
+        // /api/new-home
+
+        // /api/add-new-devices
+
+        //todo: zapisz dane i przekieruj na strone tego domu
+
+        }
+        catch(error){
+            console.error('Error', error);
+        }
+
+    }
+
 
     async function AddManually(){
 
@@ -263,6 +329,8 @@ export default function AddNewAppHome(){
 
     async function findDevices(){
         
+
+
         setBlur('blur-sm');
         setLoading('');
 
@@ -325,6 +393,13 @@ export default function AddNewAppHome(){
 
     }
 
+    const onChangeSetCategory = (e) =>{
+        selectedCategory(e.target.value);
+    }
+
+    const onChangeSelectedRoom = (e) =>{
+        setSelectedRoom(e.target.value);
+    }
 
     const onChangeSetTurnOn = (e) =>{
         setCommand_on(e.target.value);
@@ -351,9 +426,13 @@ export default function AddNewAppHome(){
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoomId
+            selectedRoom: selectedRoom,
+            category: selectedCategory
         };
     
+        console.log('11111');
+        console.log(newDevice);
+
         setLabel('');          
         setCommand_on('');     
         setCommand_off('');     
@@ -371,11 +450,11 @@ export default function AddNewAppHome(){
 
         let foundDevice = devicesList.find(device => device.name === name);
         
+        const category = foundDevice.category;
+
         foundDevice.hidden="true";
         
         let selectedRoomId;
-
-        // tutaj musi być switch który będzie uzupelnial id pokoju
 
         const newDevice = {
             name: name,
@@ -384,7 +463,7 @@ export default function AddNewAppHome(){
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoomId
+            selectedRoom: selectedRoom
         };
     
         setLabel('');          
@@ -463,9 +542,9 @@ export default function AddNewAppHome(){
     //https://www.google.com/search?q=smarthome+dashboard+&sca_esv=05826a3c56c67289&sca_upv=1&udm=2&biw=1536&bih=762&sxsrf=ADLYWILD-SP5BW0JZ51WUhsa3bPcMyuN0Q%3A1727801186747&ei=Yif8ZvmkLeipwPAP64vIsAI&ved=0ahUKEwj53en_0O2IAxXoFBAIHesFEiYQ4dUDCBA&uact=5&oq=smarthome+dashboard+&gs_lp=Egxnd3Mtd2l6LXNlcnAiFHNtYXJ0aG9tZSBkYXNoYm9hcmQgMgQQABgeSOgXUNgFWJkXcAF4AJABAJgBTKAB_QWqAQIxMbgBA8gBAPgBAZgCC6ACjAbCAgQQIxgnwgIHEAAYgAQYE8ICCBAAGBMYCBgewgIGEAAYExgemAMAiAYBkgcCMTGgB4YT&sclient=gws-wiz-serp#vhid=tu-J8RDAJQML3M&vssid=mosaic
 
     function setFields(name,status,category){
+        setFormVisible(true);
         setSelectedRoom(null);
         setSelectedProtocol(''); 
-        setFormVisible(true);
         console.log(name,status);
         setName(name);
         setStatus(status);
@@ -543,7 +622,7 @@ export default function AddNewAppHome(){
                                 </div>
                                 <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
                                     
-                                    {formVisible && 
+                                    
                                     <>
                                         <p class="font-semibold">Set your devices - {name}</p>
 
@@ -552,7 +631,7 @@ export default function AddNewAppHome(){
                                         <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
                                             placeholder="Select room" className="w-56" />
 
-                                        <Dropdown value={selectedCategory} onChange={(e) => setSelectedRoom(e.value)} options={categories} id="category_id" optionLabel="Device category" 
+                                        <Dropdown value={selectedCategory} onChange={(e) => setSelectedCategory(e.value)} options={categories} id="category_id" optionLabel="Device category" 
                                             placeholder="Select device category" className="w-56" />
 
                                         <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
@@ -561,7 +640,7 @@ export default function AddNewAppHome(){
 
                                         <Button label="Save" onClick={saveDevice}/>
                                     </>
-                                    }
+                                    
 
                                 </div>
                             </div>
@@ -619,30 +698,47 @@ export default function AddNewAppHome(){
                 </div>
             </StepperPanel>
             <StepperPanel header="Confirm">
-                <div className="flex flex-column h-[80vh]">
-                        <div className="!bg-slate-800 surface-ground flex flex-col justify-center items-center gap-5 font-medium w-[100%]">
-
-                            <div className="flex flex-col gap-5">    
-
-                            { (valueHomeName.length>0 && userDevices.length>0) ? 
-                                    <>
-                                        <p className="text-2xl">House name : <strong>{valueHomeName.length == 0 ? "Empty" : valueHomeName}</strong></p>
-                                        <p className="text-2xl">Devices : {userDevices.length == 0 ? "empty" : ""}</p>
-
-                                        {userDevices && userDevices.map(device => {
-                                            return <li className="text-xl px-[25px]">{device.name}</li>;
-                                        })}
-                                    </>    
-                                :
-                                    <p className="text-xl">Please fill in the required fields.</p>
-
-                            }
-                            </div>
-                        </div>
+            <div className="flex flex-column h-[80vh]">
+                    <div className=" surface-ground flex flex-col items-center gap-5 font-medium w-[100%] p-4">
+                        {(valueHomeName.length > 0 && userDevices.length > 0) ? (
+                            <>
+                                <h2 className="text-3xl mb-4">House: <strong>{valueHomeName}</strong></h2>
+                                
+                                <DataTable 
+                                    value={userDevices} 
+                                    className="w-full md:w-[80%] bg-transparent"
+                                >
+                                    <Column field="name" header="Name" />
+                                    <Column field="label" header="Label" />
+                                    <Column field="status" header="Status" />
+                                    <Column field="selectedRoom" header="Room" />
+                                    <Column field="command_on" header="Turn On Command" />
+                                    <Column field="command_off" header="Turn Off Command" />
+                                    <Column 
+                                       body={(rowData, rowIndex) => (
+                                           <i 
+                                               className="pi pi-trash text-red-500 text-xl cursor-pointer hover:text-red-700"
+                                               onClick={() => {
+                                                   const updatedDevices = [...userDevices];
+                                                   updatedDevices.splice(rowIndex, 1);
+                                                   setUserDevices(updatedDevices);
+                                               }}
+                                           />
+                                       )}
+                                       header="Actions"
+                                       style={{ width: '50px', textAlign: 'center' }}
+                                    />
+                                </DataTable>
+                            </>
+                        ) : (
+                            <p className="text-xl">Please fill in the required fields.</p>
+                        )}
+                    </div>
                 </div>
+                
                 <div className="flex pt-4 justify-between">
                     <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                    <Button label="Save" icon="pi pi-save" iconPos="right" />
+                    <Button label="Save" icon="pi pi-save" iconPos="right" onClick={saveAndCreateNewHome}/>
                 </div>
             </StepperPanel>
         </Stepper>

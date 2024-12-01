@@ -148,15 +148,16 @@ export default function ListItem() {
                     </Link>
                 );
             })}
-            <div className="card flex justify-content-center ">
+            <div className="card flex justify-content-center">
             <Button label="Login" icon="pi pi-user" className="!text-larablue !px-4 !py-4 border-transparent bg-transparent rounded-[100px] hover:bg-[#35363C] active:bg-[#35363C] z-3 " onClick={() => setVisible(true)} />
             {!singIn ? (<Dialog
                 visible={visible}
                 modal
+                className=" w-96"
                 onHide={() => {if (!visible) return; setVisible(false); }}
                 content={({ hide }) => (
                     <div className="flex flex-col px-8 py-5 gap-4 bg-[#1E1E2F]" style={{ borderRadius: '12px'}}>
-                        <h1 className="text-xl font-bold text-center w-[15vw]">Log-in<br/></h1>
+                        <h1 className="text-xl font-bold text-center w-full">Log-in<br/></h1>
                         <div className="inline-flex flex-col gap-2">
                             <label htmlFor="username" className="text-primary-50 font-semibold">
                                 Username
@@ -182,10 +183,11 @@ export default function ListItem() {
                 <Dialog
                 visible={visible}
                 modal
+                className=" w-96"
                 onHide={() => {if (!visible) return; setVisible(false); }}
                 content={({ hide }) => (
                     <div className="flex flex-col px-8 py-5 gap-4 bg-[#1E1E2F]" style={{ borderRadius: '12px'}}>
-                        <h1 className="text-xl font-bold text-center w-[15vw]">Sign-in<br/></h1>
+                        <h1 className="text-xl font-bold text-center w-full">Sign-in<br/></h1>
                         <div className="inline-flex flex-col gap-2">
                             <label htmlFor="username" className="text-primary-50 font-semibold">
                                 Username

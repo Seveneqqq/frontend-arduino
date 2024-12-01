@@ -1,6 +1,6 @@
 import { Badge } from 'primereact/badge';
 import { Avatar } from 'primereact/avatar';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { OverlayPanel } from 'primereact/overlaypanel';
 
 import FastAccesElement from '../components/fastAccessElement';
@@ -18,7 +18,31 @@ export default function PanelDashboard() {
     const [microphoneActivatedColor, setMicrophoneActivatedColor] = useState('bg-[#080808]');
     const [notificationsActivated, setNotificationsActivated] = useState(false);
     const [notificationsActivatedColor, setNotificationsActivatedColor] = useState('bg-[#080808]');
+    const [devices, setDevices] = useState([]);
     
+    const fetchDevices = async() => {
+
+        const response = await fetch(`http://localhost:4000/api/home/get-devices`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify({
+                home_id: sessionStorage.getItem('selected-home-id')
+            })
+        })
+
+        const data = await response.json();
+        console.log(data);
+        setDevices(data.devices);
+
+
+    }
+
+    useEffect(() => {
+        fetchDevices();
+    }, [])
 
     const handleMouseDown = (e) => {
         setIsDragging(true);
@@ -130,24 +154,19 @@ export default function PanelDashboard() {
                     <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing">
                     
                     </div>
-                    <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#5E85ED] rounded-xl cursor-grab active:cursor-grabbing">
-                    
-                    </div>
-                    <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#CB50CB] rounded-xl cursor-grab active:cursor-grabbing">
-                    
-                    </div>
+
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-none lg:grid-rows-5 gap-4 bg-[#151513] rounded-xl px-5 py-5 flex-1">
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px]">Losowa grupa urzadzen</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-1 lg:row-start-2">Losowa grupa urzadzen</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Kamera z mozliwoscia przewijania na inne ?</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1">Taski do zrobienia +dodac w uzytkowniku imie/pseudonim aby sie wyswietlal</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:row-start-3">Jakies losowe urzadzenie w ktorym beda rozne opcje w zaleznosci od urzadzenia</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3">Wykres czujnikow z przelaczaniem</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
-                    <div className="bg-[#080808] rounded-xl p-4 min-h-[100px] lg:col-start-4 lg:row-start-5">Scenariusz</div>
+                    <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px]">Losowa grupa urzadzen</div>
+                    <div className="bg-[#CB50CB] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-2">Losowa grupa urzadzen</div>
+                    <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Kamera z mozliwoscia przewijania na inne ?</div>
+                    <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1">Taski do zrobienia +dodac w uzytkowniku imie/pseudonim aby sie wyswietlal</div>
+                    <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:row-start-3">Jakies losowe urzadzenie w ktorym beda rozne opcje w zaleznosci od urzadzenia</div>
+                    <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
+                    <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3">Wykres czujnikow z przelaczaniem</div>
+                    <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
+                    <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px] lg:col-start-4 lg:row-start-5">Scenariusz</div>
                 </div>
 
 
