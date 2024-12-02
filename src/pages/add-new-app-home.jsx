@@ -454,8 +454,6 @@ export default function AddNewAppHome(){
 
         foundDevice.hidden="true";
         
-        let selectedRoomId;
-
         const newDevice = {
             name: name,
             category: category,
