@@ -149,7 +149,7 @@ export default function ListItem() {
                 );
             })}
             <div className="card flex justify-content-center">
-            <Button label="Login" icon="pi pi-user" className="!text-larablue !px-4 !py-4 border-transparent bg-transparent rounded-[100px] hover:bg-[#35363C] active:bg-[#35363C] z-3 " onClick={() => setVisible(true)} />
+            <Button label="Login" icon="pi pi-user" className="!text-larablue !px-4 !py-4 border-transparent bg-transparent !rounded-[100px] hover:bg-[#333335] !active:bg-[#35363C] z-3 w-[6vw] h-[85%]" onClick={() => setVisible(true)} />
             {!singIn ? (<Dialog
                 visible={visible}
                 modal
