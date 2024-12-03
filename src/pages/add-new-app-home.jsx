@@ -430,9 +430,6 @@ export default function AddNewAppHome(){
             category: selectedCategory
         };
     
-        console.log('11111');
-        console.log(newDevice);
-
         setLabel('');          
         setCommand_on('');     
         setCommand_off('');     
@@ -559,7 +556,7 @@ export default function AddNewAppHome(){
                                     {!isClicked ?
                                     <>
                                         <h2>Name of new house</h2>
-                                        <InputText placeholder="Name" value={valueHomeName} maxLength={15} onChange={(event)=>onChangeSaveData(event.target.value)}/>
+                                        <InputText placeholder="Name" value={valueHomeName} maxLength={50} onChange={(event)=>onChangeSaveData(event.target.value)}/>
                                         <h2>Or</h2>
                                         <Button label="Join with Code" icon="pi pi-sign-in  " onClick={()=>changeToInput()}/>
                                         
