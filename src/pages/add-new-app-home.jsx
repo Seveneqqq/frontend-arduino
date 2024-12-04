@@ -430,9 +430,6 @@ export default function AddNewAppHome(){
             category: selectedCategory
         };
     
-        console.log('11111');
-        console.log(newDevice);
-
         setLabel('');          
         setCommand_on('');     
         setCommand_off('');     
@@ -454,8 +451,6 @@ export default function AddNewAppHome(){
 
         foundDevice.hidden="true";
         
-        let selectedRoomId;
-
         const newDevice = {
             name: name,
             category: category,
@@ -552,196 +547,269 @@ export default function AddNewAppHome(){
     }
 
     return (
-    <div className="card flex justify-center h-[100vh] w-[100vw] !bg-slate-800" >
-        <Stepper ref={stepperRef}  className="md:w-[80vw] w-[100vw] h-[100vh] !bg-slate-800" >
-            <StepperPanel header="Select home">
-                <div className="flex flex-column h-[80vh]">
-                        <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-                            <div className="flex flex-col items-center w-[100%] gap-5 justify-center">
-                                <Toast ref={toast} />
-                                
-                                    {!isClicked ?
-                                    <>
-                                        <h2>Name of new house</h2>
-                                        <InputText placeholder="Name" value={valueHomeName} maxLength={15} onChange={(event)=>onChangeSaveData(event.target.value)}/>
-                                        <h2>Or</h2>
-                                        <Button label="Join with Code" icon="pi pi-sign-in  " onClick={()=>changeToInput()}/>
-                                        
-                                    </>
-                                    : 
-                                    <>
-                                        <h2>Join to existing house</h2>
-                                            <InputText keyfilter="int" value={inviteCode} id="inviteCode" placeholder="#123456" maxLength={6} onChange={(event) => setInviteCode(event.target.value)}/>
-                                            <Button label="Join" icon="pi pi-plus" onClick={()=>joinToHouse()}/>
-                                        <h2>Or</h2>
-                                            <div className="flex flex-col gap-5">
-                                                <Button label="Back" icon="pi pi-arrow-left" onClick={()=>changeToInput()}/>
-                                            </div>
-                                    </>
-                                    }
-                            </div>
-                        </div>
-                </div>
-                <div className="flex pt-4 justify-between">
-                    <Button label="Choose home" icon="pi pi-home" iconPos="left" onClick={() => navigate('/login-app-home')} />
-                    <Button label="Next" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
-                </div>
-            </StepperPanel>
-            <StepperPanel header="Add devices">
-                
-                <div className="flex flex-column h-[80vh] items-center justify-center">
-                            <div className={`absolute w-[100%] h-[100%] flex justify-center ${loading}`}>
-                                <ProgressSpinner strokeWidth={5} className={`absolute flex z-50 top-[45%] ${loading}`}/>
-                            </div>
-                        <div className={`!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%] ${blur}`}>
-                            
-                            <Toast ref={toast} />
-                            
-                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => findDevices()}>
-                            <i class="pi pi-search text-9xl w-[100%] h-[65%]"></i>
-                            <p className="text-xl mb-5">FIND ARDUINO DEVICES</p>
-                        </div>
-                        <div className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600" onClick={() => AddManually()}>
-                            <i class="pi pi-plus text-9xl w-[100%] h-[65%]"></i>
-                            <p className="text-xl mb-5">ADD MANUALLY</p>
-                        </div>
-
-                        <Dialog header="Founded devices"  visible={panelVisible1} onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
-                            <div className="flex flex-row w-[100%]">
-                                <div className="w-[40%]">
-                                    {devices=="" ? 
-                                        <h1>Loading...</h1> 
-                                        :
-                                        <>
-                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
-                                        {devices.map(el=>{
-                                            return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 ${el.hidden ? "hidden" : ""}`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
-                                        })}
-                                        </>
-                                    }
-                                </div>
-                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
-                                    
-                                    
-                                    <>
-                                        <p class="font-semibold">Set your devices - {name}</p>
-
-                                        <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
-
-                                        <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
-                                            placeholder="Select room" className="w-56" />
-
-                                        <Dropdown value={selectedCategory} onChange={(e) => setSelectedCategory(e.value)} options={categories} id="category_id" optionLabel="Device category" 
-                                            placeholder="Select device category" className="w-56" />
-
-                                        <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
-
-                                        <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
-
-                                        <Button label="Save" onClick={saveDevice}/>
-                                    </>
-                                    
-
-                                </div>
-                            </div>
-                        </Dialog>
-
-                        <Dialog header="Add devices from list" visible={panelVisible2} onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }} > 
-                            
-                        <div className="flex flex-row w-[100%]">
-                                <div className="w-[40%]">
-
-                                    {devicesList=="" ? 
-                                        <h1>Loading...</h1> 
-                                        :
-                                        <>
-                                        <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Category</p></div>
-                                            <div className="">
-                                            {devicesList.map(el=>{  // Tutaj beda sie wyswietlaly kategorie, po wybraniu kategorii dane urzadzenie
-                                                return <div className={`grid grid-cols-2 px-2 gap-6 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,"not-active",el.category)}><p>{el.name}</p><p>{el.category}</p></div>
-                                            })}
-                                            </div>
-                                        </>
-                                    }
-                                </div>
-                                <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%] ">
-
-                                    
-                                    <>
-                                        {formVisible ? <p class="font-semibold">Set your devices - {name}</p> : <p class="font-semibold">Select device</p>}
-
-                                        <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
-
-                                        <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
-                                            placeholder="Select room" className="w-56" />
-
-                                        <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
-
-                                        <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
-                                        
-                                        <Dropdown value={selectedProtocol} onChange={(e) => setSelectedProtocol(e.value)} options={protocols} id="protocol_id" optionLabel="Protocol" 
-                                            placeholder="Select protocol" className="w-56" />
-                                        {selectedProtocol && showFormFields()}
-                                        {formVisible ? <Button label="Save" onClick={saveDeviceManually}/> : "" }
-                                    </>
-                                    
-
-                                </div>
-                            </div>
-                        </Dialog>
-
-                        </div>
-                </div>
-                <div className="flex pt-4 justify-between">
-                    <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                    <Button label="Next" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
-                </div>
-            </StepperPanel>
-            <StepperPanel header="Confirm">
+      <div className="card flex justify-center h-[100vh] w-[100vw] !bg-slate-800">
+        <Stepper
+          ref={stepperRef}
+          className="md:w-[80vw] w-[100vw] h-[100vh] !bg-slate-800"
+        >
+          <StepperPanel header="Select home">
             <div className="flex flex-column h-[80vh]">
-                    <div className=" surface-ground flex flex-col items-center gap-5 font-medium w-[100%] p-4">
-                        {(valueHomeName.length > 0 && userDevices.length > 0) ? (
-                            <>
-                                <h2 className="text-3xl mb-4">House: <strong>{valueHomeName}</strong></h2>
-                                
-                                <DataTable 
-                                    value={userDevices} 
-                                    className="w-full md:w-[80%] bg-transparent"
-                                >
-                                    <Column field="name" header="Name" />
-                                    <Column field="label" header="Label" />
-                                    <Column field="status" header="Status" />
-                                    <Column field="selectedRoom" header="Room" />
-                                    <Column field="command_on" header="Turn On Command" />
-                                    <Column field="command_off" header="Turn Off Command" />
-                                    <Column 
-                                       body={(rowData, rowIndex) => (
-                                           <i 
-                                               className="pi pi-trash text-red-500 text-xl cursor-pointer hover:text-red-700"
-                                               onClick={() => {
-                                                   const updatedDevices = [...userDevices];
-                                                   updatedDevices.splice(rowIndex, 1);
-                                                   setUserDevices(updatedDevices);
-                                               }}
-                                           />
-                                       )}
-                                       header="Actions"
-                                       style={{ width: '50px', textAlign: 'center' }}
-                                    />
-                                </DataTable>
-                            </>
-                        ) : (
-                            <p className="text-xl">Please fill in the required fields.</p>
-                        )}
-                    </div>
+              <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+                <div className="flex flex-col items-center w-[100%] gap-5 justify-center">
+                  <Toast ref={toast} />
+
+                  {!isClicked ? (
+                    <>
+                      <h2>Name of new house</h2>
+                      <InputText
+                        placeholder="Name"
+                        value={valueHomeName}
+                        maxLength={50}
+                        onChange={(event) =>
+                          onChangeSaveData(event.target.value)
+                        }
+                      />
+                      <h2>Or</h2>
+                      <Button
+                        label="Join with Code"
+                        icon="pi pi-sign-in  "
+                        onClick={() => changeToInput()}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <h2>Join to existing house</h2>
+                      <InputText
+                        keyfilter="int"
+                        value={inviteCode}
+                        id="inviteCode"
+                        placeholder="#123456"
+                        maxLength={6}
+                        onChange={(event) => setInviteCode(event.target.value)}
+                      />
+                      <Button
+                        label="Join"
+                        icon="pi pi-plus"
+                        onClick={() => joinToHouse()}
+                      />
+                      <h2>Or</h2>
+                      <div className="flex flex-col gap-5">
+                        <Button
+                          label="Back"
+                          icon="pi pi-arrow-left"
+                          onClick={() => changeToInput()}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
-                
-                <div className="flex pt-4 justify-between">
-                    <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                    <Button label="Save" icon="pi pi-save" iconPos="right" onClick={saveAndCreateNewHome}/>
+              </div>
+            </div>
+            <div className="flex pt-4 justify-between">
+              <Button
+                label="Choose home"
+                icon="pi pi-home"
+                iconPos="left"
+                onClick={() => navigate("/login-app-home")}
+              />
+              <Button
+                label="Next"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                onClick={() => stepperRef.current.nextCallback()}
+              />
+            </div>
+          </StepperPanel>
+          <StepperPanel header="Add devices">
+            <div className="flex flex-column h-[80vh] items-center justify-center">
+              <div
+                className={`absolute w-[100%] h-[100%] flex justify-center ${loading}`}
+              >
+                <ProgressSpinner
+                  strokeWidth={5}
+                  className={`absolute flex z-50 top-[45%] ${loading}`}
+                />
+              </div>
+              <div
+                className={`!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%] ${blur}`}
+              >
+                <Toast ref={toast} />
+
+                <div
+                  className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600"
+                  onClick={() => findDevices()}
+                >
+                  <i class="pi pi-search text-9xl w-[100%] h-[65%]"></i>
+                  <p className="text-xl mb-5">FIND ARDUINO DEVICES</p>
                 </div>
-            </StepperPanel>
-        </Stepper>
+                <div
+                  className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600"
+                  onClick={() => AddManually()}
+                >
+                  <i class="pi pi-plus text-9xl w-[100%] h-[65%]"></i>
+                  <p className="text-xl mb-5">ADD MANUALLY</p>
+                </div>
+
+                <Dialog 
+    header="Founded devices" 
+    className="max-w-3xl"
+    style={{width: '1000px'}}
+    visible={panelVisible1} 
+    onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
+    <div className="flex flex-row">
+        <div className="w-[40%]">
+            {devices=="" ? 
+                <h1>Loading...</h1> 
+                :
+                <>
+                <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
+                {devices.map(el=>{
+                    return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 ${el.hidden ? "hidden" : ""}`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
+                })}
+                </>
+            }
+        </div>
+        <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
+            <>
+                <p className="font-semibold">Set your devices - {name}</p>
+
+                <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
+
+                <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
+                    placeholder="Select room" className="!w-56" />
+
+                <Dropdown value={selectedCategory} onChange={(e) => setSelectedCategory(e.value)} options={categories} id="category_id" optionLabel="Device category" 
+                    placeholder="Select device category" className="!w-56" />
+
+                <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
+
+                <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
+
+                <Button label="Save" onClick={saveDevice}/>
+            </>
+        </div>
     </div>
+</Dialog>
+
+<Dialog 
+    header="Add devices from list" 
+    className="max-w-3xl"
+    style={{width: ''}}
+    visible={panelVisible2} 
+    onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }}>
+    <div className="flex flex-row">
+        <div className="w-[40%]">
+            {devicesList=="" ? 
+                <h1>Loading...</h1> 
+                :
+                <>
+                <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Category</p></div>
+                    <div className="">
+                    {devicesList.map(el=>{
+                        return <div className={`grid grid-cols-2 px-2 gap-6 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700`} onClick={()=>setFields(el.name,"not-active",el.category)}><p>{el.name}</p><p>{el.category}</p></div>
+                    })}
+                    </div>
+                </>
+            }
+        </div>
+        <div className="px-2 pt-4 gap-4 flex flex-col items-center w-[60%]">
+            <>
+                {formVisible ? <p className="font-semibold">Set your devices - {name}</p> : <p className="font-semibold">Select device</p>}
+
+                <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
+
+                <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
+                    placeholder="Select room" className="!w-56" />
+
+                <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
+
+                <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
+                
+                <Dropdown value={selectedProtocol} onChange={(e) => setSelectedProtocol(e.value)} options={protocols} id="protocol_id" optionLabel="Protocol" 
+                    placeholder="Select protocol" className="!w-56" />
+                {selectedProtocol && showFormFields()}
+                {formVisible ? <Button label="Save" onClick={saveDeviceManually}/> : "" }
+            </>
+        </div>
+    </div>
+</Dialog>
+              </div>
+            </div>
+            <div className="flex pt-4 justify-between">
+              <Button
+                label="Back"
+                severity="secondary"
+                icon="pi pi-arrow-left"
+                onClick={() => stepperRef.current.prevCallback()}
+              />
+              <Button
+                label="Next"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                onClick={() => stepperRef.current.nextCallback()}
+              />
+            </div>
+          </StepperPanel>
+          <StepperPanel header="Confirm">
+            <div className="flex flex-column h-[80vh]">
+              <div className=" surface-ground flex flex-col items-center gap-5 font-medium w-[100%] p-4">
+                {valueHomeName.length > 0 && userDevices.length > 0 ? (
+                  <>
+                    <h2 className="text-3xl mb-4">
+                      House: <strong>{valueHomeName}</strong>
+                    </h2>
+
+                    <DataTable
+                      value={userDevices}
+                      className="w-full md:w-[80%] bg-transparent"
+                    >
+                      <Column field="name" header="Name" />
+                      <Column field="label" header="Label" />
+                      <Column field="status" header="Status" />
+                      <Column field="selectedRoom" header="Room" />
+                      <Column field="command_on" header="Turn On Command" />
+                      <Column field="command_off" header="Turn Off Command" />
+                      <Column
+                        body={(rowData, rowIndex) => (
+                          <i
+                            className="pi pi-trash text-red-500 text-xl cursor-pointer hover:text-red-700"
+                            onClick={() => {
+                              const updatedDevices = [...userDevices];
+                              updatedDevices.splice(rowIndex, 1);
+                              setUserDevices(updatedDevices);
+                            }}
+                          />
+                        )}
+                        header="Actions"
+                        style={{ width: "50px", textAlign: "center" }}
+                      />
+                    </DataTable>
+                  </>
+                ) : (
+                  <p className="text-xl">Please fill in the required fields.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex pt-4 justify-between">
+              <Button
+                label="Back"
+                severity="secondary"
+                icon="pi pi-arrow-left"
+                onClick={() => stepperRef.current.prevCallback()}
+              />
+              <Button
+                label="Save"
+                icon="pi pi-save"
+                iconPos="right"
+                onClick={saveAndCreateNewHome}
+              />
+            </div>
+          </StepperPanel>
+        </Stepper>
+      </div>
+    );
+}
     )
 }
+
