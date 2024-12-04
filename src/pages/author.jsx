@@ -20,9 +20,8 @@ export default function Author() {
             setIsConnected(false);
         });
 
-        socket.on('sensorData', (data) => {
-            console.log('Received data:', data.distance); 
-            setSensorValue(data.distance);
+        socket.on('sensorData', (data) => { 
+            setSensorValue(data);
         });
 
         return () => {
@@ -32,7 +31,7 @@ export default function Author() {
 
     const startSensorReading = async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/test-sensors');
+            const response = await fetch('http://localhost:4000/api/home/app-start');
             const data = await response.json();
             console.log('Sensor reading started:', data);
         } catch (error) {
@@ -58,7 +57,14 @@ export default function Author() {
             </button>
 
             <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Wartość odczytu: {sensorValue || '-'}</h2>
+                
+                {sensorValue !== null  && 
+                    <>
+                        <h2 className="text-xl font-semibold">Wartość odczytu dystans:     {sensorValue.distance || '-'}cm</h2>
+                        <h2 className="text-xl font-semibold">Wartość odczytu nawilżenie:  {sensorValue.humidity || '-'}%</h2>
+                        <h2 className="text-xl font-semibold">Wartość odczytu temperatura: {sensorValue.temperature || '-'}℃</h2>
+                    </>
+                }
             </div>
         </div>
     );
