@@ -444,12 +444,10 @@ export default function AddNewAppHome(){
     };
 
     const saveDeviceManually = () => {
-
-        let foundDevice = devicesList.find(device => device.name === name);
         
+        let foundDevice = devicesList.find(device => device.name === name);
         const category = foundDevice.category;
-
-        foundDevice.hidden="true";
+        foundDevice.hidden = "true";
         
         const newDevice = {
             name: name,
@@ -458,20 +456,60 @@ export default function AddNewAppHome(){
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoom
+            selectedRoom: selectedRoom,
+            protocol: selectedProtocol, 
+            protocolConfig: {} 
         };
-    
+
+        switch (selectedProtocol) {
+            case 'Zigbee':
+                newDevice.protocolConfig = {
+                    zigbeeId: zigbeeId,
+                    zigbeeChannel: zigbeeChannel,
+                    zigbeeGroupId: zigbeeGroupId,
+                    zigbeeHub: zigbeeHub
+                };
+                break;
+            case 'Wifi':
+                newDevice.protocolConfig = {
+                    ipAddress: ipAddress,
+                    macAddress: macAddress,
+                    ssid: ssid,
+                    password: password
+                };
+                break;
+            case 'Bluetooth':
+                newDevice.protocolConfig = {
+                    bleUuid: bleUuid,
+                    bleConnection: bleConnection
+                };
+                break;
+            case 'Z-Wave':
+                newDevice.protocolConfig = {
+                    zwaveDeviceId: zwaveDeviceId,
+                    zwaveNetworkKey: zwaveNetworkKey,
+                    zwaveGroupId: zwaveGroupId
+                };
+                break;
+            case 'MQTT':
+                newDevice.protocolConfig = {
+                    mqttBrokerUrl: mqttBrokerUrl,
+                    mqttTopicOn: mqttTopicOn,
+                    mqttTopicOff: mqttTopicOff,
+                    mqttDeviceId: mqttDeviceId
+                };
+                break;
+        }
+
         setLabel('');          
         setCommand_on('');     
         setCommand_off('');     
         setSelectedRoom(null);
-        setSelectedProtocol(''); 
+        setSelectedProtocol(null); 
         clearFields();
-
-
+    
         setUserDevices(prevDevices => {
             const updatedDevices = [...prevDevices, newDevice];
-            //console.log(updatedDevices); 
             return updatedDevices;
         });        
     };
