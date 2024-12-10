@@ -26,6 +26,14 @@ export default function PanelDashboard() {
    const [visible, setVisible] = useState(false);
    const [dialogCategory, setDialogCategory] = useState();
    
+    useEffect(() => {
+        if(microphoneActivated) {
+           
+            //todo obsluga nagrywania dzwieku
+
+        }
+    }, [microphoneActivated]);
+    
    const fetchDevices = async() => {
        const response = await fetch(`http://localhost:4000/api/home/get-devices`,{
            method: 'POST',
