@@ -5,6 +5,7 @@ import DevicesTab from '../components/dashboard-tabs/devices-tab';
 import AutomationTab from '../components/dashboard-tabs/automation-tab';
 import SettingsTab from '../components/dashboard-tabs/settings-tab';
 import { Dialog } from 'primereact/dialog';
+import { InputSwitch } from 'primereact/inputswitch';
 
 export default function PanelDashboard() {
    const scrollRef = useRef(null);
@@ -23,6 +24,7 @@ export default function PanelDashboard() {
    const [devices, setDevices] = useState([]);
    const [categories, setCategories] = useState([]);
    const [visible, setVisible] = useState(false);
+   const [dialogCategory, setDialogCategory] = useState();
    
    const fetchDevices = async() => {
        const response = await fetch(`http://localhost:4000/api/home/get-devices`,{
@@ -85,10 +87,63 @@ export default function PanelDashboard() {
        setNotificationsActivatedColor(newState ? 'bg-[#5E85ED]' : 'bg-[#080808]');
    }
 
+   const DialogWithDeviceFamily = ({ visible, setVisible }) => {
+    const [checked, setChecked] = useState(false);
+
+    const filteredDevices = devices
+        .filter(device => device.category === dialogCategory)
+        .sort((a, b) => {
+            if (a.status === 'active' && b.status !== 'active') return -1;
+            if (a.status !== 'active' && b.status === 'active') return 1;
+            return 0;
+        });
+
+    return (
+        <Dialog 
+            header={dialogCategory}
+            visible={visible}
+            className='max-w-[800px] w-[100%] md:m-0 m-5 border-2'
+            contentStyle={{ backgroundColor: '#151513' }}
+            headerStyle={{ backgroundColor: '#151513' }}
+            maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
+            onHide={() => {if (!visible) return; setVisible(false); }}
+        >
+            <div className="flex flex-col gap-4">
+                {filteredDevices.map((device, index) => (
+                    <div 
+                        key={index}
+                        className={`p-4 rounded-xl flex justify-between items-center
+                            ${device.status === 'active' ? 'bg-[#1E1E1C]' : 'bg-[#111111]'}`}
+                    >
+                        <div>
+                            <h3 className="text-lg font-semibold">{device.label} ( {device.name} )</h3>
+                            <p className={`text-sm ${device.status === 'active' ? 'text-green-500' : 'text-red-500'}`}>
+                                {device.status}
+                            </p>
+                        </div>
+                        <div className="flex gap-3 items-center">
+                            {device.status === 'active' && (
+                                <InputSwitch 
+                                    checked={checked}
+                                    onChange={(e) => setChecked(e.value)}
+                                />
+                            )}
+                            <div className={`w-3 h-3 rounded-full ${device.status === 'active' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </Dialog>
+    );
+}
+     
+
    const renderContent = () => {
+
        switch(activeTab) {
            case 'dashboard':
                return (
+
                    <div className="flex-1 px-5 py-5 flex flex-col gap-5">
                        <div
                            ref={scrollRef}
@@ -98,23 +153,14 @@ export default function PanelDashboard() {
                            onMouseLeave={handleMouseUp}
                            onMouseMove={handleMouseMove}
                        >
-                           <Dialog 
-                               header="Header" 
-                               visible={visible} 
-                               style={{ width: '50vw' }} 
-                               contentStyle={{ backgroundColor: '#151513' }}
-                               headerStyle={{ backgroundColor: '#151513' }}
-                               onHide={() => {if (!visible) return; setVisible(false); }}
-                           >
-                               <p className="m-0">
-                                   Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-                               </p>
-                           </Dialog>
 
                            {categories && categories.map((category, index) => (
                                <div 
                                    key={index} 
-                                   onClick={handleCardClick}
+                                   onClick={() => {
+                                        handleCardClick();
+                                        setDialogCategory(category.category);
+                                    }}
                                    className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing flex flex-col items-center justify-center"
                                >
                                    <h3 className="text-xl mb-2">{category.category}</h3>
@@ -123,6 +169,8 @@ export default function PanelDashboard() {
                                </div>
                            ))}
                        </div>
+
+                       <DialogWithDeviceFamily visible={visible} setVisible={setVisible} />
 
                        <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-none lg:grid-rows-5 gap-4 bg-[#151513] rounded-xl px-5 py-5 flex-1">
                            <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px]">Losowa grupa urzadzen</div>
