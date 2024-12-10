@@ -98,6 +98,22 @@ export default function PanelDashboard() {
    const DialogWithDeviceFamily = ({ visible, setVisible }) => {
     const [checked, setChecked] = useState(false);
 
+    const handleSwitchChange = (device, newValue) => {
+        setChecked(newValue);
+        console.log({
+            device_id: device.device_id,
+            name: device.name,
+            label: device.label,
+            category: device.category,
+            state: newValue ? 'on' : 'off',
+            command: newValue ? device.command_on : device.command_off,
+            room_id: device.room_id,
+            home_id: device.home_id
+        });
+
+        //todo wysylanie do api /home/do
+    };
+
     const filteredDevices = devices
         .filter(device => device.category === dialogCategory)
         .sort((a, b) => {
@@ -133,7 +149,7 @@ export default function PanelDashboard() {
                             {device.status === 'active' && (
                                 <InputSwitch 
                                     checked={checked}
-                                    onChange={(e) => setChecked(e.value)}
+                                    onChange={(e) => handleSwitchChange(device, e.value)}
                                 />
                             )}
                             <div className={`w-3 h-3 rounded-full ${device.status === 'active' ? 'bg-green-500' : 'bg-red-500'}`}></div>
