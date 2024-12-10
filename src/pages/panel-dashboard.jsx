@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { HeaderDashboard } from '../components/dashboard-header'
+import ActivityTab from '../components/dashboard-tabs/activity-tab';
+import DevicesTab from '../components/dashboard-tabs/devices-tab';
+import AutomationTab from '../components/dashboard-tabs/automation-tab';
+import SettingsTab from '../components/dashboard-tabs/settings-tab';
 
 export default function PanelDashboard() {
     const scrollRef = useRef(null);
@@ -104,7 +108,7 @@ export default function PanelDashboard() {
                     <div className="flex-1 px-5 py-5">
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
                             <h2 className="text-2xl mb-4">Automation</h2>
-                            
+                            <AutomationTab/>
                         </div>
                     </div>
                 );
@@ -113,7 +117,7 @@ export default function PanelDashboard() {
                     <div className="flex-1 px-5 py-5">
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
                             <h2 className="text-2xl mb-4">Devices</h2>
-                            
+                            <DevicesTab/>
                         </div>
                     </div>
                 );
@@ -122,7 +126,7 @@ export default function PanelDashboard() {
                     <div className="flex-1 px-5 py-5">
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
                             <h2 className="text-2xl mb-4">Activity</h2>
-                           
+                           <ActivityTab/>
                         </div>
                     </div>
                 );
@@ -131,7 +135,7 @@ export default function PanelDashboard() {
                     <div className="flex-1 px-5 py-5">
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
                             <h2 className="text-2xl mb-4">Settings</h2>
-                            
+                            <SettingsTab/>
                         </div>
                     </div>
                 );
