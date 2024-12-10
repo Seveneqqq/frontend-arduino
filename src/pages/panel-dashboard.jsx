@@ -19,6 +19,7 @@ export default function PanelDashboard() {
     const [notificationsActivated, setNotificationsActivated] = useState(false);
     const [notificationsActivatedColor, setNotificationsActivatedColor] = useState('bg-[#080808]');
     const [devices, setDevices] = useState([]);
+    const [categories, setCategories] = useState([]);
     
     const fetchDevices = async() => {
         const response = await fetch(`http://localhost:4000/api/home/get-devices`,{
@@ -35,6 +36,8 @@ export default function PanelDashboard() {
         const data = await response.json();
         console.log(data);
         setDevices(data.devices);
+        setCategories(data.categories);
+        console.log(data.categories);
     }
 
     useEffect(() => {
@@ -83,11 +86,18 @@ export default function PanelDashboard() {
                             onMouseLeave={handleMouseUp}
                             onMouseMove={handleMouseMove}
                         >
-                            <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing"></div>
-                            <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing"></div>
-                            <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing"></div>
-                            <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing"></div>
-                            <div className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing"></div>
+                          
+                            {categories && categories.map((category, index) => (
+                                <div 
+                                    key={index} 
+                                    className="flex-none lg:w-80 sm:w-96 w-[18.4rem] lg:h-40 h-56 bg-[#151513] rounded-xl cursor-grab active:cursor-grabbing flex flex-col items-center justify-center"
+                                >
+                                    <h3 className="text-xl mb-2">{category.category}</h3>
+                                    <p className="text-2xl font-bold text-[#C7EE7C]">{category.count}</p>
+                                    <p className="text-sm text-gray-400">{category.count > 1 ? "Devices" : "Device"}</p>
+                                </div>
+                            ))}
+
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-none lg:grid-rows-5 gap-4 bg-[#151513] rounded-xl px-5 py-5 flex-1">
