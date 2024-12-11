@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Button } from 'primereact/button';
-import { Menu } from 'primereact/menu';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Knob } from 'primereact/knob';
 
@@ -43,40 +42,17 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
     'grid-cols-1 xl:grid-cols-7'
   ];
 
-  const [selectedDevice, setSelectedDevice] = useState(null);
-  const menu = React.useMemo(() => {
-    return [
-      {
-        label: 'Edit',
-        icon: 'pi pi-pencil',
-        command: () => onEditDevice(selectedDevice)
-      },
-      {
-        label: 'Delete',
-        icon: 'pi pi-trash',
-        command: () => onDeleteDevice(selectedDevice)
-      }
-    ];
-  }, [onEditDevice, onDeleteDevice, selectedDevice]);
+  const [visibleActions, setVisibleActions] = useState(null);
 
-  const handleMenuClick = (event) => {
-    setSelectedDevice(event.value);
-    menu[0].command();
+  const handleEditClick = (device) => {
+    onEditDevice(device);
+    setVisibleActions(null);
   };
 
-  const handleSwitchChange = useCallback(
-    (device, newState, newBrightness, isLocalUpdate) => {
-      onSwitchChange(device, newState, newBrightness, isLocalUpdate);
-    },
-    [onSwitchChange]
-  );
-
-  const handleKnobChange = useCallback(
-    (device, newState, newBrightness, isLocalUpdate) => {
-      onKnobChange(device, newState, newBrightness, isLocalUpdate);
-    },
-    [onKnobChange]
-  );
+  const handleDeleteClick = (device) => {
+    onDeleteDevice(device);
+    setVisibleActions(null);
+  };
 
   return (
     <>
@@ -102,18 +78,18 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                       {device.status}
                     </p>
                   </div>
-                  <div className="flex gap-3 items-center">
+                  <div className="flex gap-3 items-center relative">
                     {device.status === 'active' && (
                       <InputSwitch
                         checked={deviceStates[device.device_id]?.isOn || false}
-                        onChange={(e) => handleSwitchChange(device, e.value, deviceStates[device.device_id]?.brightness, false)}
+                        onChange={(e) => onSwitchChange(device, e.value, deviceStates[device.device_id]?.brightness, false)}
                       />
                     )}
                     {device.category === 'Light' && (
                       <div className="flex items-center">
                         <Knob
                           value={deviceStates[device.device_id]?.brightness || 100}
-                          onChange={(e) => handleKnobChange(device, true, e.value, true)}
+                          onChange={(e) => onKnobChange(device, true, e.value, true)}
                           valueTemplate="{value}%"
                           size={60}
                           strokeWidth={8}
@@ -124,19 +100,25 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                     )}
                     <Button
                       icon="pi pi-ellipsis-v"
-                      className="p-button-text p-button-secondary hover:bg-transparent bg-transparent active:border-0 border-0 active:!shadow-none shadow-none visited:shadow-none"
-                      onClick={(event) => {
-                        setSelectedDevice(device);
-                        menu[0].command();
-                      }}
-                    >
-                      <Menu model={menu} popup onShow={() => setSelectedDevice(device)} onHide={() => setSelectedDevice(null)} />
-                    </Button>
-                    <div
-                      className={`w-3 h-3 rounded-full ${
-                        device.status === 'active' ? 'bg-green-500' : 'bg-red-500'
-                      }`}
-                    ></div>
+                      className="p-button-text p-button-secondary"
+                      onClick={() => setVisibleActions(visibleActions === device.device_id ? null : device.device_id)}
+                    />
+                    {visibleActions === device.device_id && (
+                      <div className="absolute top-full gap-2 mt-2 left-0 bg-gray-800 rounded shadow-lg p-2 flex flex-col z-10">
+                        <Button
+                          label="Edit"
+                          icon="pi pi-pencil"
+                          className="p-button-text text-left bg-transparent"
+                          onClick={() => handleEditClick(device)}
+                        />
+                        <Button
+                          label="Delete"
+                          icon="pi pi-trash"
+                          className="p-button-text text-left bg-transparent"
+                          onClick={() => handleDeleteClick(device)}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
