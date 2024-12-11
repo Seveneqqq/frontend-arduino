@@ -6,6 +6,7 @@ import AutomationTab from '../components/dashboard-tabs/automation-tab';
 import SettingsTab from '../components/dashboard-tabs/settings-tab';
 import { Dialog } from 'primereact/dialog';
 import { InputSwitch } from 'primereact/inputswitch';
+import { Knob } from 'primereact/knob';
 
 export default function PanelDashboard() {
    const scrollRef = useRef(null);
@@ -97,6 +98,15 @@ export default function PanelDashboard() {
 
    const DialogWithDeviceFamily = ({ visible, setVisible }) => {
     const [checked, setChecked] = useState(false);
+    const [knobValues, setKnobValues] = useState({});
+
+    useEffect(() => {
+        const initialValues = {};
+        devices.forEach(device => {
+            initialValues[device.device_id] = 100; 
+        });
+        setKnobValues(initialValues);
+    }, [devices]);
 
     const handleSwitchChange = (device, newValue) => {
         setChecked(newValue);
@@ -110,8 +120,22 @@ export default function PanelDashboard() {
             room_id: device.room_id,
             home_id: device.home_id
         });
+    };
 
-        //todo wysylanie do api /home/do
+    const handleKnobChange = (device, newValue) => {
+        setKnobValues(prev => ({
+            ...prev,
+            [device.device_id]: newValue
+        }));
+        console.log({
+            device_id: device.device_id,
+            name: device.name,
+            label: device.label,
+            category: device.category,
+            brightness: newValue,
+            room_id: device.room_id,
+            home_id: device.home_id
+        });
     };
 
     const filteredDevices = devices
@@ -151,6 +175,19 @@ export default function PanelDashboard() {
                                     checked={checked}
                                     onChange={(e) => handleSwitchChange(device, e.value)}
                                 />
+                            )}
+                            {dialogCategory === 'Light' && (
+                                <div className="flex items-center">
+                                    <Knob 
+                                        value={knobValues[device.device_id] || 100}
+                                        onChange={(e) => handleKnobChange(device, e.value)}
+                                        valueTemplate={'{value}%'}
+                                        size={70}
+                                        strokeWidth={8}
+                                        valueColor="#5E85ED"
+                                        disabled={device.status !== 'active'}
+                                    />
+                                </div>
                             )}
                             <div className={`w-3 h-3 rounded-full ${device.status === 'active' ? 'bg-green-500' : 'bg-red-500'}`}></div>
                         </div>
