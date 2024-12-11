@@ -27,14 +27,121 @@ export default function PanelDashboard() {
    const [visible, setVisible] = useState(false);
    const [dialogCategory, setDialogCategory] = useState();
    
-    useEffect(() => {
-        if(microphoneActivated) {
-           
-            //todo obsluga nagrywania dzwieku
 
+   useEffect(() => {
+    let recognition = null;
+
+    const createDeviceCommands = () => {
+        if (!devices || devices.length === 0) {
+            return [];
         }
-    }, [microphoneActivated]);
-    
+
+        return devices.map(device => ({
+            name: device.name,
+            label: device.label,
+            commands: [
+                device.label,
+                `włącz ${device.label}`,
+                `wyłącz ${device.label}`,
+                `włącz ${device.name}`,
+                `wyłącz ${device.name}`,
+                device.command_on || 'light',
+                device.command_off || 'light off'
+            ]
+        }));
+    };
+
+    const startRecording = () => {
+        try {
+            if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+                console.error('Twoja przeglądarka nie obsługuje rozpoznawania mowy');
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+
+            if (!recognition) {
+                console.error('Nie udało się włączyć rozpoznawania mowy');
+                return;
+            }
+
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'pl-PL';
+
+            recognition.onstart = () => {
+                console.log('Rozpoczęto nasłuchiwanie');
+            };
+
+            recognition.onresult = (event) => {
+                if (!event.results || !event.results[0]) {
+                    return;
+                }
+
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                console.log('Rozpoznany tekst:', transcript);
+
+                const deviceCommands = createDeviceCommands();
+                deviceCommands.forEach(device => {
+                    if (device.commands.some(cmd => transcript.includes(cmd.toLowerCase()))) {
+                        console.log('Wykryto komendę dla urządzenia:', device.name);
+                    }
+                });
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Błąd rozpoznawania:', event.error);
+                
+                if (event.error === 'not-allowed') {
+                    console.error('Brak dostępu do mikrofonu');
+                    setMicrophoneActivated(false);
+                    setMicrophoneActivatedColor('bg-[#080808]');
+                }
+            };
+
+            recognition.onend = () => {
+                if (microphoneActivated && recognition) {
+                    setTimeout(() => {
+                        try {
+                            recognition.start();
+                        } catch (error) {
+                            console.error('Błąd przy restarcie:', error);
+                        }
+                    }, 200);
+                }
+            };
+
+            recognition.start();
+
+        } catch (error) {
+            console.error('Błąd podczas inicjalizacji rozpoznawania mowy:', error);
+            setMicrophoneActivated(false);
+            setMicrophoneActivatedColor('bg-[#080808]');
+        }
+    };
+
+    if (microphoneActivated) {
+        startRecording();
+    }
+
+    return () => {
+        if (recognition) {
+            try {
+                recognition.stop();
+                recognition = null;
+            } catch (error) {
+                console.error('Błąd podczas zatrzymywania rozpoznawania:', error);
+            }
+        }
+    };
+}, [microphoneActivated, devices]);
+
+
+
+
+
+
    const fetchDevices = async() => {
        const response = await fetch(`http://localhost:4000/api/home/get-devices`,{
            method: 'POST',
