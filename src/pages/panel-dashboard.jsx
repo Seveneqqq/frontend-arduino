@@ -128,6 +128,7 @@ export default function PanelDashboard() {
     const [visible, setVisible] = useState(false);
     const [dialogCategory, setDialogCategory] = useState();
     const [deviceStates, setDeviceStates] = useState({});
+    const [selectedDevice, setSelectedDevice] = useState(null);
 
     useEffect(() => {
         if (devices.length > 0) {
@@ -361,6 +362,31 @@ export default function PanelDashboard() {
         setNotificationsActivatedColor(newState ? 'bg-[#5E85ED]' : 'bg-[#080808]');
     }
 
+    const handleSwitchChange = useCallback(
+        (device, newState, newBrightness, isLocalUpdate) => {
+          updateDeviceState(device, newState, newBrightness, isLocalUpdate);
+        },
+        [updateDeviceState]
+      );
+    
+      const handleKnobChange = useCallback(
+        (device, newState, newBrightness, isLocalUpdate) => {
+          updateDeviceState(device, newState, newBrightness, isLocalUpdate);
+        },
+        [updateDeviceState]
+      );
+    
+      const handleEditDevice = (device) => {
+        setSelectedDevice(device);
+        // edytowanie urzadzen
+      };
+    
+      const handleDeleteDevice = (device) => {
+        setSelectedDevice(device);
+        // usuwanie urzadzen
+      };
+
+
     const renderContent = () => {
         switch(activeTab) {
             case 'dashboard':
@@ -416,8 +442,14 @@ export default function PanelDashboard() {
                 return (
                     <div className="flex-1 px-5 py-5">
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
-                            <h2 className="text-2xl mb-4">Devices</h2>
-                            <DevicesTab devices={devices} deviceStates={deviceStates}/>
+                        <DevicesTab
+                          devices={devices}
+                          deviceStates={deviceStates}
+                          onEditDevice={handleEditDevice}
+                          onDeleteDevice={handleDeleteDevice}
+                          onSwitchChange={updateDeviceState}
+                          onKnobChange={updateDeviceState}
+                        />
                         </div>
                     </div>
                 );
