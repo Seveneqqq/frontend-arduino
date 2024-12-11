@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function ActivityTab() {
   return (
-    <div>Activity</div>
+    <div>Activity - tutaj bedzie wszelka aktywnosc : logi, alerty itp</div>
   )
 }
 
