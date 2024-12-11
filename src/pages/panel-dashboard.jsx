@@ -215,34 +215,91 @@ export default function PanelDashboard() {
         setKnobValues(initialValues);
     }, [devices]);
 
-    const handleSwitchChange = (device, newValue) => {
+    const handleSwitchChange = async (device, newValue) => {
         setChecked(newValue);
-        console.log({
-            device_id: device.device_id,
-            name: device.name,
-            label: device.label,
-            category: device.category,
-            state: newValue ? 'on' : 'off',
-            command: newValue ? device.command_on : device.command_off,
-            room_id: device.room_id,
-            home_id: device.home_id
-        });
-    };
+        
+        try {
+            const payload = {
+                homeId: device.home_id,
+                device: {
+                    deviceName: device.name,
+                    category: device.category,
+                    label: device.label,
+                    status: device.status
+                },
+                actions: {
+                    state: newValue ? 1 : 0,
+                    brightness: newValue ? 100 : 0
+                }
+            };
+    
+            const response = await fetch('http://localhost:4000/api/home/do', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                },
+                body: JSON.stringify(payload)
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
 
-    const handleKnobChange = (device, newValue) => {
+            if (newValue) {
+                setKnobValues(prev => ({
+                    ...prev,
+                    [device.device_id]: 100
+                }));
+            }
+    
+        } catch (error) {
+            console.error('Błąd podczas wysyłania stanu:', error);
+        }
+    };
+    
+    const handleKnobChange = async (device, newValue) => {
+
         setKnobValues(prev => ({
             ...prev,
             [device.device_id]: newValue
         }));
-        console.log({
-            device_id: device.device_id,
-            name: device.name,
-            label: device.label,
-            category: device.category,
-            brightness: newValue,
-            room_id: device.room_id,
-            home_id: device.home_id
-        });
+    
+        if (!checked) {
+            return;
+        }
+    
+        try {
+            const payload = {
+                homeId: device.home_id,
+                device: {
+                    deviceName: device.name,
+                    category: device.category,
+                    label: device.label,
+                    status: device.status
+                },
+                actions: {
+                    state: 1,
+                    brightness: newValue
+                }
+            };
+    
+            const response = await fetch('http://localhost:4000/api/home/do', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                },
+                body: JSON.stringify(payload)
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+        } catch (error) {
+            console.error('Błąd podczas wysyłania jasności:', error);
+        }
     };
 
     const filteredDevices = devices
