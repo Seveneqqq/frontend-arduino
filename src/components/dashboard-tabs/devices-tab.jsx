@@ -35,12 +35,12 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
 
   const columnClasses = [
     'grid-cols-1',
-    'grid-cols-1 md:grid-cols-2',
-    'grid-cols-1 md:grid-cols-3',
-    'grid-cols-1 md:grid-cols-4',
-    'grid-cols-1 md:grid-cols-5',
-    'grid-cols-1 md:grid-cols-6',
-    'grid-cols-1 md:grid-cols-7'
+    'grid-cols-1 xl:grid-cols-2',
+    'grid-cols-1 xl:grid-cols-3',
+    'grid-cols-1 xl:grid-cols-4',
+    'grid-cols-1 xl:grid-cols-5',
+    'grid-cols-1 xl:grid-cols-6',
+    'grid-cols-1 xl:grid-cols-7'
   ];
 
   const [selectedDevice, setSelectedDevice] = useState(null);
