@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
 
+
 export function HeaderDashboard({ 
     microphoneActivatedColor, 
     notificationsActivatedColor, 
@@ -51,7 +52,7 @@ export function HeaderDashboard({
                     className={`${microphoneActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center hover:cursor-pointer cursor-default transition ease-out duration-500`} 
                     onClick={microphoneActivate}
                 >
-                    <i className='pi pi-microphone transition before:ease-out before:delay-150 before:duration-150 text-[1.5em]' />
+                    <i className='pi pi-microphone text-[1.5em]' />
                 </li>
                 <li 
                     className={`bg-[#080808] ${notificationsActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center transition ease-out duration-500`} 
