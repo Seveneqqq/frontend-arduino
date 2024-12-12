@@ -153,29 +153,29 @@ export default function PanelDashboard() {
 
     const updateDeviceState = useCallback(async (device, newState, newBrightness, isLocalUpdate = false) => {
         setDeviceStates(prev => ({
-            ...prev,
-            [device.device_id]: {
-                isOn: newState !== undefined ? newState : prev[device.device_id]?.isOn || false,
-                brightness: newBrightness !== undefined ? newBrightness : prev[device.device_id]?.brightness || 100
-            }
+          ...prev,
+          [device.device_id]: {
+            isOn: newState !== undefined ? newState : prev[device.device_id]?.isOn || false,
+            brightness: newBrightness !== undefined ? newBrightness : prev[device.device_id]?.brightness || 100
+          }
         }));
-
+      
         if (isLocalUpdate || device.status !== 'active') return;
         
         try {
-            const payload = {
-                homeId: device.home_id,
-                device: {
-                    deviceName: device.name,
-                    category: device.category,
-                    label: device.label,
-                    status: device.status
-                },
-                actions: {
-                    state: newState ? 1 : 0,
-                    brightness: newBrightness || 0
-                }
-            };
+          const payload = {
+            homeId: device.home_id,
+            device: {
+              deviceName: device.name,
+              category: device.category,
+              label: device.label,
+              status: device.status
+            },
+            actions: {
+              state: newState ? 1 : 0,
+              brightness: newBrightness !== undefined ? newBrightness : 0
+            }
+          };
 
             const response = await fetch('http://localhost:4000/api/home/do', {
                 method: 'POST',
@@ -369,12 +369,9 @@ export default function PanelDashboard() {
         [updateDeviceState]
       );
     
-      const handleKnobChange = useCallback(
-        (device, newState, newBrightness, isLocalUpdate) => {
-          updateDeviceState(device, newState, newBrightness, isLocalUpdate);
-        },
-        [updateDeviceState]
-      );
+      const handleKnobChange = (device, newState, newBrightness, isLocalUpdate) => {
+        updateDeviceState(device, newState, newBrightness, isLocalUpdate);
+      };
     
       const handleEditDevice = (device) => {
         setSelectedDevice(device);

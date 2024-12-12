@@ -89,7 +89,7 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                       <div className="flex items-center">
                         <Knob
                           value={deviceStates[device.device_id]?.brightness || 100}
-                          onChange={(e) => onKnobChange(device, true, e.value, true)}
+                          onChange={(e) => onKnobChange(device, deviceStates[device.device_id]?.isOn, e.value, false)}
                           valueTemplate="{value}%"
                           size={60}
                           strokeWidth={8}
