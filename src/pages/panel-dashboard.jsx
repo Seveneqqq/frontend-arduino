@@ -430,7 +430,6 @@ export default function PanelDashboard() {
                 return (
                     <div className="flex-1 px-5 py-5">
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
-                            <h2 className="text-2xl mb-4">Automation</h2>
                             <AutomationTab devices={devices} deviceStates={deviceStates}/>
                         </div>
                     </div>

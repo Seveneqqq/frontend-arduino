@@ -594,11 +594,16 @@ const protocols = [
                         
         
                         <Dialog 
-            header="Founded devices" 
-            className="max-w-3xl"
-            style={{width: '1000px'}}
-            visible={panelVisible1} 
-            onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
+                            header="Founded devices" 
+                            className="max-w-3xl"
+                            style={{width: '1000px'}}
+                            visible={panelVisible1} 
+                            onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}
+                            contentStyle={{ backgroundColor: '#151513' }}
+                            headerStyle={{ backgroundColor: '#151513' }}
+                            maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
+                        >
+                
             <div className="flex flex-row">
                 <div className="w-[40%]">
                     {devices=="" ? 
@@ -639,7 +644,9 @@ const protocols = [
             className="max-w-3xl"
             style={{width: ''}}
             visible={panelVisible2} 
-            onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }}>
+            onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }}
+            maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
+        >
             <div className="flex flex-row">
                 <div className="w-[40%]">
                     {devicesList=="" ? 
