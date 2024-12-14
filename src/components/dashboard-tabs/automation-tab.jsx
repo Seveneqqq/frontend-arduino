@@ -251,7 +251,7 @@ export default function AutomationTab({ devices, deviceStates }) {
                                 value={newDevice.device}
                                 options={devices}
                                 onChange={(e) => setNewDevice({ device: e.value, actions: {} })}
-                                optionLabel="name"
+                                optionLabel="label"
                                 placeholder="Select a device"
                                 className="w-full"
                             />
@@ -265,14 +265,12 @@ export default function AutomationTab({ devices, deviceStates }) {
 
                     {renderDeviceActions()}
 
-
-                    {formData.lenght > 0 && (
                         <div className="field mt-4">
                           <label>Devices list</label>
                             <div className="flex flex-col gap-2">
                                 {formData.devices.map((device, index) => (
-                                    <div key={index} className="p-2 border rounded flex justify-between items-center">
-                                        <span>{device.name}</span>
+                                    <div key={index} className="p-2 rounded flex justify-between items-center">
+                                        <span>{device.label}</span>
                                         <Button
                                             icon="pi pi-trash"
                                             className="p-button-danger p-button-text"
@@ -285,8 +283,7 @@ export default function AutomationTab({ devices, deviceStates }) {
                                 ))}
                             </div>
                         </div>
-                      )
-                    }
+                    
                   
                     <div className="flex justify-end gap-2">
                         <Button
