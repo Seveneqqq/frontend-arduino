@@ -66,13 +66,13 @@ export default function AccountTab() {
           <h2 className="text-xl font-semibold mb-4">My Homes</h2>
           <div className="space-y-4">
             {data.homes.map((home) => (
-              <div key={home.home_id} className="rounded-lg p-4">
+              <div key={home.home_id} className="rounded-lg p-4 bg-gray-800">
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="flex items-center gap-2 mb-2 justify-between">
+                    <div className="flex items-center gap-4 mb-2 justify-between">
                       <h3 className="text-lg font-medium">{home.name}</h3>
                       {home.owner_id === parseInt(sessionStorage.getItem('UserId')) && (
-                        <span className="text-xs bg-blue-500 text-white px-2 py-1 rounded">Owner</span>
+                        <span className="text-xs bg-[#CB50CB] text-white px-2 py-1 rounded">Owner</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ export default function AccountTab() {
                       <span className="text-sm bg-[#151513] px-2 py-1 rounded">{home.home_invite_code}</span>
                       <Button 
                         icon="pi pi-copy" 
-                        className="p-button-text p-button-sm p-0" 
+                        className="p-button-text p-button-sm p-0 bg-transparent" 
                         onClick={() => navigator.clipboard.writeText(home.home_invite_code)}
                       />
                     </div>
