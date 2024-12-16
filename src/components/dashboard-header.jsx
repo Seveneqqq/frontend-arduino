@@ -55,7 +55,7 @@ export function HeaderDashboard({
                     <i className='pi pi-microphone text-[1.5em]' />
                 </li>
                 <li 
-                    className={`bg-[#080808] ${notificationsActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center transition ease-out duration-500`} 
+                    className={`bg-[#080808] ${notificationsActivatedColor} rounded-[100%] p-2 w-[55px] h-[55px] flex items-center justify-center hover:cursor-pointer transition ease-out duration-500`} 
                     onClick={(e) => {op.current.toggle(e); activateNofitications();}}
                 >
                     <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
@@ -74,12 +74,8 @@ export function HeaderDashboard({
                         </OverlayPanel>
                     </i>
                 </li>
-                <li className="bg-[#080808] rounded-[100%] w-[55px] h-[55px] flex items-center justify-center">
-                    <Avatar 
-                        label="S" 
-                        shape='circle' 
-                        className="w-full h-[100%] bg-transparent text-[#C7EE7C] text-[1.7rem]" 
-                    />
+                <li className={`${activeTab === 'account' ? 'text-[#080808] bg-[#C7EE7C]' : ''} rounded-[100%] w-[50px] h-[50px] flex items-center justify-center hover:cursor-pointer`} onClick={() => onTabChange('account')}>
+                    <i className='pi pi-user' style={{ fontSize: '1.5rem' }}></i>
                 </li>
             </ul>
         </header>

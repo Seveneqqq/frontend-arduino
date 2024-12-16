@@ -4,6 +4,7 @@ import ActivityTab from '../components/dashboard-tabs/activity-tab';
 import DevicesTab from '../components/dashboard-tabs/devices-tab';
 import AutomationTab from '../components/dashboard-tabs/automation-tab';
 import SettingsTab from '../components/dashboard-tabs/settings-tab';
+import AccountTab from '../components/dashboard-tabs/account-tab';
 import { Dialog } from 'primereact/dialog';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Knob } from 'primereact/knob';
@@ -38,7 +39,7 @@ const DeviceItem = React.memo(({
                 {device.status === 'active' && (
                     <InputSwitch 
                         checked={deviceState?.isOn || false}
-                        onChange={(e) => onSwitchChange(device, e.value, deviceState?.brightness, false)}
+                        onChange={(e) => onSwitchChange(device, e.value, device.category === 'Light' ? deviceState?.brightness : deviceState?.temperature)}
                     />
                 )}
                 {dialogCategory === 'Light' && (
@@ -50,7 +51,26 @@ const DeviceItem = React.memo(({
                                 onKnobChange(device, true, newValue, true);
                                 debouncedKnobChange(newValue);
                             }}
-                            valueTemplate={'{value}%'}
+                            valueTemplate="{value}%"
+                            size={70}
+                            strokeWidth={8}
+                            valueColor="#5E85ED"
+                            disabled={!deviceState?.isOn || device.status !== 'active'}
+                        />
+                    </div>
+                )}
+                {dialogCategory === 'Heating' && (
+                    <div className="flex items-center">
+                        <Knob 
+                            value={deviceState?.temperature || 20}
+                            onChange={(e) => {
+                                const newValue = e.value;
+                                onKnobChange(device, true, newValue, true);
+                                debouncedKnobChange(newValue);
+                            }}
+                            valueTemplate="{value}°C"
+                            min={15}
+                            max={30}
                             size={70}
                             strokeWidth={8}
                             valueColor="#5E85ED"
@@ -138,7 +158,8 @@ export default function PanelDashboard() {
                 if (!deviceStates[id]) {
                     initialStates[id] = {
                         isOn: false,
-                        brightness: 100
+                        brightness: 100,
+                        temperature: 24 
                     };
                 }
             });
@@ -151,32 +172,47 @@ export default function PanelDashboard() {
         }
     }, [devices, deviceStates]);
 
-    const updateDeviceState = useCallback(async (device, newState, newBrightness, isLocalUpdate = false) => {
+    const updateDeviceState = useCallback(async (device, newState, newValue, isLocalUpdate = false) => {
         setDeviceStates(prev => ({
-          ...prev,
-          [device.device_id]: {
-            isOn: newState !== undefined ? newState : prev[device.device_id]?.isOn || false,
-            brightness: newBrightness !== undefined ? newBrightness : prev[device.device_id]?.brightness || 100
-          }
+            ...prev,
+            [device.device_id]: {
+                ...prev[device.device_id],
+                isOn: newState !== undefined ? newState : prev[device.device_id]?.isOn || false,
+                brightness: device.category === 'Light' ? 
+                    (newValue !== undefined ? newValue : prev[device.device_id]?.brightness || 100) : 
+                    prev[device.device_id]?.brightness || 100,
+                temperature: device.category === 'Heating' ? 
+                    (newValue !== undefined ? newValue : prev[device.device_id]?.temperature || 20) : 
+                    prev[device.device_id]?.temperature || 20
+            }
         }));
       
         if (isLocalUpdate || device.status !== 'active') return;
         
         try {
-          const payload = {
-            homeId: device.home_id,
-            device: {
-              deviceName: device.name,
-              category: device.category,
-              label: device.label,
-              status: device.status
-            },
-            actions: {
-              state: newState ? 1 : 0,
-              brightness: newBrightness !== undefined ? newBrightness : 0
+            const actionValue = device.category === 'Heating' ? 
+                (newValue !== undefined ? newValue : deviceStates[device.device_id]?.temperature || 20) :
+                (newValue !== undefined ? newValue : deviceStates[device.device_id]?.brightness || 100);
+    
+            const payload = {
+                homeId: device.home_id,
+                device: {
+                    deviceName: device.name,
+                    category: device.category,
+                    label: device.label,
+                    status: device.status
+                },
+                actions: {
+                    state: newState ? 1 : 0
+                }
+            };
+    
+            if (device.category === 'Heating') {
+                payload.actions.temperature = actionValue;
+            } else if (device.category === 'Light') {
+                payload.actions.brightness = actionValue;
             }
-          };
-
+    
             const response = await fetch('http://localhost:4000/api/home/do', {
                 method: 'POST',
                 headers: {
@@ -185,14 +221,14 @@ export default function PanelDashboard() {
                 },
                 body: JSON.stringify(payload)
             });
-
+    
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
         } catch (error) {
             console.error('Error updating device state:', error);
         }
-    }, []);
+    }, [deviceStates]);
 
     useEffect(() => {
         let recognition = null;
@@ -464,6 +500,15 @@ export default function PanelDashboard() {
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
                             <h2 className="text-2xl mb-4">Settings</h2>
                             <SettingsTab/>
+                        </div>
+                    </div>
+                );
+            case 'account':
+                return (
+                    <div className="flex-1 px-5 py-5">
+                        <div className="bg-[#151513] rounded-xl p-6 h-full">
+                            <h2 className="text-2xl mb-4">Account</h2>
+                            <AccountTab/>
                         </div>
                     </div>
                 );

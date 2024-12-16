@@ -283,8 +283,6 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                 foundDevice.hidden="true";
                 let selectedRoomId;
         
-                // tutaj musi być switch który będzie uzupelnial id pokoju
-        
                 const newDevice = {
                     name: name,
                     status: status,
@@ -463,7 +461,7 @@ const protocols = [
   const groupDevicesByRoom = () => {
     const devicesByRoom = {};
     devices.forEach(device => {
-      const roomIndex = device.room_id - 1;
+      const roomIndex = device.room_id;
       if (roomIndex >= 0 && roomIndex < rooms.length) {
         const room = rooms[roomIndex];
         if (!devicesByRoom[room]) {
@@ -528,24 +526,51 @@ const protocols = [
                     </p>
                   </div>
                   <div className="flex gap-3 items-center relative">
-                    {device.status === 'active' && (
+                    {device.status === 'active' && device.category === 'Light' && (
+                      <>
+                        <InputSwitch
+                          checked={deviceStates[device.device_id]?.isOn || false}
+                          onChange={(e) => onSwitchChange(device, e.value, deviceStates[device.device_id]?.brightness)}
+                        />
+                        <div className="flex items-center">
+                          <Knob
+                            value={deviceStates[device.device_id]?.brightness || 100}
+                            onChange={(e) => onKnobChange(device, deviceStates[device.device_id]?.isOn, e.value)}
+                            valueTemplate="{value}%"
+                            size={60}
+                            strokeWidth={8}
+                            valueColor="#5E85ED"
+                            disabled={!deviceStates[device.device_id]?.isOn || device.status !== 'active'}
+                          />
+                        </div>
+                      </>
+                    )}
+                    {device.status === 'active' && (device.category === 'Gate' || device.category === 'Lock') && (
                       <InputSwitch
                         checked={deviceStates[device.device_id]?.isOn || false}
-                        onChange={(e) => onSwitchChange(device, e.value, deviceStates[device.device_id]?.brightness, false)}
+                        onChange={(e) => onSwitchChange(device, e.value)}
                       />
                     )}
-                    {device.category === 'Light' && (
-                      <div className="flex items-center">
-                        <Knob
-                          value={deviceStates[device.device_id]?.brightness || 100}
-                          onChange={(e) => onKnobChange(device, deviceStates[device.device_id]?.isOn, e.value, false)}
-                          valueTemplate="{value}%"
-                          size={60}
-                          strokeWidth={8}
-                          valueColor="#5E85ED"
-                          disabled={!deviceStates[device.device_id]?.isOn || device.status !== 'active'}
+                    {device.status === 'active' && device.category === 'Heating' && (
+                      <>
+                        <InputSwitch
+                          checked={deviceStates[device.device_id]?.isOn || false}
+                          onChange={(e) => onSwitchChange(device, e.value, deviceStates[device.device_id]?.temperature)}
                         />
-                      </div>
+                        <div className="flex items-center">
+                          <Knob
+                            value={deviceStates[device.device_id]?.temperature || 20}
+                            onChange={(e) => onKnobChange(device, deviceStates[device.device_id]?.isOn, e.value)}
+                            valueTemplate="{value}°C"
+                            min={15}
+                            max={30}
+                            size={60}
+                            strokeWidth={8}
+                            valueColor="#5E85ED"
+                            disabled={!deviceStates[device.device_id]?.isOn || device.status !== 'active'}
+                          />
+                        </div>
+                      </>
                     )}
                     <Button
                       icon="pi pi-ellipsis-v"
