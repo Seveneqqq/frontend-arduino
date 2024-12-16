@@ -36,6 +36,48 @@ export default function AccountTab() {
     }
   };
 
+  const handleLeaveHome = async (home_id) => {
+    try {
+      const response = await fetch('http://localhost:4000/api/account/leave-home', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+        },
+        body: JSON.stringify({
+          home_id: home_id,
+          user_id: sessionStorage.getItem('UserId')
+        })
+      });
+  
+      if (response.ok) {
+        toast.current.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Successfully left the home',
+          life: 3000
+        });
+        fetchAccountInfo();
+      } else {
+        const errorData = await response.json();
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: errorData.error || 'Failed to leave home',
+          life: 3000
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to leave home',
+        life: 3000
+      });
+    }
+  };
+
   const handlePasswordChange = async () => {
     if (newPassword !== repeatPassword) {
       toast.current.show({
@@ -220,6 +262,7 @@ export default function AccountTab() {
                       icon="pi pi-sign-out"
                       className="p-button-danger p-button-text p-button-sm"
                       tooltip="Leave Home"
+                      onClick={() => handleLeaveHome(home.home_id)}
                     />
                   )}
                 </div>
