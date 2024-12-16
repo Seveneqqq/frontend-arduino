@@ -112,8 +112,10 @@ export default function AutomationTab({ devices, deviceStates }) {
                 life: 3000
             });
         }
+        
     };
-    
+
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
