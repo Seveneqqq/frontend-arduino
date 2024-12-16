@@ -187,13 +187,12 @@ export default function AccountTab() {
         }}
         maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
       >
-        <div className='flex flex-col gap-6 w-full items-center'>
+        <div className='flex flex-col gap-10 w-full items-center mt-5'>
           <FloatLabel>
             <Password 
               inputId="currentPassword" 
               value={currentPassword} 
-              onChange={(e) => setCurrentPassword(e.target.value)} 
-              toggleMask 
+              onChange={(e) => setCurrentPassword(e.target.value)}  
               feedback={false}
               className="w-full"
             />
@@ -204,7 +203,6 @@ export default function AccountTab() {
               inputId="newPassword" 
               value={newPassword} 
               onChange={(e) => setNewPassword(e.target.value)} 
-              toggleMask
               className="w-full"
             />
             <label htmlFor="newPassword">New password</label>
@@ -214,7 +212,6 @@ export default function AccountTab() {
               inputId="repeatPassword" 
               value={repeatPassword} 
               onChange={(e) => setRepeatPassword(e.target.value)} 
-              toggleMask 
               feedback={false}
               className="w-full"
             />
