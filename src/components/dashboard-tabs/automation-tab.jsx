@@ -17,6 +17,7 @@ export default function AutomationTab({ devices, deviceStates }) {
     const [scenarios, setScenarios] = useState([]);
     const [scenariosStates, setScenariosStates] = useState({});
     const [selectedDevices, setSelectedDevices] = useState([]);
+    const [previousDeviceStates, setPreviousDeviceStates] = useState({});
     const [formData, setFormData] = useState({
         name: '',
         scenarioTurnOn: '',
@@ -55,24 +56,44 @@ export default function AutomationTab({ devices, deviceStates }) {
         }
     };
 
-    const handleScenarioToggle = async (scenarioId, newState) => {
+
+    const handleScenarioToggle = async (scenarioId, newState, scenarioDevices) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/automation/${scenarioId}/toggle`, {
+            const activeDevices = scenarioDevices
+                .filter(device => device.status === 'active')
+                .map(device => {
+                    if (!newState) {
+                        return {
+                            ...device,
+                            actions: {
+                                state: deviceStates[device.device_id]?.isOn ? 1 : 0,
+                                brightness: deviceStates[device.device_id]?.brightness || 100
+                            }
+                        };
+                    }
+                    return device;
+                });
+    
+            const response = await fetch(`http://localhost:4000/api/automation/toggle`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
                 },
-                body: JSON.stringify({ state: newState })
+                body: JSON.stringify({
+                    scenario_id: scenarioId,
+                    state: newState,
+                    devices: activeDevices
+                })
             });
-
+    
             if (response.ok) {
                 setScenariosStates(prev => {
                     const newStates = { ...prev, [scenarioId]: newState };
                     localStorage.setItem('scenarioStates', JSON.stringify(newStates));
                     return newStates;
                 });
-
+    
                 toast.current.show({
                     severity: 'success',
                     summary: 'Success',
@@ -92,7 +113,7 @@ export default function AutomationTab({ devices, deviceStates }) {
             });
         }
     };
-
+    
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
@@ -404,8 +425,8 @@ export default function AutomationTab({ devices, deviceStates }) {
                         </p>
                     </div>
                     <InputSwitch
-                        checked={scenariosStates[scenario._id] || false}
-                        onChange={(e) => handleScenarioToggle(scenario._id, e.value)}
+                        checked={scenariosStates[scenario._id] ?? false}
+                        onChange={(e) => handleScenarioToggle(scenario._id, e.value, scenario.devices)}
                         className="ml-4"
                     />
                 </div>
@@ -414,13 +435,13 @@ export default function AutomationTab({ devices, deviceStates }) {
                     <div className="space-y-2">
                         <p className="text-sm font-medium text-gray-400">Voice Commands</p>
                         <div className="space-y-2 bg-[#151513] rounded-lg p-3">
-                            <div className="flex items-center text-sm">
-                                <span className="text-green-500 w-8">ON:</span>
-                                <span className="text-gray-300">"{scenario.scenarioTurnOn}"</span>
+                            <div className="flex items-center text-sm gap-4">
+                                <span className="text-green-500 w-8">ON: </span>
+                                <span className="text-gray-400">{scenario.scenarioTurnOn}</span>
                             </div>
-                            <div className="flex items-center text-sm">
-                                <span className="text-red-500 w-8">OFF:</span>
-                                <span className="text-gray-300">"{scenario.scenarioTurnOff}"</span>
+                            <div className="flex items-center text-sm gap-4">
+                                <span className="text-red-500 w-8">OFF: </span>
+                                <span className="text-gray-400">{scenario.scenarioTurnOff}</span>
                             </div>
                         </div>
                     </div>
