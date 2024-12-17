@@ -35,8 +35,12 @@ export default function AutomationTab({ devices, deviceStates }) {
     }, []);
 
     const fetchScenarios = async () => {
+
         try {
-            const response = await fetch('http://localhost:4000/api/mongodb', {
+
+            const home_id = sessionStorage.getItem('selected-home-id');
+
+            const response = await fetch(`http://localhost:4000/api/mongodb/scenarios/${home_id}`, {
                 headers: {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
                 }
@@ -112,9 +116,8 @@ export default function AutomationTab({ devices, deviceStates }) {
                 life: 3000
             });
         }
-        
-    };
 
+    };
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -163,16 +166,67 @@ export default function AutomationTab({ devices, deviceStates }) {
         }
     };
     
-    const handleSave = () => {
-        console.log("Data to be sent to API:", formData);
-        setVisible(false);
-        setFormData({
-            name: '',
-            scenarioTurnOn: '',
-            scenarioTurnOff: '',
-            devices: []
-        });
+    const handleSave = async () => {
+        
+        const homeId = sessionStorage.getItem('selected-home-id');
+
+        if (!homeId) {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Błąd',
+                detail: 'Brak wybranego home_id w sessionStorage',
+                life: 3000
+            });
+            return;
+        }
+
+        const dataToSend = {
+            ...formData,
+            home_id: homeId
+        };
+    
+        try {
+            const response = await fetch('http://localhost:4000/api/mongodb/add-scenario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                },
+                body: JSON.stringify(dataToSend)
+            });
+    
+            if (response.ok) {
+                const savedScenario = await response.json();
+                setScenarios(prevScenarios => [...prevScenarios, savedScenario]);
+                toast.current.show({
+                    severity: 'success',
+                    summary: 'Sukces',
+                    detail: 'Scenariusz został dodany pomyślnie',
+                    life: 3000
+                });
+                setVisible(false);
+                setFormData({
+                    name: '',
+                    scenarioTurnOn: '',
+                    scenarioTurnOff: '',
+                    devices: []
+                });
+            } else {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Nie udało się dodać scenariusza');
+            }
+        } catch (error) {
+            console.error('Błąd podczas dodawania scenariusza:', error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Błąd',
+                detail: error.message,
+                life: 3000
+            });
+        }
     };
+    
+
 
     const renderDeviceActions = () => {
         if (!newDevice.device) return null;
