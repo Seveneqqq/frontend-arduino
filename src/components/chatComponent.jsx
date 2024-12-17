@@ -71,7 +71,7 @@ const ChatComponent = () => {
     };
 
     return (
-        <div className="xl:h-[340px] h-[500px] flex flex-col rounded-xl overflow-hidden">
+        <div className="xl:h-[342px] h-[500px] flex flex-col rounded-xl overflow-hidden">
             <div className="px-4 py-1 border-b border-gray-700 flex-shrink-0">
                 <h2 className="text-lg font-semibold">Smart Home Assistant</h2>
             </div>

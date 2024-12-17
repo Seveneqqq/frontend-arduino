@@ -513,7 +513,7 @@ export default function PanelDashboard() {
                                     <div className="flex items-center gap-2">
                                         <i className="pi pi-exclamation-circle"></i>
                                         {devices.some(device => device.name === 'temperature and humidity sensor') ? (
-                                            <h2 className="text-xl font-semibold">No data</h2>
+                                            <h2 className="text-xl font-semibold">Sensor not connected</h2>
                                         ) : (
                                             <h2 className="text-xl font-semibold">No sensor added</h2>
                                         )}
@@ -544,7 +544,7 @@ export default function PanelDashboard() {
                                     <div className="flex items-center gap-2">
                                         <i className="pi pi-exclamation-circle"></i>
                                         {devices.some(device => device.name === 'temperature and humidity sensor') ? (
-                                            <h2 className="text-xl font-semibold">No data</h2>
+                                            <h2 className="text-xl font-semibold">Sensor not connected</h2>
                                         ) : (
                                             <h2 className="text-xl font-semibold">No sensor added</h2>
                                         )}
