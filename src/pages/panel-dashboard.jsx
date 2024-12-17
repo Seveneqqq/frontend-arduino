@@ -9,6 +9,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Knob } from 'primereact/knob';
 import _ from 'lodash';
+import { io } from 'socket.io-client';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -149,6 +150,34 @@ export default function PanelDashboard() {
     const [dialogCategory, setDialogCategory] = useState();
     const [deviceStates, setDeviceStates] = useState({});
     const [selectedDevice, setSelectedDevice] = useState(null);
+    const [sensorValue, setSensorValue] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
+
+    useEffect(() => {
+            const socket = io('http://localhost:4000', {
+                transports: ['websocket']
+            });
+    
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                setIsConnected(true);
+                startSensorReading();
+            });
+    
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+                setIsConnected(false);
+            });
+    
+            socket.on('sensorData', (data) => { 
+                setSensorValue(data);
+            });
+    
+            return () => {
+                socket.disconnect();
+            };
+
+        }, []);
 
     useEffect(() => {
         if (devices.length > 0) {
@@ -171,6 +200,16 @@ export default function PanelDashboard() {
             }
         }
     }, [devices, deviceStates]);
+
+    const startSensorReading = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/api/home/app-start');
+            const data = await response.json();
+            console.log('Sensor reading started:', data);
+        } catch (error) {
+            console.error('Error starting sensors:', error);
+        }
+    };
 
     const updateDeviceState = useCallback(async (device, newState, newValue, isLocalUpdate = false) => {
         setDeviceStates(prev => ({
@@ -419,6 +458,8 @@ export default function PanelDashboard() {
         // usuwanie urzadzen
       };
 
+      
+
 
     const renderContent = () => {
         switch(activeTab) {
@@ -449,9 +490,69 @@ export default function PanelDashboard() {
                             ))}
                         </div>
 
+                        
+                        
+                    
                         <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-none lg:grid-rows-5 gap-4 bg-[#151513] rounded-xl px-5 py-5 flex-1">
-                            <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px]">Czujnik temperatury wewnatrz</div>
-                            <div className="bg-[#CB50CB] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-2">Czujnik wilgotnosci</div>
+                            <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px]">
+                                {sensorValue !== null && devices.some(device => 
+                                    device.status === 'active' && 
+                                    device.name === 'temperature and humidity sensor'
+                                ) ? (
+                                    <div className="flex items-center gap-5">
+                                       <svg xmlns="http://www.w3.org/2000/svg" width="32px"  viewBox="0 -960 960 960"  fill="#e8eaed"><path d="M520-520v-80h200v80H520Zm0-160v-80h320v80H520ZM320-120q-83 0-141.5-58.5T120-320q0-48 21-89.5t59-70.5v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q38 29 59 70.5t21 89.5q0 83-58.5 141.5T320-120ZM200-320h240q0-29-12.5-54T392-416l-32-24v-280q0-17-11.5-28.5T320-760q-17 0-28.5 11.5T280-720v280l-32 24q-23 17-35.5 42T200-320Z"/></svg>
+                                        <div>
+                                            <span className="text-md text-white/80 font-semibold">Interior temperature :</span>
+                                            <div className="flex mt-1 items-center gap-1">
+                                                <span className="text-2xl font-semibold font-sans">
+                                                    {sensorValue.temperature || '-'}
+                                                </span>
+                                                <span className="ml-1 text-lg">°C</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <i className="pi pi-exclamation-circle"></i>
+                                        {devices.some(device => device.name === 'temperature and humidity sensor') ? (
+                                            <h2 className="text-xl font-semibold">No data</h2>
+                                        ) : (
+                                            <h2 className="text-xl font-semibold">No sensor added</h2>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="bg-[#CB50CB] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-2">
+                                {sensorValue !== null && devices.some(device => 
+                                    device.status === 'active' && 
+                                    device.name === 'temperature and humidity sensor'
+                                )? (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-5">
+                                            <i className="pi pi-cloud text-2xl"></i>
+                                            <div>
+                                                <span className="text-md text-white/80 font-semibold">Humidity level :</span>
+                                                <div className="flex mt-1 items-center gap-1">
+                                                    <span className="text-2xl font-semibold">
+                                                        {sensorValue.humidity || '-'}
+                                                    </span>
+                                                    <span className="ml-1 text-lg">%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <i className="pi pi-exclamation-circle"></i>
+                                        {devices.some(device => device.name === 'temperature and humidity sensor') ? (
+                                            <h2 className="text-xl font-semibold">No data</h2>
+                                        ) : (
+                                            <h2 className="text-xl font-semibold">No sensor added</h2>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                             <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Kamera z mozliwoscia przewijania na inne ?</div>
                             <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1">Taski do zrobienia +dodac w uzytkowniku imie/pseudonim aby sie wyswietlal</div>
                             <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:row-start-3">Jakies losowe urzadzenie w ktorym beda rozne opcje w zaleznosci od urzadzenia</div>
