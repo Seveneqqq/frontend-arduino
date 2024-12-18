@@ -503,8 +503,8 @@ const protocols = [
       <div className="flex xl:flex-row flex-col xl:gap-0 gap-4 justify-between items-center mb-4">
         <h2 className="text-2xl">Devices</h2>
         <div className='flex gap-4'>
-          <Button label="Arduino devices" icon="pi pi-plus" className="p-button-success" onClick={() => findDevices()}/>
-          <Button label="Other devices" icon="pi pi-plus" className="p-button-success" onClick={() => AddManually()} />
+          <Button label="Arduino devices" icon="pi pi-plus" onClick={() => findDevices()}/>
+          <Button label="Other devices" icon="pi pi-plus" onClick={() => AddManually()} />
         </div>
       </div>
       <div className={`grid ${columnClasses[roomsWithDevices.length - 1]} gap-4`}>

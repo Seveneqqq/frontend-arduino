@@ -16,10 +16,10 @@ import Tailwind from 'primereact/passthrough/tailwind';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <PrimeReactProvider value={{ unstyled: false , pt: Tailwind}}>
+    <PrimeReactProvider value={{ unstyled: false }}> 
     <App />
     </PrimeReactProvider>
   </React.StrictMode>
 );
 
-//value={{  unstyled: false , pt: Tailwind }}
+//value={{  unstyled: false , pt: Tailwind }}//pt: Tailwind
