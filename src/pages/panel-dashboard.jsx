@@ -39,7 +39,7 @@ const DeviceItem = React.memo(({
                 </p>
             </div>
             <div className="flex gap-3 items-center">
-                {device.status === 'active' && (
+                {device.status === 'active' && device.category !== 'Sensor' && (
                     <InputSwitch 
                         checked={deviceState?.isOn || false}
                         onChange={(e) => onSwitchChange(device, e.value, device.category === 'Light' ? deviceState?.brightness : deviceState?.temperature)}

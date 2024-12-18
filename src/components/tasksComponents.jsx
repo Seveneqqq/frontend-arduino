@@ -155,11 +155,10 @@ const TasksComponent = () => {
             <Toast ref={toast} />
             
             <div className="flex justify-between items-center mb-2">
-                <h2 className="text-2xl">Tasks</h2>
+                <h2 className="text-lg font-semibold">Tasks</h2>
                 <Button 
-                    label="Add task"
+                    label="New"
                     icon="pi pi-plus"
-                    className="bg-blue-500"
                     onClick={() => setVisible(true)}
                 />
             </div>
@@ -219,6 +218,7 @@ const TasksComponent = () => {
                 header="Add New Task"
                 visible={visible}
                 style={{ width: '90%', maxWidth: '500px' }}
+                maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
                 modal
                 onHide={() => setVisible(false)}
             >
