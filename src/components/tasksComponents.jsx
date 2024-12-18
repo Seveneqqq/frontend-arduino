@@ -163,7 +163,7 @@ const TasksComponent = () => {
                 />
             </div>
 
-            <div className="flex-1 relative flex items-center">
+            <div className="flex-1 relative flex items-center border-t border-gray-700">
                 {tasks.length > 0 ? (
                     <>
                         <Button 
@@ -175,7 +175,7 @@ const TasksComponent = () => {
 
                         <div className="w-full px-16">
                             {tasks[currentTaskIndex] && (
-                                <div className="bg-[#1E1E1C] rounded-xl p-4 w-full">
+                                <div className=" rounded-xl p-4 w-full">
                                     <div className="flex justify-between items-center mb-2">
                                         <h3 className="text-lg">{tasks[currentTaskIndex].topic}</h3>
                                         <p className="text-sm text-gray-400">{tasks[currentTaskIndex].user_email}</p>
