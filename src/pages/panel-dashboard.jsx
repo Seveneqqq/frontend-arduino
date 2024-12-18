@@ -10,6 +10,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Knob } from 'primereact/knob';
 import ChatComponent from '../components/chatComponent';
+import ScenarioComponent from '../components/scenarioComponent';
 import _ from 'lodash';
 import { io } from 'socket.io-client';
 
@@ -558,7 +559,7 @@ export default function PanelDashboard() {
                             <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3"><ChatComponent /></div>
                             <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
-                            <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px] lg:col-start-4 lg:row-start-5">Scenariusz</div>
+                            <div className="bg-[#B68CFA] rounded-xl px-4 py-3 min-h-[100px] lg:col-start-4 lg:row-start-5"><ScenarioComponent devices={devices} deviceStates={deviceStates}/></div>
                         </div>
                     </div>
                 );
