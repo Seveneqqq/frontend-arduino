@@ -13,6 +13,7 @@ import ChatComponent from '../components/chatComponent';
 import ScenarioComponent from '../components/scenarioComponent';
 import _ from 'lodash';
 import { io } from 'socket.io-client';
+import SensorAlarmComponent from '../components/sensorAlarmComponent';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -155,6 +156,8 @@ export default function PanelDashboard() {
     const [selectedDevice, setSelectedDevice] = useState(null);
     const [sensorValue, setSensorValue] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
+    const [temperatureRange, setTemperatureRange] = useState([20,60]);
+    const [humidityRange, setHumidityRange] = useState([40,70]);
 
     useEffect(() => {
             const socket = io('http://localhost:4000', {
@@ -555,7 +558,7 @@ export default function PanelDashboard() {
                             </div>
                             <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Kamera z mozliwoscia przewijania na inne ?</div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1"><TasksComponent /></div>
-                            <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:row-start-3">Jakies losowe urzadzenie w ktorym beda rozne opcje w zaleznosci od urzadzenia</div>
+                            <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:row-start-3"><SensorAlarmComponent temperatureRange={temperatureRange} humidityRange={humidityRange} setTemperatureRange={setTemperatureRange} setHumidityRange={setHumidityRange} /></div>
                             <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3"><ChatComponent /></div>
                             <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
