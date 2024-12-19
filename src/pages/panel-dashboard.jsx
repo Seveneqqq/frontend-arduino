@@ -156,8 +156,8 @@ export default function PanelDashboard() {
     const [selectedDevice, setSelectedDevice] = useState(null);
     const [sensorValue, setSensorValue] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
-    const [temperatureRange, setTemperatureRange] = useState([20,60]);
-    const [humidityRange, setHumidityRange] = useState([40,70]);
+    const [temperatureRange, setTemperatureRange] = useState([]);
+    const [humidityRange, setHumidityRange] = useState([]);
 
     useEffect(() => {
             const socket = io('http://localhost:4000', {
@@ -206,6 +206,48 @@ export default function PanelDashboard() {
             }
         }
     }, [devices, deviceStates]);
+
+    useEffect(() => {
+        fetchAlarmSettings();
+    }, []); 
+
+    const fetchAlarmSettings = async () => {
+        try {
+            console.log('Fetching alarm settings for home:', sessionStorage.getItem('selected-home-id'));
+            
+            const response = await fetch(`http://localhost:4000/api/mongodb/alarms/${sessionStorage.getItem('selected-home-id')}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to fetch alarm settings');
+            }
+    
+            const data = await response.json();
+            console.log('Received alarm data:', data);
+            
+            if (data && Array.isArray(data.temperatureRange) && Array.isArray(data.humidityRange)) {
+                console.log('Setting new ranges:', {
+                    temperature: data.temperatureRange,
+                    humidity: data.humidityRange
+                });
+                setTemperatureRange(data.temperatureRange);
+                setHumidityRange(data.humidityRange);
+            } else {
+                console.error('Invalid data format received:', data);
+                setTemperatureRange([19, 24]);
+                setHumidityRange([40, 60]);
+            }
+        } catch (error) {
+            console.error('Error fetching alarm settings:', error);
+            setTemperatureRange([19, 24]);
+            setHumidityRange([40, 60]);
+        }
+    };
 
     const startSensorReading = async () => {
         try {
