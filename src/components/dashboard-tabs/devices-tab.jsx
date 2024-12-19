@@ -212,11 +212,11 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                 if( response.ok){
         
                     let data = await response.json();
-        
-                    if(data.connection == "true"){
+
+                    if(data.connection){
                         
                         setNewDevices(data.devices);
-        
+                        
                         setTimeout(() => {
                             connected();
                         }, 200);
@@ -624,8 +624,6 @@ const protocols = [
                             style={{width: '1000px'}}
                             visible={panelVisible1} 
                             onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}
-                            contentStyle={{ backgroundColor: '#151513' }}
-                            headerStyle={{ backgroundColor: '#151513' }}
                             maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
                         >
                 

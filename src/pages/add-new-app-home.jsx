@@ -348,7 +348,7 @@ export default function AddNewAppHome(){
 
             let data = await response.json();
 
-            if(data.connection == "true"){
+            if(data.connection == true){
                 
                 setDevices(data.devices);
 
