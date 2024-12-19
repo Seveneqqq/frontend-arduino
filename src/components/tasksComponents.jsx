@@ -155,16 +155,15 @@ const TasksComponent = () => {
             <Toast ref={toast} />
             
             <div className="flex justify-between items-center mb-2">
-                <h2 className="text-2xl">Tasks</h2>
+                <h2 className="text-lg font-semibold">Tasks</h2>
                 <Button 
-                    label="Add task"
+                    label="New"
                     icon="pi pi-plus"
-                    className="bg-blue-500"
                     onClick={() => setVisible(true)}
                 />
             </div>
 
-            <div className="flex-1 relative flex items-center">
+            <div className="flex-1 relative flex items-center border-t border-gray-700">
                 {tasks.length > 0 ? (
                     <>
                         <Button 
@@ -176,7 +175,7 @@ const TasksComponent = () => {
 
                         <div className="w-full px-16">
                             {tasks[currentTaskIndex] && (
-                                <div className="bg-[#1E1E1C] rounded-xl p-4 w-full">
+                                <div className=" rounded-xl p-4 w-full">
                                     <div className="flex justify-between items-center mb-2">
                                         <h3 className="text-lg">{tasks[currentTaskIndex].topic}</h3>
                                         <p className="text-sm text-gray-400">{tasks[currentTaskIndex].user_email}</p>
@@ -219,6 +218,7 @@ const TasksComponent = () => {
                 header="Add New Task"
                 visible={visible}
                 style={{ width: '90%', maxWidth: '500px' }}
+                maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
                 modal
                 onHide={() => setVisible(false)}
             >

@@ -10,8 +10,10 @@ import { Dialog } from 'primereact/dialog';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Knob } from 'primereact/knob';
 import ChatComponent from '../components/chatComponent';
+import ScenarioComponent from '../components/scenarioComponent';
 import _ from 'lodash';
 import { io } from 'socket.io-client';
+import SensorAlarmComponent from '../components/sensorAlarmComponent';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -39,7 +41,7 @@ const DeviceItem = React.memo(({
                 </p>
             </div>
             <div className="flex gap-3 items-center">
-                {device.status === 'active' && (
+                {device.status === 'active' && device.category !== 'Sensor' && (
                     <InputSwitch 
                         checked={deviceState?.isOn || false}
                         onChange={(e) => onSwitchChange(device, e.value, device.category === 'Light' ? deviceState?.brightness : deviceState?.temperature)}
@@ -154,6 +156,8 @@ export default function PanelDashboard() {
     const [selectedDevice, setSelectedDevice] = useState(null);
     const [sensorValue, setSensorValue] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
+    const [temperatureRange, setTemperatureRange] = useState([]);
+    const [humidityRange, setHumidityRange] = useState([]);
 
     useEffect(() => {
             const socket = io('http://localhost:4000', {
@@ -202,6 +206,48 @@ export default function PanelDashboard() {
             }
         }
     }, [devices, deviceStates]);
+
+    useEffect(() => {
+        fetchAlarmSettings();
+    }, []); 
+
+    const fetchAlarmSettings = async () => {
+        try {
+            console.log('Fetching alarm settings for home:', sessionStorage.getItem('selected-home-id'));
+            
+            const response = await fetch(`http://localhost:4000/api/mongodb/alarms/${sessionStorage.getItem('selected-home-id')}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to fetch alarm settings');
+            }
+    
+            const data = await response.json();
+            console.log('Received alarm data:', data);
+            
+            if (data && Array.isArray(data.temperatureRange) && Array.isArray(data.humidityRange)) {
+                console.log('Setting new ranges:', {
+                    temperature: data.temperatureRange,
+                    humidity: data.humidityRange
+                });
+                setTemperatureRange(data.temperatureRange);
+                setHumidityRange(data.humidityRange);
+            } else {
+                console.error('Invalid data format received:', data);
+                setTemperatureRange([19, 24]);
+                setHumidityRange([40, 60]);
+            }
+        } catch (error) {
+            console.error('Error fetching alarm settings:', error);
+            setTemperatureRange([19, 24]);
+            setHumidityRange([40, 60]);
+        }
+    };
 
     const startSensorReading = async () => {
         try {
@@ -554,11 +600,11 @@ export default function PanelDashboard() {
                             </div>
                             <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Kamera z mozliwoscia przewijania na inne ?</div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1"><TasksComponent /></div>
-                            <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:row-start-3">Jakies losowe urzadzenie w ktorym beda rozne opcje w zaleznosci od urzadzenia</div>
+                            <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:row-start-3"><SensorAlarmComponent temperatureRange={temperatureRange} humidityRange={humidityRange} setTemperatureRange={setTemperatureRange} setHumidityRange={setHumidityRange} /></div>
                             <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3"><ChatComponent /></div>
                             <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
-                            <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px] lg:col-start-4 lg:row-start-5">Scenariusz</div>
+                            <div className="bg-[#B68CFA] rounded-xl px-4 py-3 min-h-[100px] lg:col-start-4 lg:row-start-5"><ScenarioComponent devices={devices} deviceStates={deviceStates}/></div>
                         </div>
                     </div>
                 );

@@ -368,7 +368,7 @@ export default function AutomationTab({ devices, deviceStates }) {
                     <Button
                         label="Add new"
                         icon="pi pi-plus"
-                        className="p-button-success md:w-[unset] w-[100%]"
+                        className="md:w-[unset] w-[100%]"
                         onClick={() => setVisible(true)}
                     />
                 </div>
@@ -505,18 +505,27 @@ export default function AutomationTab({ devices, deviceStates }) {
                     <div className="space-y-2">
                         <p className="text-sm font-medium text-gray-400">Devices</p>
                         <div className="space-y-2">
-                            {scenario.devices.map((device, index) => (
+                        {scenario.devices
+                            .sort((a, b) => b.actions.state - a.actions.state) // sortowanie: 1 na początku, 0 na końcu
+                            .map((device, index) => (
                                 <div 
                                     key={index} 
                                     className="flex items-center justify-between bg-[#151513] rounded-lg p-3 text-sm hover:bg-[#1A1A18] transition-colors"
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-3">
                                         <i className={`pi ${getCategoryIcon(device.category)} text-gray-400`}></i>
+                                        {device.actions.state === 1 ? (
+                                            <div className={`w-2 h-2 rounded-full bg-green-500`}></div>
+                                        ):(
+                                            <div className={`w-2 h-2 rounded-full bg-red-500`}></div>
+                                        )}
                                         <span className="text-gray-200">{device.label}</span>
                                     </div>
-                                    <span className="text-xs px-2 py-1 rounded-full bg-[#2A2A28] text-gray-400">
-                                        {device.category}
-                                    </span>
+                                    <div className='flex flex-row gap-4 items-center'>
+                                        <span className="text-xs px-2 py-1 rounded-full bg-[#2A2A28] text-gray-400">
+                                            {device.category}
+                                        </span>
+                                    </div>
                                 </div>
                             ))}
                         </div>

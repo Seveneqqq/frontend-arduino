@@ -266,6 +266,22 @@ export default function AddNewAppHome(){
             const dataAddDevices = await responseAddDevices.json();
             console.log(dataAddDevices);
 
+            const responseAddAlarm = await fetch(`http://localhost:4000/api/mongodb/add-alarm`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                },
+                body: JSON.stringify({
+                    "home_id": homeId,
+                    "temperatureRange": [19, 24],
+                    "humidityRange": [40, 60]
+                })
+            });
+    
+            const dataAddAlarm = await responseAddAlarm.json();
+            console.log('Alarm settings created:', dataAddAlarm);
+
             if( dataNewHome.success && dataAddDevices.success){
 
                 sessionStorage.setItem('selected-home-id',homeId);
@@ -348,7 +364,7 @@ export default function AddNewAppHome(){
 
             let data = await response.json();
 
-            if(data.connection == "true"){
+            if(data.connection == true){
                 
                 setDevices(data.devices);
 
