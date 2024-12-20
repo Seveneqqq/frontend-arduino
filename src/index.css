@@ -78,3 +78,6 @@ code {
 .menu-bg-transparent .p-menuitem-link{
   background-color: transparent;
 }
+.p-datatable-emptymessage{
+  background-color: transparent;
+}

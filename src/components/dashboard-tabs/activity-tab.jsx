@@ -30,16 +30,221 @@ export default function ActivityTab() {
     );
 }
 
-function DevicesTab(){
+function DevicesTab() {
+    const [devices, setDevices] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        fetchDevicesHistory();
+    }, []);
+
+    const fetchDevicesHistory = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:4000/api/mongodb/devices/history/${sessionStorage.getItem('selected-home-id')}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                    }
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setDevices(data);
+            }
+        } catch (error) {
+            console.error('Error fetching devices history:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const actionBodyTemplate = (rowData) => (
+        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
+            ${rowData.action === 'added' ? 'bg-[#C7EE7C] text-[#080808]' : 'bg-red-100 text-red-800'}`}>
+            {rowData.action.toUpperCase()}
+        </span>
+    );
+
+    const statusBodyTemplate = (rowData) => (
+        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
+            ${rowData.device_status === 'active' ? 'bg-[#C7EE7C] text-[#080808]' : 'bg-red-100 text-red-800'}`}>
+            {rowData.device_status.toUpperCase()}
+        </span>
+    );
+
+    const dateBodyTemplate = (rowData) => (
+        <span className="text-sm">{new Date(rowData.timestamp).toLocaleString()}</span>
+    );
+
+    return (
+        <div className="card mt-4">
+            <DataTable 
+                value={devices}
+                showGridlines
+                paginator 
+                rows={20}
+                rowsPerPageOptions={[10, 20, 50]}
+                loading={loading}
+                sortField="timestamp" 
+                sortOrder={-1}
+                className="bg-[#151513]"
+                emptyMessage="No activity found"
+                style={{
+                    backgroundColor: '#151513',
+                    borderRadius: '0.5rem'
+                }}
+                paginatorClassName="bg-[#151513]"
+            >
+                <Column style={{ backgroundColor: '#151513' }} field="timestamp" header="Date & Time" sortable body={dateBodyTemplate} />
+                <Column style={{ backgroundColor: '#151513' }} field="device_name" header="Device" sortable />
+                <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
+                <Column style={{ backgroundColor: '#151513' }} field="device_status" header="Status" sortable body={statusBodyTemplate} />
+                <Column style={{ backgroundColor: '#151513' }} field="room" header="Room" sortable />
+                <Column style={{ backgroundColor: '#151513' }} field="category" header="Category" sortable />
+            </DataTable>
+        </div>
+    );
 }
 
-function ScenariosTab(){
+function ScenariosTab() {
+    const [scenarios, setScenarios] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        fetchScenariosHistory();
+    }, []);
+
+    const fetchScenariosHistory = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:4000/api/mongodb/scenarios/history/${sessionStorage.getItem('selected-home-id')}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                    }
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setScenarios(data);
+            }
+        } catch (error) {
+            console.error('Error fetching scenarios history:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const actionBodyTemplate = (rowData) => (
+        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
+            ${rowData.action === 'added' ? 'bg-[#C7EE7C] text-[#080808]' : 'bg-red-100 text-red-800'}`}>
+            {rowData.action.toUpperCase()}
+        </span>
+    );
+
+    const dateBodyTemplate = (rowData) => (
+        <span className="text-sm">{new Date(rowData.timestamp).toLocaleString()}</span>
+    );
+
+    return (
+        <div className="card mt-4">
+            <DataTable 
+                value={scenarios}
+                showGridlines
+                paginator 
+                rows={20}
+                rowsPerPageOptions={[10, 20, 50]}
+                loading={loading}
+                sortField="timestamp" 
+                sortOrder={-1}
+                className="bg-[#151513]"
+                emptyMessage="No activity found"
+                style={{
+                    backgroundColor: '#151513',
+                    borderRadius: '0.5rem'
+                }}
+                paginatorClassName="bg-[#151513]"
+            >
+                <Column style={{ backgroundColor: '#151513' }} field="timestamp" header="Date & Time" sortable body={dateBodyTemplate} />
+                <Column style={{ backgroundColor: '#151513' }} field="scenario_name" header="Scenario" sortable />
+                <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
+            </DataTable>
+        </div>
+    );
 }
 
-function UsersTab(){
+function UsersTab() {
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        fetchUsersHistory();
+    }, []);
+
+    const fetchUsersHistory = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:4000/api/mongodb/users/history/${sessionStorage.getItem('selected-home-id')}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                    }
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setUsers(data);
+            }
+        } catch (error) {
+            console.error('Error fetching users history:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const actionBodyTemplate = (rowData) => (
+        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
+            ${rowData.action === 'joined' ? 'bg-[#C7EE7C] text-[#080808]' : 'bg-red-100 text-red-800'}`}>
+            {rowData.action.toUpperCase()}
+        </span>
+    );
+
+    const dateBodyTemplate = (rowData) => (
+        <span className="text-sm">{new Date(rowData.timestamp).toLocaleString()}</span>
+    );
+
+    return (
+        <div className="card mt-4">
+            <DataTable 
+                value={users}
+                showGridlines
+                paginator 
+                rows={20}
+                rowsPerPageOptions={[10, 20, 50]}
+                loading={loading}
+                sortField="timestamp" 
+                sortOrder={-1}
+                className="bg-[#151513]"
+                emptyMessage="No activity found"
+                style={{
+                    backgroundColor: '#151513',
+                    borderRadius: '0.5rem'
+                }}
+                paginatorClassName="bg-[#151513]"
+            >
+                <Column style={{ backgroundColor: '#151513' }} field="timestamp" header="Date & Time" sortable body={dateBodyTemplate} />
+                <Column style={{ backgroundColor: '#151513' }} field="user_id" header="User ID" sortable />
+                <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
+            </DataTable>
+        </div>
+    );
 }
 
 function AlarmsTab() {
