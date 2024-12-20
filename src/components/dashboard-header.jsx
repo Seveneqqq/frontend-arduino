@@ -1,6 +1,7 @@
 import React from 'react';
 import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
+import { Badge } from 'primereact/badge';
 
 
 export function HeaderDashboard({ 
@@ -59,19 +60,38 @@ export function HeaderDashboard({
                     onClick={(e) => {op.current.toggle(e); activateNofitications();}}
                 >
                     <i className="pi pi-bell p-overlay-badge" style={{ fontSize: '1.5rem' }}>
-                        <OverlayPanel 
-                            ref={op} 
-                            className='bg-[#151513]'
-                            onHide={() => activateNofitications(true)}
-                        >
-                            <div className="flex flex-col">
-                                {notifications.length > 0 ? (
-                                    <span className='text-[1rem]'>Notification 1</span>
-                                ) : (
-                                    <span className='text-[1rem]'>Nothing to show</span>
-                                )}
-                            </div>
-                        </OverlayPanel>
+                    {notifications.length > 0 ? <Badge value={notifications.length} className='bg-[#CB50CB]'></Badge> : ""}
+                    <OverlayPanel 
+                        ref={op} 
+                        className='bg-[#151513] w-80'  
+                        onHide={() => activateNofitications(true)}
+                    >
+                        <div className="flex flex-col gap-2 max-h-96 overflow-y-auto">
+                            <h3 className="text-lg font-semibold mb-2">Notifications</h3>
+                            {notifications.length > 0 ? (
+                                notifications.map((notification) => (
+                                    <div 
+                                        key={notification.id} 
+                                        className={`p-3 rounded-lg ${notification.type === 'alarm' ? 'bg-red-900/30' : 'bg-[#1E1E1C]'}`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm text-gray-400">
+                                                {new Date(notification.timestamp).toLocaleString()}
+                                            </span>
+                                            {!notification.read && (
+                                                <span className="w-2 h-2 rounded-full bg-[#C7EE7C]"></span>
+                                            )}
+                                        </div>
+                                        <p className="text-sm mt-1">{notification.text}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-4 text-gray-400">
+                                    No notifications to show
+                                </div>
+                            )}
+                        </div>
+                    </OverlayPanel>
                     </i>
                 </li>
                 <li className={`${activeTab === 'account' ? 'text-[#080808] bg-[#C7EE7C]' : ''} rounded-[100%] w-[50px] h-[50px] flex items-center justify-center hover:cursor-pointer`} onClick={() => onTabChange('account')}>

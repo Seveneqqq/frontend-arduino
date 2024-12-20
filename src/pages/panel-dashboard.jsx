@@ -135,8 +135,10 @@ const DialogWithDeviceFamily = React.memo(({
 });
 
 export default function PanelDashboard() {
+
     const scrollRef = useRef(null);
     const op = useRef(null);
+    const socketRef = useRef(null);
 
     const [activeTab, setActiveTab] = useState('dashboard');
     const [notifications, setNotifications] = useState([]);
@@ -161,80 +163,156 @@ export default function PanelDashboard() {
     const [alarmActivated, setAlarmActivated] = useState(false);
     const [alarmReasons, setAlarmReasons] = useState({});
 
-    useEffect(() => {
-            const socket = io('http://localhost:4000', {
-                transports: ['websocket']
-            });
-    
-            socket.on('connect', () => {
-                console.log('Connected to server');
-                setIsConnected(true);
-                startSensorReading();
-            });
-    
-            socket.on('disconnect', () => {
-                console.log('Disconnected from server');
-                setIsConnected(false);
-            });
-    
-            socket.on('sensorData', (data) => { 
+useEffect(() => {
+    const socket = io('http://localhost:4000', {
+        transports: ['websocket']
+    });
 
-                setSensorValue(data);
-                
-                
-                const tempOutOfRange = data.temperature < temperatureRange[0] || data.temperature > temperatureRange[1];
-              
-                const humOutOfRange = data.humidity < humidityRange[0] || data.humidity > humidityRange[1];
-            
-                if (tempOutOfRange && !alarmReasons.temperature) {
-                    console.log('ALARM: Temperature out of range!', {
-                        current: data.temperature,
-                        range: temperatureRange
-                    });
-                    setAlarmReasons(prev => ({
-                        ...prev,
-                        temperature: true
-                    }));
-                } else if (!tempOutOfRange && alarmReasons.temperature) {
-                    console.log('INFO: Temperature back to normal range', {
-                        current: data.temperature,
-                        range: temperatureRange
-                    });
-                    setAlarmReasons(prev => ({
-                        ...prev,
-                        temperature: false
-                    }));
-                }
-            
-                if (humOutOfRange && !alarmReasons.humidity) {
-                    console.log('ALARM: Humidity out of range!', {
-                        current: data.humidity,
-                        range: humidityRange
-                    });
-                    setAlarmReasons(prev => ({
-                        ...prev,
-                        humidity: true
-                    }));
-                } else if (!humOutOfRange && alarmReasons.humidity) {
-                    console.log('INFO: Humidity back to normal range', {
-                        current: data.humidity,
-                        range: humidityRange
-                    });
-                    setAlarmReasons(prev => ({
-                        ...prev,
-                        humidity: false
-                    }));
-                }
-            
-                
-                setAlarmActivated(tempOutOfRange || humOutOfRange);
-            });
-    
-            return () => {
-                socket.disconnect();
-            };
+    socketRef.current = socket;
 
-        }, [temperatureRange, humidityRange, alarmReasons]);
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        setIsConnected(true);
+        socket.emit('joinHome', sessionStorage.getItem('selected-home-id'));
+        startSensorReading();
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+        setIsConnected(false);
+    });
+
+    socket.on('receiveNotification', (data) => {
+        setNotifications(prev => [{
+            id: Date.now(),
+            text: data.message,
+            timestamp: new Date(),
+            read: false,
+            type: data.type
+        }, ...prev]);
+
+        console.log('Received notification');
+        setNotificationsActivated(true);
+        setNotificationsActivatedColor('bg-[#5E85ED]');
+    });
+
+    return () => {
+        if (socketRef.current) {
+            socketRef.current.disconnect();
+        }
+    };
+}, []);
+
+const saveAlarmAndNotify = useCallback(async (alarmData) => {
+    try {
+        const response = await fetch('http://localhost:4000/api/mongodb/alarms/history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify(alarmData)
+        });
+
+        if (response.ok) {
+            const notificationText = `${alarmData.type === 'temperature' ? 'Temperature' : 'Humidity'} 
+                ${alarmData.status === 'alert' ? 'out of range' : 'returned to normal'}: 
+                ${alarmData.value} ${alarmData.type === 'temperature' ? '°C' : '%'}`;
+
+            if (socketRef.current) {
+                socketRef.current.emit('newNotification', {
+                    homeId: sessionStorage.getItem('selected-home-id'),
+                    message: notificationText,
+                    type: 'alarm',
+                    timestamp: new Date()
+                });
+            }
+
+            setNotifications(prev => [{
+                id: Date.now(),
+                text: notificationText,
+                timestamp: new Date(),
+                read: false,
+                type: 'alarm'
+            }, ...prev]);
+        }
+    } catch (error) {
+        console.error('Error saving alarm:', error);
+    }
+}, []);
+
+
+useEffect(() => {
+    if (!socketRef.current) return;
+
+    const handleSensorData = (data) => {
+        setSensorValue(data);
+        
+        const tempOutOfRange = data.temperature < temperatureRange[0] || data.temperature > temperatureRange[1];
+        const humOutOfRange = data.humidity < humidityRange[0] || data.humidity > humidityRange[1];
+
+        if (tempOutOfRange && !alarmReasons.temperature) {
+            saveAlarmAndNotify({
+                type: 'temperature',
+                status: 'alert',
+                value: data.temperature,
+                range: temperatureRange,
+                home_id: sessionStorage.getItem('selected-home-id')
+            });
+            setAlarmReasons(prev => ({
+                ...prev,
+                temperature: true
+            }));
+        } else if (!tempOutOfRange && alarmReasons.temperature) {
+            saveAlarmAndNotify({
+                type: 'temperature',
+                status: 'resolved',
+                value: data.temperature,
+                range: temperatureRange,
+                home_id: sessionStorage.getItem('selected-home-id')
+            });
+            setAlarmReasons(prev => ({
+                ...prev,
+                temperature: false
+            }));
+        }
+
+        if (humOutOfRange && !alarmReasons.humidity) {
+            saveAlarmAndNotify({
+                type: 'humidity',
+                status: 'alert',
+                value: data.humidity,
+                range: humidityRange,
+                home_id: sessionStorage.getItem('selected-home-id')
+            });
+            setAlarmReasons(prev => ({
+                ...prev,
+                humidity: true
+            }));
+        } else if (!humOutOfRange && alarmReasons.humidity) {
+            saveAlarmAndNotify({
+                type: 'humidity',
+                status: 'resolved',
+                value: data.humidity,
+                range: humidityRange,
+                home_id: sessionStorage.getItem('selected-home-id')
+            });
+            setAlarmReasons(prev => ({
+                ...prev,
+                humidity: false
+            }));
+        }
+
+        setAlarmActivated(tempOutOfRange || humOutOfRange);
+    };
+
+    socketRef.current.on('sensorData', handleSensorData);
+
+    return () => {
+        socketRef.current?.off('sensorData', handleSensorData);
+    };
+}, [temperatureRange, humidityRange, alarmReasons, saveAlarmAndNotify]);
+
 
     useEffect(() => {
         if (devices.length > 0) {
@@ -257,6 +335,7 @@ export default function PanelDashboard() {
             }
         }
     }, [devices, deviceStates]);
+
 
     useEffect(() => {
         fetchAlarmSettings();
