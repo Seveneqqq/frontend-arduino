@@ -158,6 +158,8 @@ export default function PanelDashboard() {
     const [isConnected, setIsConnected] = useState(false);
     const [temperatureRange, setTemperatureRange] = useState([]);
     const [humidityRange, setHumidityRange] = useState([]);
+    const [alarmActivated, setAlarmActivated] = useState(false);
+    const [alarmReasons, setAlarmReasons] = useState({});
 
     useEffect(() => {
             const socket = io('http://localhost:4000', {
@@ -176,14 +178,63 @@ export default function PanelDashboard() {
             });
     
             socket.on('sensorData', (data) => { 
+
                 setSensorValue(data);
+                
+                
+                const tempOutOfRange = data.temperature < temperatureRange[0] || data.temperature > temperatureRange[1];
+              
+                const humOutOfRange = data.humidity < humidityRange[0] || data.humidity > humidityRange[1];
+            
+                if (tempOutOfRange && !alarmReasons.temperature) {
+                    console.log('ALARM: Temperature out of range!', {
+                        current: data.temperature,
+                        range: temperatureRange
+                    });
+                    setAlarmReasons(prev => ({
+                        ...prev,
+                        temperature: true
+                    }));
+                } else if (!tempOutOfRange && alarmReasons.temperature) {
+                    console.log('INFO: Temperature back to normal range', {
+                        current: data.temperature,
+                        range: temperatureRange
+                    });
+                    setAlarmReasons(prev => ({
+                        ...prev,
+                        temperature: false
+                    }));
+                }
+            
+                if (humOutOfRange && !alarmReasons.humidity) {
+                    console.log('ALARM: Humidity out of range!', {
+                        current: data.humidity,
+                        range: humidityRange
+                    });
+                    setAlarmReasons(prev => ({
+                        ...prev,
+                        humidity: true
+                    }));
+                } else if (!humOutOfRange && alarmReasons.humidity) {
+                    console.log('INFO: Humidity back to normal range', {
+                        current: data.humidity,
+                        range: humidityRange
+                    });
+                    setAlarmReasons(prev => ({
+                        ...prev,
+                        humidity: false
+                    }));
+                }
+            
+                
+                setAlarmActivated(tempOutOfRange || humOutOfRange);
             });
     
             return () => {
                 socket.disconnect();
             };
 
-        }, []);
+        }, [temperatureRange, humidityRange, alarmReasons]);
 
     useEffect(() => {
         if (devices.length > 0) {
@@ -539,13 +590,16 @@ export default function PanelDashboard() {
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-none lg:grid-rows-5 gap-4 bg-[#151513] rounded-xl px-5 py-5 flex-1">
-                            <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px]">
+                        <div className={`rounded-xl p-6 min-h-[100px] transition-colors duration-500 ease-in-out
+                            ${alarmReasons.temperature ? 'bg-red-600' : 'bg-[#B68CFA]'}`}>
                                 {sensorValue !== null && devices.some(device => 
                                     device.status === 'active' && 
                                     device.name === 'temperature and humidity sensor'
                                 ) ? (
                                     <div className="flex items-center gap-5">
-                                       <svg xmlns="http://www.w3.org/2000/svg" width="32px"  viewBox="0 -960 960 960"  fill="#e8eaed"><path d="M520-520v-80h200v80H520Zm0-160v-80h320v80H520ZM320-120q-83 0-141.5-58.5T120-320q0-48 21-89.5t59-70.5v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q38 29 59 70.5t21 89.5q0 83-58.5 141.5T320-120ZM200-320h240q0-29-12.5-54T392-416l-32-24v-280q0-17-11.5-28.5T320-760q-17 0-28.5 11.5T280-720v280l-32 24q-23 17-35.5 42T200-320Z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32px" viewBox="0 -960 960 960" fill="#e8eaed">
+                                            <path d="M520-520v-80h200v80H520Zm0-160v-80h320v80H520ZM320-120q-83 0-141.5-58.5T120-320q0-48 21-89.5t59-70.5v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q38 29 59 70.5t21 89.5q0 83-58.5 141.5T320-120ZM200-320h240q0-29-12.5-54T392-416l-32-24v-280q0-17-11.5-28.5T320-760q-17 0-28.5 11.5T280-720v280l-32 24q-23 17-35.5 42T200-320Z"/>
+                                        </svg>
                                         <div>
                                             <span className="text-md text-white/80 font-semibold">Interior temperature :</span>
                                             <div className="flex mt-1 items-center gap-1">
@@ -568,11 +622,12 @@ export default function PanelDashboard() {
                                 )}
                             </div>
 
-                            <div className="bg-[#CB50CB] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-2">
+                            <div className={`rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-2 transition-colors duration-500 ease-in-out
+                                ${alarmReasons.humidity ? 'bg-red-600' : 'bg-[#CB50CB]'}`}>
                                 {sensorValue !== null && devices.some(device => 
                                     device.status === 'active' && 
                                     device.name === 'temperature and humidity sensor'
-                                )? (
+                                ) ? (
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-5">
                                             <i className="pi pi-cloud text-2xl"></i>
