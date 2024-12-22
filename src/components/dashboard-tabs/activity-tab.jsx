@@ -172,6 +172,7 @@ function ScenariosTab() {
             >
                 <Column style={{ backgroundColor: '#151513' }} field="timestamp" header="Date & Time" sortable body={dateBodyTemplate} />
                 <Column style={{ backgroundColor: '#151513' }} field="scenario_name" header="Scenario" sortable />
+                <Column style={{ backgroundColor: '#151513' }} field="user_id" header="User" sortable />
                 <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
             </DataTable>
         </div>

@@ -629,11 +629,25 @@ useEffect(() => {
       const handleEditDevice = (device) => {
         setSelectedDevice(device);
         // edytowanie urzadzen
+        console.log("Edit device");
       };
     
       const handleDeleteDevice = (device) => {
         setSelectedDevice(device);
         // usuwanie urzadzen
+        console.log("Delete device");
+      };
+
+      const handleEditScenario = (scenario) => {
+        //setSelectedScenario(scenario);
+        // edytowanie scenariuszy
+        console.log("Edit scenario");
+      };
+
+      const handleDeleteScenario = (scenario) => {
+         //setSelectedScenario(scenario);
+        // usuwanie scenariuszy
+        console.log("Delete scenario");
       };
 
       
@@ -732,7 +746,7 @@ useEffect(() => {
                                     </div>
                                 )}
                             </div>
-                            <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Kamera z mozliwoscia przewijania na inne ?</div>
+                            <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Sterowanie automatycznym ogrzewaniem ? Zadanie okreslonej temperatury i jezeli spadnie poniezej to wtedy ma sie wlaczyc sterowanie ogrzewaniem, jezeli go nie ma lub nie ma czujnika temperatury to wtedy cos innego</div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1"><TasksComponent /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:row-start-3"><SensorAlarmComponent temperatureRange={temperatureRange} humidityRange={humidityRange} setTemperatureRange={setTemperatureRange} setHumidityRange={setHumidityRange} /></div>
                             <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>

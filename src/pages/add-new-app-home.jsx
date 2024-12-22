@@ -259,6 +259,7 @@ export default function AddNewAppHome(){
                 },
                 body: JSON.stringify({
                     "homeId": homeId,
+                    "userId": sessionStorage.getItem('UserId'),
                     "devices": userDevices
                 })
             })
