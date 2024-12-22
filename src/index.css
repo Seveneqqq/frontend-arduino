@@ -75,3 +75,9 @@ code {
 .p-stepper .p-stepper-panels {
   background: unset;
 }
+.menu-bg-transparent .p-menuitem-link{
+  background-color: transparent;
+}
+.p-datatable-emptymessage{
+  background-color: transparent;
+}

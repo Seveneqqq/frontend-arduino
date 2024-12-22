@@ -259,6 +259,7 @@ export default function AddNewAppHome(){
                 },
                 body: JSON.stringify({
                     "homeId": homeId,
+                    "userId": sessionStorage.getItem('UserId'),
                     "devices": userDevices
                 })
             })
@@ -546,9 +547,7 @@ export default function AddNewAppHome(){
     }, [userDevices]);
 
     async function joinToHouse(){
-
         try {
-
             let joinCode = document.getElementById('inviteCode').value;
             let userId = sessionStorage.getItem('UserId');
             
@@ -563,29 +562,45 @@ export default function AddNewAppHome(){
                     "home_invite_code": joinCode
                 })
             });
-
-            if( response.ok){
+    
+            if (response.ok) {
                 let data = await response.json();
                 console.log(data);
-                if(data.success){
-                    showSuccess();
-                    setTimeout(() => {
-                        navigate('/login-app-home');
-                    }, 1000);
-                }
-                else{
+                if (data.success) {
+                    const historyResponse = await fetch('http://localhost:4000/api/mongodb/users/history', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                        },
+                        body: JSON.stringify({
+                            home_id: data.home_id, 
+                            user_id: userId,
+                            action: 'joined',
+                            timestamp: new Date()
+                        })
+                    });
+    
+                    if (historyResponse.ok) {
+                        showSuccess();
+                        setTimeout(() => {
+                            navigate('/login-app-home');
+                        }, 1000);
+                    } else {
+                        console.error('Failed to save join history');
+                    }
+                } else {
                     showError();
                 }
-            }
-            else{
+            } else {
                 showError();
             }
         } catch (error) {
+            console.error('Error:', error);
             showError();
             console.log(error);
 
         }
-        
     }
 
     //https://www.google.com/search?q=smarthome+dashboard+&sca_esv=05826a3c56c67289&sca_upv=1&udm=2&biw=1536&bih=762&sxsrf=ADLYWILD-SP5BW0JZ51WUhsa3bPcMyuN0Q%3A1727801186747&ei=Yif8ZvmkLeipwPAP64vIsAI&ved=0ahUKEwj53en_0O2IAxXoFBAIHesFEiYQ4dUDCBA&uact=5&oq=smarthome+dashboard+&gs_lp=Egxnd3Mtd2l6LXNlcnAiFHNtYXJ0aG9tZSBkYXNoYm9hcmQgMgQQABgeSOgXUNgFWJkXcAF4AJABAJgBTKAB_QWqAQIxMbgBA8gBAPgBAZgCC6ACjAbCAgQQIxgnwgIHEAAYgAQYE8ICCBAAGBMYCBgewgIGEAAYExgemAMAiAYBkgcCMTGgB4YT&sclient=gws-wiz-serp#vhid=tu-J8RDAJQML3M&vssid=mosaic

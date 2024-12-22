@@ -182,6 +182,7 @@ export default function AutomationTab({ devices, deviceStates }) {
 
         const dataToSend = {
             ...formData,
+            user_id: sessionStorage.getItem('UserId'),
             home_id: homeId
         };
     

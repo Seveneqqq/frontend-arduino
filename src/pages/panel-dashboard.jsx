@@ -135,8 +135,10 @@ const DialogWithDeviceFamily = React.memo(({
 });
 
 export default function PanelDashboard() {
+
     const scrollRef = useRef(null);
     const op = useRef(null);
+    const socketRef = useRef(null);
 
     const [activeTab, setActiveTab] = useState('dashboard');
     const [notifications, setNotifications] = useState([]);
@@ -158,32 +160,159 @@ export default function PanelDashboard() {
     const [isConnected, setIsConnected] = useState(false);
     const [temperatureRange, setTemperatureRange] = useState([]);
     const [humidityRange, setHumidityRange] = useState([]);
+    const [alarmActivated, setAlarmActivated] = useState(false);
+    const [alarmReasons, setAlarmReasons] = useState({});
 
-    useEffect(() => {
-            const socket = io('http://localhost:4000', {
-                transports: ['websocket']
-            });
-    
-            socket.on('connect', () => {
-                console.log('Connected to server');
-                setIsConnected(true);
-                startSensorReading();
-            });
-    
-            socket.on('disconnect', () => {
-                console.log('Disconnected from server');
-                setIsConnected(false);
-            });
-    
-            socket.on('sensorData', (data) => { 
-                setSensorValue(data);
-            });
-    
-            return () => {
-                socket.disconnect();
-            };
+useEffect(() => {
+    const socket = io('http://localhost:4000', {
+        transports: ['websocket']
+    });
 
-        }, []);
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        setIsConnected(true);
+        socket.emit('joinHome', sessionStorage.getItem('selected-home-id'));
+        startSensorReading();
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+        setIsConnected(false);
+    });
+
+    socket.on('receiveNotification', (data) => {
+        setNotifications(prev => [{
+            id: Date.now(),
+            text: data.message,
+            timestamp: new Date(),
+            read: false,
+            type: data.type
+        }, ...prev]);
+
+        console.log('Received notification');
+        setNotificationsActivated(true);
+        setNotificationsActivatedColor('bg-[#5E85ED]');
+    });
+
+    return () => {
+        if (socketRef.current) {
+            socketRef.current.disconnect();
+        }
+    };
+}, []);
+
+const saveAlarmAndNotify = useCallback(async (alarmData) => {
+    try {
+        const response = await fetch('http://localhost:4000/api/mongodb/alarms/history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify(alarmData)
+        });
+
+        if (response.ok) {
+            const notificationText = `${alarmData.type === 'temperature' ? 'Temperature' : 'Humidity'} 
+                ${alarmData.status === 'alert' ? 'out of range' : 'returned to normal'}: 
+                ${alarmData.value} ${alarmData.type === 'temperature' ? '°C' : '%'}`;
+
+            if (socketRef.current) {
+                socketRef.current.emit('newNotification', {
+                    homeId: sessionStorage.getItem('selected-home-id'),
+                    message: notificationText,
+                    type: 'alarm',
+                    timestamp: new Date()
+                });
+            }
+
+            setNotifications(prev => [{
+                id: Date.now(),
+                text: notificationText,
+                timestamp: new Date(),
+                read: false,
+                type: 'alarm'
+            }, ...prev]);
+        }
+    } catch (error) {
+        console.error('Error saving alarm:', error);
+    }
+}, []);
+
+
+useEffect(() => {
+    if (!socketRef.current) return;
+
+    const handleSensorData = (data) => {
+        setSensorValue(data);
+        
+        const tempOutOfRange = data.temperature < temperatureRange[0] || data.temperature > temperatureRange[1];
+        const humOutOfRange = data.humidity < humidityRange[0] || data.humidity > humidityRange[1];
+
+        if (tempOutOfRange && !alarmReasons.temperature) {
+            saveAlarmAndNotify({
+                type: 'temperature',
+                status: 'alert',
+                value: data.temperature,
+                range: temperatureRange,
+                home_id: sessionStorage.getItem('selected-home-id')
+            });
+            setAlarmReasons(prev => ({
+                ...prev,
+                temperature: true
+            }));
+        } else if (!tempOutOfRange && alarmReasons.temperature) {
+            saveAlarmAndNotify({
+                type: 'temperature',
+                status: 'resolved',
+                value: data.temperature,
+                range: temperatureRange,
+                home_id: sessionStorage.getItem('selected-home-id')
+            });
+            setAlarmReasons(prev => ({
+                ...prev,
+                temperature: false
+            }));
+        }
+
+        if (humOutOfRange && !alarmReasons.humidity) {
+            saveAlarmAndNotify({
+                type: 'humidity',
+                status: 'alert',
+                value: data.humidity,
+                range: humidityRange,
+                home_id: sessionStorage.getItem('selected-home-id')
+            });
+            setAlarmReasons(prev => ({
+                ...prev,
+                humidity: true
+            }));
+        } else if (!humOutOfRange && alarmReasons.humidity) {
+            saveAlarmAndNotify({
+                type: 'humidity',
+                status: 'resolved',
+                value: data.humidity,
+                range: humidityRange,
+                home_id: sessionStorage.getItem('selected-home-id')
+            });
+            setAlarmReasons(prev => ({
+                ...prev,
+                humidity: false
+            }));
+        }
+
+        setAlarmActivated(tempOutOfRange || humOutOfRange);
+    };
+
+    socketRef.current.on('sensorData', handleSensorData);
+
+    return () => {
+        socketRef.current?.off('sensorData', handleSensorData);
+    };
+}, [temperatureRange, humidityRange, alarmReasons, saveAlarmAndNotify]);
+
 
     useEffect(() => {
         if (devices.length > 0) {
@@ -206,6 +335,7 @@ export default function PanelDashboard() {
             }
         }
     }, [devices, deviceStates]);
+
 
     useEffect(() => {
         fetchAlarmSettings();
@@ -499,11 +629,25 @@ export default function PanelDashboard() {
       const handleEditDevice = (device) => {
         setSelectedDevice(device);
         // edytowanie urzadzen
+        console.log("Edit device");
       };
     
       const handleDeleteDevice = (device) => {
         setSelectedDevice(device);
         // usuwanie urzadzen
+        console.log("Delete device");
+      };
+
+      const handleEditScenario = (scenario) => {
+        //setSelectedScenario(scenario);
+        // edytowanie scenariuszy
+        console.log("Edit scenario");
+      };
+
+      const handleDeleteScenario = (scenario) => {
+         //setSelectedScenario(scenario);
+        // usuwanie scenariuszy
+        console.log("Delete scenario");
       };
 
       
@@ -539,13 +683,16 @@ export default function PanelDashboard() {
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-none lg:grid-rows-5 gap-4 bg-[#151513] rounded-xl px-5 py-5 flex-1">
-                            <div className="bg-[#B68CFA] rounded-xl p-6 min-h-[100px]">
+                        <div className={`rounded-xl p-6 min-h-[100px] transition-colors duration-500 ease-in-out
+                            ${alarmReasons.temperature ? 'bg-red-600' : 'bg-[#B68CFA]'}`}>
                                 {sensorValue !== null && devices.some(device => 
                                     device.status === 'active' && 
                                     device.name === 'temperature and humidity sensor'
                                 ) ? (
                                     <div className="flex items-center gap-5">
-                                       <svg xmlns="http://www.w3.org/2000/svg" width="32px"  viewBox="0 -960 960 960"  fill="#e8eaed"><path d="M520-520v-80h200v80H520Zm0-160v-80h320v80H520ZM320-120q-83 0-141.5-58.5T120-320q0-48 21-89.5t59-70.5v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q38 29 59 70.5t21 89.5q0 83-58.5 141.5T320-120ZM200-320h240q0-29-12.5-54T392-416l-32-24v-280q0-17-11.5-28.5T320-760q-17 0-28.5 11.5T280-720v280l-32 24q-23 17-35.5 42T200-320Z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32px" viewBox="0 -960 960 960" fill="#e8eaed">
+                                            <path d="M520-520v-80h200v80H520Zm0-160v-80h320v80H520ZM320-120q-83 0-141.5-58.5T120-320q0-48 21-89.5t59-70.5v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q38 29 59 70.5t21 89.5q0 83-58.5 141.5T320-120ZM200-320h240q0-29-12.5-54T392-416l-32-24v-280q0-17-11.5-28.5T320-760q-17 0-28.5 11.5T280-720v280l-32 24q-23 17-35.5 42T200-320Z"/>
+                                        </svg>
                                         <div>
                                             <span className="text-md text-white/80 font-semibold">Interior temperature :</span>
                                             <div className="flex mt-1 items-center gap-1">
@@ -568,11 +715,12 @@ export default function PanelDashboard() {
                                 )}
                             </div>
 
-                            <div className="bg-[#CB50CB] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-2">
+                            <div className={`rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-2 transition-colors duration-500 ease-in-out
+                                ${alarmReasons.humidity ? 'bg-red-600' : 'bg-[#CB50CB]'}`}>
                                 {sensorValue !== null && devices.some(device => 
                                     device.status === 'active' && 
                                     device.name === 'temperature and humidity sensor'
-                                )? (
+                                ) ? (
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-5">
                                             <i className="pi pi-cloud text-2xl"></i>
@@ -598,7 +746,7 @@ export default function PanelDashboard() {
                                     </div>
                                 )}
                             </div>
-                            <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Kamera z mozliwoscia przewijania na inne ?</div>
+                            <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1">Sterowanie automatycznym ogrzewaniem ? Zadanie okreslonej temperatury i jezeli spadnie poniezej to wtedy ma sie wlaczyc sterowanie ogrzewaniem, jezeli go nie ma lub nie ma czujnika temperatury to wtedy cos innego</div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1"><TasksComponent /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:row-start-3"><SensorAlarmComponent temperatureRange={temperatureRange} humidityRange={humidityRange} setTemperatureRange={setTemperatureRange} setHumidityRange={setHumidityRange} /></div>
                             <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
