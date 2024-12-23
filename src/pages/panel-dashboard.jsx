@@ -165,6 +165,7 @@ export default function PanelDashboard() {
     const [alarmReasons, setAlarmReasons] = useState({});
     const [cameraAdded, setCameraAdded] = useState(false);
     const [cameraAddress, setCameraAddress] = useState("");
+    const [isCameraEditing, setIsCameraEditing] = useState(false);
 
 useEffect(() => {
     const socket = io('http://localhost:4000', {
@@ -654,7 +655,56 @@ useEffect(() => {
       };
 
       
+      const fetchCameraData = async () => {
+        try {
+          const response = await fetch(`http://localhost:4000/api/mongodb/camera/${sessionStorage.getItem('selected-home-id')}`, {
+            headers: {
+              'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            }
+          });
+          const data = await response.json();
+          if (data) {
+            setCameraAdded(true);
+            setCameraAddress(data.camera_url);
+          }
+        } catch (error) {
+          console.error('Error fetching camera data:', error);
+          setCameraAdded(false);
+          setCameraAddress('');
+        }
+      };
+      
+      const handleSaveCamera = async (newUrl) => {
+        console.log("handleSaveCamera called with:", newUrl);
+        try {
+          const response = await fetch('http://localhost:4000/api/mongodb/camera',{
+            method: 'POST', 
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify({
+              home_id: parseInt(sessionStorage.getItem('selected-home-id')),
+              camera_url: newUrl
+            })
+          });
+      
+          console.log("Response status:", response.status);
+          const data = await response.json();
+          console.log("Response data:", data);
+      
+          if (response.ok) {
+            setCameraAdded(true);
+            setCameraAddress(newUrl);
+          }
+        } catch (error) {
+          console.error('Error saving camera:', error);
+        }
+      };
 
+      useEffect(() => {
+        fetchCameraData();
+      }, []);
 
     const renderContent = () => {
         switch(activeTab) {
@@ -749,7 +799,7 @@ useEffect(() => {
                                     </div>
                                 )}
                             </div>
-                            <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1"><CameraStreamComponent cameraAdded={cameraAdded} cameraAddress={cameraAddress} /></div>
+                            <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1"><CameraStreamComponent cameraAdded={cameraAdded} cameraAddress={cameraAddress} onSaveAddress={handleSaveCamera} /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1"><TasksComponent /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:row-start-3"><SensorAlarmComponent temperatureRange={temperatureRange} humidityRange={humidityRange} setTemperatureRange={setTemperatureRange} setHumidityRange={setHumidityRange} /></div>
                             <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
