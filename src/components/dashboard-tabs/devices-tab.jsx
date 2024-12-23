@@ -10,6 +10,7 @@ import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';  
 import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
+import _ from 'lodash';
 
 export default function DevicesTab({ devices, deviceStates, onEditDevice, onDeleteDevice, onSwitchChange, onKnobChange }) {
   
@@ -57,6 +58,12 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
       let [userDevices, setUserDevices] = useState([]);
       let [devicesList, setDevicesList] = useState([]);
   
+      const debouncedKnobChange = useRef(
+        _.debounce((device, isOn, value) => {
+          onKnobChange(device, isOn, value, false);
+        }, 500)
+      ).current;
+
       const showFormFields = () => {
               
               if(selectedProtocol){
@@ -533,9 +540,12 @@ const protocols = [
                           onChange={(e) => onSwitchChange(device, e.value, deviceStates[device.device_id]?.brightness)}
                         />
                         <div className="flex items-center">
-                          <Knob
+                        <Knob
                             value={deviceStates[device.device_id]?.brightness || 100}
-                            onChange={(e) => onKnobChange(device, deviceStates[device.device_id]?.isOn, e.value)}
+                            onChange={(e) => {
+                              onKnobChange(device, deviceStates[device.device_id]?.isOn, e.value, true); // natychmiastowa aktualizacja UI
+                              debouncedKnobChange(device, deviceStates[device.device_id]?.isOn, e.value); // opóźnione wysłanie do backendu
+                            }}
                             valueTemplate="{value}%"
                             size={60}
                             strokeWidth={8}
