@@ -629,12 +629,12 @@ const protocols = [
                 
             <div className="flex flex-row">
                 <div className="w-[40%]">
-                    {devices=="" ? 
+                    {newDevices=="" ? 
                         <h1>Loading...</h1> 
                         :
                         <>
                         <div className="grid grid-cols-2 font-semibold px-2 py-4"><p>Name</p><p>Status</p></div>
-                        {devices.map(el=>{
+                        {newDevices.map(el=>{
                             return <div className={`grid grid-cols-2 px-2 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700 ${el.hidden ? "hidden" : ""}`} onClick={()=>setFields(el.name,el.status)}><p>{el.name}</p><p>{el.status}</p></div>
                         })}
                         </>
