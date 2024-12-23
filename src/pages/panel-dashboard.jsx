@@ -654,6 +654,23 @@ useEffect(() => {
         console.log("Delete scenario");
       };
 
+      const handleDeleteCamera = async () => {
+        try {
+          const response = await fetch(`http://localhost:4000/api/mongodb/camera/${sessionStorage.getItem('selected-home-id')}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            }
+          });
+      
+          if (response.ok) {
+            setCameraAdded(false);
+            setCameraAddress('');
+          }
+        } catch (error) {
+          console.error('Error deleting camera:', error);
+        }
+      };
       
       const fetchCameraData = async () => {
         try {
@@ -799,7 +816,7 @@ useEffect(() => {
                                     </div>
                                 )}
                             </div>
-                            <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1"><CameraStreamComponent cameraAdded={cameraAdded} cameraAddress={cameraAddress} onSaveAddress={handleSaveCamera} /></div>
+                            <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1"><CameraStreamComponent cameraAdded={cameraAdded} cameraAddress={cameraAddress} onSaveAddress={handleSaveCamera} onDeleteCamera={handleDeleteCamera} /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1"><TasksComponent /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:row-start-3"><SensorAlarmComponent temperatureRange={temperatureRange} humidityRange={humidityRange} setTemperatureRange={setTemperatureRange} setHumidityRange={setHumidityRange} /></div>
                             <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>

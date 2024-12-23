@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const CameraStreamComponent = ({cameraAdded, cameraAddress, onSaveAddress}) => {
+const CameraStreamComponent = ({cameraAdded, cameraAddress, onSaveAddress, onDeleteCamera}) => {
   const streamUrl = cameraAddress;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAddress, setNewAddress] = useState('');
@@ -94,15 +94,26 @@ const CameraStreamComponent = ({cameraAdded, cameraAddress, onSaveAddress}) => {
                   {cameraAdded ? 'Update Camera' : 'Connect Camera'}
                 </button>
                 {cameraAdded && (
-                  <button
-                    onClick={() => {
-                      setIsEditing(false);
-                      setNewAddress(cameraAddress);
-                    }}
-                    className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                  >
-                    Cancel
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        onDeleteCamera();
+                        setIsEditing(false);
+                      }}
+                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsEditing(false);
+                        setNewAddress(cameraAddress);
+                      }}
+                      className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    >
+                      Cancel
+                    </button>
+                  </>
                 )}
               </div>
             </div>
