@@ -681,8 +681,14 @@ useEffect(() => {
           });
           const data = await response.json();
           if (data) {
-            setCameraAdded(true);
-            setCameraAddress(data.camera_url);
+            if(data.error == "Camera not found"){
+                setCameraAdded(false);
+                setCameraAddress('');
+            }
+            else{
+                setCameraAdded(true);
+                setCameraAddress(data.camera_url);
+            }
           }
         } catch (error) {
           console.error('Error fetching camera data:', error);
