@@ -15,6 +15,8 @@ import _ from 'lodash';
 import { io } from 'socket.io-client';
 import SensorAlarmComponent from '../components/sensorAlarmComponent';
 import CameraStreamComponent from '../components/cameraStreamComponent';
+import StatisticCompomnent from '../components/statisticCompomnent';
+import FrontGateComponent from '../components/frontGateComponent';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -825,9 +827,9 @@ useEffect(() => {
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1"><CameraStreamComponent cameraAdded={cameraAdded} cameraAddress={cameraAddress} onSaveAddress={handleSaveCamera} onDeleteCamera={handleDeleteCamera} /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1"><TasksComponent /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:row-start-3"><SensorAlarmComponent temperatureRange={temperatureRange} humidityRange={humidityRange} setTemperatureRange={setTemperatureRange} setHumidityRange={setHumidityRange} /></div>
-                            <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
+                            <div className="bg-[#B68CFA] rounded-xl px-4 py-3 min-h-[100px] lg:col-start-1 lg:row-start-5"><FrontGateComponent onUpdateDeviceState={updateDeviceState} devices={devices} deviceStates={deviceStates} /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3"><ChatComponent /></div>
-                            <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
+                            <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3"><StatisticCompomnent /></div>
                             <div className="bg-[#B68CFA] rounded-xl px-4 py-3 min-h-[100px] lg:col-start-4 lg:row-start-5"><ScenarioComponent devices={devices} deviceStates={deviceStates}/></div>
                         </div>
                     </div>
