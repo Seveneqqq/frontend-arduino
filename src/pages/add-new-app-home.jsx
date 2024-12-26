@@ -675,7 +675,7 @@ export default function AddNewAppHome(){
                         keyfilter="int"
                         value={inviteCode}
                         id="inviteCode"
-                        placeholder="#123456"
+                        placeholder="Invite code"
                         maxLength={6}
                         onChange={(event) => setInviteCode(event.target.value)}
                       />

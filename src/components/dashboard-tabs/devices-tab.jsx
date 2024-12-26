@@ -57,6 +57,12 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
       let [panelVisible2, setPanelVisible2] = useState(false);
       let [userDevices, setUserDevices] = useState([]);
       let [devicesList, setDevicesList] = useState([]);
+      
+      const [editDialog, setEditDialog] = useState(false);
+      const [editingDevice, setEditingDevice] = useState(null);
+      const [editLabel, setEditLabel] = useState('');
+      const [editCommandOn, setEditCommandOn] = useState('');
+      const [editCommandOff, setEditCommandOff] = useState('');
   
       const debouncedKnobChange = useRef(
         _.debounce((device, isOn, value) => {
@@ -543,18 +549,84 @@ const groupDevicesByRoom = () => {
 
   const [visibleActions, setVisibleActions] = useState(null);
 
+  const handleEditDevice = async () => {
+    if (!editLabel || !editCommandOn || !editCommandOff) {
+        toast.current.show({
+            severity: 'error', 
+            summary: 'Error', 
+            detail: 'All fields are required'
+        });
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:4000/api/devices/${editingDevice.device_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify({
+                label: editLabel,
+                command_on: editCommandOn,
+                command_off: editCommandOff
+            })
+        });
+
+        if (response.ok) {
+            toast.current.show({severity: 'success', summary: 'Success', detail: 'Device updated successfully'});
+            setEditDialog(false);
+        }
+    } catch (error) {
+        toast.current.show({severity: 'error', summary: 'Error', detail: 'Failed to update device'});
+    }
+};
+
   const handleEditClick = (device) => {
-    onEditDevice(device);
-    setVisibleActions(null);
+      setEditingDevice(device);
+      setEditLabel(device.label);
+      setEditCommandOn(device.command_on);
+      setEditCommandOff(device.command_off);
+      setEditDialog(true);
+      setVisibleActions(null);
   };
 
   const handleDeleteClick = (device) => {
-    onDeleteDevice(device);
-    setVisibleActions(null);
+      onDeleteDevice(device);
+      setVisibleActions(null);
   };
 
   return (
     <>
+        <Dialog 
+          header={`Edit Device - ${editingDevice?.label || ''}`}
+          visible={editDialog} 
+          onHide={() => setEditDialog(false)}
+          style={{width: '400px'}}
+        >
+    <div className="flex flex-col gap-4 p-4">
+        <InputText 
+            className={!editLabel ? 'p-invalid' : ''}
+            value={editLabel} 
+            onChange={(e) => setEditLabel(e.target.value)}
+            placeholder="Device Label*" 
+        />
+        <InputText 
+            className={!editCommandOn ? 'p-invalid' : ''}
+            value={editCommandOn} 
+            onChange={(e) => setEditCommandOn(e.target.value)}
+            placeholder="Command to turn on*" 
+        />
+        <InputText 
+            className={!editCommandOff ? 'p-invalid' : ''}
+            value={editCommandOff} 
+            onChange={(e) => setEditCommandOff(e.target.value)}
+            placeholder="Command to turn off*" 
+        />
+        <small className="text-red-500">* Required fields</small>
+        <Button label="Save" onClick={handleEditDevice} />
+    </div>
+</Dialog>
       <div className="flex xl:flex-row flex-col xl:gap-0 gap-4 justify-between items-center mb-4">
         <h2 className="text-2xl">Devices</h2>
         <div className='flex gap-4'>
