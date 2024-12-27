@@ -15,6 +15,9 @@ import _ from 'lodash';
 import { io } from 'socket.io-client';
 import SensorAlarmComponent from '../components/sensorAlarmComponent';
 import CameraStreamComponent from '../components/cameraStreamComponent';
+import StatisticCompomnent from '../components/statisticCompomnent';
+import FrontGateComponent from '../components/frontGateComponent';
+import { Toast } from 'primereact/toast';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -140,6 +143,7 @@ export default function PanelDashboard() {
     const scrollRef = useRef(null);
     const op = useRef(null);
     const socketRef = useRef(null);
+    const toast = useRef(null);
 
     const [activeTab, setActiveTab] = useState('dashboard');
     const [notifications, setNotifications] = useState([]);
@@ -166,6 +170,7 @@ export default function PanelDashboard() {
     const [cameraAdded, setCameraAdded] = useState(false);
     const [cameraAddress, setCameraAddress] = useState("");
     const [isCameraEditing, setIsCameraEditing] = useState(false);
+    
 
 useEffect(() => {
     const socket = io('http://localhost:4000', {
@@ -573,6 +578,8 @@ useEffect(() => {
         });
 
         const data = await response.json();
+        console.log("ponizej dane urzadzen");
+        console.log(data);
         setDevices(data.devices);
         setCategories(data.categories);
     }
@@ -630,17 +637,57 @@ useEffect(() => {
         updateDeviceState(device, newState, newBrightness, isLocalUpdate);
       };
     
-      const handleEditDevice = (device) => {
-        setSelectedDevice(device);
-        // edytowanie urzadzen
-        console.log("Edit device");
-      };
+      const handleEditDevice = async (device) => {
+        const response = await fetch(`http://localhost:4000/api/devices/${device.device_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify({
+                label: device.label,
+                command_on: device.command_on,
+                command_off: device.command_off
+            })
+        });
     
-      const handleDeleteDevice = (device) => {
-        setSelectedDevice(device);
-        // usuwanie urzadzen
-        console.log("Delete device");
-      };
+        if (response.ok) {
+            toast.current.show({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Device updated successfully'
+            });
+        } else {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to update device'
+            });
+        }
+    };
+    
+    const handleDeleteDevice = async (device) => {
+        const response = await fetch(`http://localhost:4000/api/devices/${device.device_id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            }
+        });
+    
+        if (response.ok) {
+            toast.current.show({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Device deleted successfully'
+            });
+        } else {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to delete device'
+            });
+        }
+    };
 
       const handleEditScenario = (scenario) => {
         //setSelectedScenario(scenario);
@@ -825,9 +872,9 @@ useEffect(() => {
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:col-start-2 lg:row-start-1"><CameraStreamComponent cameraAdded={cameraAdded} cameraAddress={cameraAddress} onSaveAddress={handleSaveCamera} onDeleteCamera={handleDeleteCamera} /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-2 lg:col-start-3 lg:row-start-1"><TasksComponent /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:row-start-3"><SensorAlarmComponent temperatureRange={temperatureRange} humidityRange={humidityRange} setTemperatureRange={setTemperatureRange} setHumidityRange={setHumidityRange} /></div>
-                            <div className="bg-[#be992a] rounded-xl p-6 min-h-[100px] lg:col-start-1 lg:row-start-5">Jeszcze nie wiadomo co - scenariusz albo cos innego</div>
+                            <div className="bg-[#B68CFA] rounded-xl px-4 py-3 min-h-[100px] lg:col-start-1 lg:row-start-5"><FrontGateComponent onUpdateDeviceState={updateDeviceState} devices={devices} deviceStates={deviceStates} /></div>
                             <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:col-span-2 lg:row-span-3 lg:col-start-2 lg:row-start-3"><ChatComponent /></div>
-                            <div className="bg-[#080808] rounded-xl p-6 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3">otwieranie bramy/drzwi</div>
+                            <div className="bg-[#080808] rounded-xl px-4 py-3 min-h-[100px] lg:row-span-2 lg:col-start-4 lg:row-start-3"><StatisticCompomnent /></div>
                             <div className="bg-[#B68CFA] rounded-xl px-4 py-3 min-h-[100px] lg:col-start-4 lg:row-start-5"><ScenarioComponent devices={devices} deviceStates={deviceStates}/></div>
                         </div>
                     </div>
@@ -889,6 +936,7 @@ useEffect(() => {
 
     return (
         <div className="w-full bg-[#080808] min-h-screen flex flex-col">
+            <Toast ref={toast} />
             <HeaderDashboard
                 microphoneActivatedColor={microphoneActivatedColor}
                 notificationsActivatedColor={notificationsActivatedColor}

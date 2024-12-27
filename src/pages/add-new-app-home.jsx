@@ -251,6 +251,10 @@ export default function AddNewAppHome(){
 
         console.log('Zwrocony homeId : ' +homeId);
 
+
+            console.log("UserDevices");
+            console.log(userDevices);
+
             const responseAddDevices = await fetch(`http://localhost:4000/api/add-new-devices`,{
                 method: 'POST',
                 headers: {
@@ -433,9 +437,18 @@ export default function AddNewAppHome(){
         let foundDevice = devices.find(device => device.name === name);
         
         foundDevice.hidden="true";
-        let selectedRoomId;
 
-        // tutaj musi być switch który będzie uzupelnial id pokoju
+        const rooms = [
+            'Kitchen',
+            'Living room',
+            'Bathroom',
+            'Garden',
+            'Children\'s room',
+            'Garage',
+            'Office'
+          ];
+
+        const room_id = rooms.indexOf(selectedRoom);
 
         const newDevice = {
             name: name,
@@ -443,7 +456,7 @@ export default function AddNewAppHome(){
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoom,
+            room_id: room_id,
             category: selectedCategory
         };
     
@@ -466,6 +479,18 @@ export default function AddNewAppHome(){
         const category = foundDevice.category;
         foundDevice.hidden = "true";
         
+        const rooms = [
+            'Kitchen',
+            'Living room',
+            'Bathroom',
+            'Garden',
+            'Children\'s room',
+            'Garage',
+            'Office'
+          ];
+
+        const room_id = rooms.indexOf(selectedRoom);
+
         const newDevice = {
             name: name,
             category: category,
@@ -473,7 +498,7 @@ export default function AddNewAppHome(){
             label: label,
             command_on: command_on,
             command_off: command_off,
-            selectedRoom: selectedRoom,
+            room_id: room_id,
             protocol: selectedProtocol, 
             protocolConfig: {} 
         };
@@ -652,7 +677,7 @@ export default function AddNewAppHome(){
                         keyfilter="int"
                         value={inviteCode}
                         id="inviteCode"
-                        placeholder="#123456"
+                        placeholder="Invite code"
                         maxLength={6}
                         onChange={(event) => setInviteCode(event.target.value)}
                       />

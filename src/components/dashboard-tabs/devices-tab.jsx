@@ -57,6 +57,12 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
       let [panelVisible2, setPanelVisible2] = useState(false);
       let [userDevices, setUserDevices] = useState([]);
       let [devicesList, setDevicesList] = useState([]);
+      
+      const [editDialog, setEditDialog] = useState(false);
+      const [editingDevice, setEditingDevice] = useState(null);
+      const [editLabel, setEditLabel] = useState('');
+      const [editCommandOn, setEditCommandOn] = useState('');
+      const [editCommandOff, setEditCommandOff] = useState('');
   
       const debouncedKnobChange = useRef(
         _.debounce((device, isOn, value) => {
@@ -283,110 +289,138 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                 setLabel(e.target.value);
             }
         
-            const saveDevice = () => {
-        
-                let foundDevice = devices.find(device => device.name === name);
-                
-                foundDevice.hidden="true";
-                let selectedRoomId;
-        
-                const newDevice = {
-                    name: name,
-                    status: status,
-                    label: label,
-                    command_on: command_on,
-                    command_off: command_off,
-                    selectedRoom: selectedRoom,
-                    category: selectedCategory
-                };
-            
-                setLabel('');          
-                setCommand_on('');     
-                setCommand_off('');     
-                setSelectedRoom(null); 
-                setSelectedCategory(null);
-        
-                setUserDevices(prevDevices => {
-                    const updatedDevices = [...prevDevices, newDevice];
-                    //console.log(updatedDevices); 
-                    return updatedDevices;
-                });        
-            };
-        
-            const saveDeviceManually = () => {
-                
-                let foundDevice = devicesList.find(device => device.name === name);
-                const category = foundDevice.category;
-                foundDevice.hidden = "true";
-                
-                const newDevice = {
-                    name: name,
-                    category: category,
-                    status: "not-active",
-                    label: label,
-                    command_on: command_on,
-                    command_off: command_off,
-                    selectedRoom: selectedRoom,
-                    protocol: selectedProtocol, 
-                    protocolConfig: {} 
-                };
-        
-                switch (selectedProtocol) {
-                    case 'Zigbee':
-                        newDevice.protocolConfig = {
-                            zigbeeId: zigbeeId,
-                            zigbeeChannel: zigbeeChannel,
-                            zigbeeGroupId: zigbeeGroupId,
-                            zigbeeHub: zigbeeHub
-                        };
-                        break;
-                    case 'Wifi':
-                        newDevice.protocolConfig = {
-                            ipAddress: ipAddress,
-                            macAddress: macAddress,
-                            ssid: ssid,
-                            password: password
-                        };
-                        break;
-                    case 'Bluetooth':
-                        newDevice.protocolConfig = {
-                            bleUuid: bleUuid,
-                            bleConnection: bleConnection
-                        };
-                        break;
-                    case 'Z-Wave':
-                        newDevice.protocolConfig = {
-                            zwaveDeviceId: zwaveDeviceId,
-                            zwaveNetworkKey: zwaveNetworkKey,
-                            zwaveGroupId: zwaveGroupId
-                        };
-                        break;
-                    case 'MQTT':
-                        newDevice.protocolConfig = {
-                            mqttBrokerUrl: mqttBrokerUrl,
-                            mqttTopicOn: mqttTopicOn,
-                            mqttTopicOff: mqttTopicOff,
-                            mqttDeviceId: mqttDeviceId
-                        };
-                        break;
-                }
-        
-                setLabel('');          
-                setCommand_on('');     
-                setCommand_off('');     
-                setSelectedRoom(null);
-                setSelectedProtocol(null); 
-                clearFields();
-            
-                setUserDevices(prevDevices => {
-                    const updatedDevices = [...prevDevices, newDevice];
-                    return updatedDevices;
-                });        
-            };
+            const saveDevice = async () => {
+              if (!name || !selectedRoom || !selectedCategory) {
+                  toast.current.show({severity:'error', summary: 'Error', detail:'Please fill all required fields', life: 2000});
+                  return;
+              }
+          
+              const newDevice = {
+                  name: name,
+                  status: status,
+                  label: label || name,
+                  command_on: command_on,
+                  command_off: command_off,
+                  room_id: rooms.indexOf(selectedRoom),
+                  category: selectedCategory,
+              };
+              
+              console.log(newDevice);
+
+              try {
+                  const response = await fetch('http://localhost:4000/api/add-new-devices', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                      },
+                      body: JSON.stringify({
+                          homeId: sessionStorage.getItem('selected-home-id'),
+                          userId: sessionStorage.getItem('UserId'),
+                          devices: [newDevice]
+                      })
+                  });
+          
+                  if (response.ok) {
+                      toast.current.show({severity:'success', summary: 'Success', detail:'Device added successfully', life: 2000});
+                      setPanelVisible1(false);
+                      clearFields();
+                  } else {
+                      throw new Error('Failed to add device');
+                  }
+              } catch (error) {
+                  console.error(error);
+                  toast.current.show({severity:'error', summary: 'Error', detail:'Failed to add device', life: 2000});
+              }
+          };
+          
+          const saveDeviceManually = async () => {
+              let foundDevice = devicesList.find(device => device.name === name);
+              if (!foundDevice) return;
+              
+              const newDevice = {
+                  name: name,
+                  category: foundDevice.category,
+                  status: "not-active",
+                  label: label,
+                  command_on: command_on,
+                  command_off: command_off,
+                  room_id: rooms.indexOf(selectedRoom),
+                  protocol: selectedProtocol,
+                  protocolConfig: {}
+              };
+          
+              console.log(newDevice);
+
+              switch (selectedProtocol) {
+                  case 'Zigbee':
+                      newDevice.protocolConfig = {
+                          zigbeeId,
+                          zigbeeChannel,
+                          zigbeeGroupId,
+                          zigbeeHub
+                      };
+                      break;
+                  case 'Wifi':
+                      newDevice.protocolConfig = {
+                          ipAddress,
+                          macAddress,
+                          ssid,
+                          password
+                      };
+                      break;
+                  case 'Bluetooth':
+                      newDevice.protocolConfig = {
+                          bleUuid,
+                          bleConnection
+                      };
+                      break;
+                  case 'Z-Wave':
+                      newDevice.protocolConfig = {
+                          zwaveDeviceId,
+                          zwaveNetworkKey,
+                          zwaveGroupId
+                      };
+                      break;
+                  case 'MQTT':
+                      newDevice.protocolConfig = {
+                          mqttBrokerUrl,
+                          mqttTopicOn,
+                          mqttTopicOff,
+                          mqttDeviceId
+                      };
+                      break;
+              }
+          
+              try {
+                  const response = await fetch('http://localhost:4000/api/add-new-devices', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+                      },
+                      body: JSON.stringify({
+                          homeId: sessionStorage.getItem('selected-home-id'),
+                          userId: sessionStorage.getItem('UserId'),
+                          devices: [newDevice]
+                      })
+                  });
+          
+                  if (response.ok) {
+                      toast.current.show({severity:'success', summary: 'Success', detail:'Device added successfully', life: 2000});
+                      setPanelVisible2(false);
+                      clearFields();
+                  }
+              } catch (error) {
+                  console.error(error);
+                  toast.current.show({severity:'error', summary: 'Error', detail:'Failed to add device', life: 2000});
+              }
+          };
             
             useEffect(() => {
+
                 console.log('Updated userDevices:', userDevices);
-        
+
                 if(userDevices.length == devices.length && devices.length != 0) {
                     
                     setPanelVisible1(false);
@@ -399,7 +433,6 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
         
             }, [userDevices]);
         
-
       const clearFields = () => {
           
           setZigbeeId('');
@@ -465,20 +498,41 @@ const protocols = [
   'MQTT', 
 ];
 
-  const groupDevicesByRoom = () => {
-    const devicesByRoom = {};
-    devices.forEach(device => {
-      const roomIndex = device.room_id;
-      if (roomIndex >= 0 && roomIndex < rooms.length) {
-        const room = rooms[roomIndex];
-        if (!devicesByRoom[room]) {
-          devicesByRoom[room] = [];
-        }
-        devicesByRoom[room].push(device);
+const groupDevicesByRoom = () => {
+  const devicesByRoom = {};
+  
+  devices.forEach(device => {
+    const roomIndex = device.room_id;
+    if (roomIndex >= 0 && roomIndex < rooms.length) {
+      const room = rooms[roomIndex];
+      if (!devicesByRoom[room]) {
+        devicesByRoom[room] = [];
       }
+      devicesByRoom[room].push(device);
+    } else if (roomIndex === -1) {
+      devicesByRoom["Living room"] = devicesByRoom["Living room"] || [];
+      devicesByRoom["Living room"].push(device);
+    }
+  });
+
+  Object.keys(devicesByRoom).forEach(room => {
+    devicesByRoom[room].sort((a, b) => {
+     
+      if (a.status !== b.status) {
+        return a.status === 'active' ? -1 : 1;
+      }
+
+      if (a.status === b.status) {
+        if (a.category === 'Sensor' && b.category !== 'Sensor') return 1;
+        if (a.category !== 'Sensor' && b.category === 'Sensor') return -1;
+      }
+      
+      return 0;
     });
-    return devicesByRoom;
-  };
+  });
+
+  return devicesByRoom;
+};
 
   const devicesByRoom = groupDevicesByRoom();
   const roomsWithDevices = Object.keys(devicesByRoom);
@@ -495,18 +549,84 @@ const protocols = [
 
   const [visibleActions, setVisibleActions] = useState(null);
 
+  const handleEditDevice = async () => {
+    if (!editLabel || !editCommandOn || !editCommandOff) {
+        toast.current.show({
+            severity: 'error', 
+            summary: 'Error', 
+            detail: 'All fields are required'
+        });
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:4000/api/devices/${editingDevice.device_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body: JSON.stringify({
+                label: editLabel,
+                command_on: editCommandOn,
+                command_off: editCommandOff
+            })
+        });
+
+        if (response.ok) {
+            toast.current.show({severity: 'success', summary: 'Success', detail: 'Device updated successfully'});
+            setEditDialog(false);
+        }
+    } catch (error) {
+        toast.current.show({severity: 'error', summary: 'Error', detail: 'Failed to update device'});
+    }
+};
+
   const handleEditClick = (device) => {
-    onEditDevice(device);
-    setVisibleActions(null);
+      setEditingDevice(device);
+      setEditLabel(device.label);
+      setEditCommandOn(device.command_on);
+      setEditCommandOff(device.command_off);
+      setEditDialog(true);
+      setVisibleActions(null);
   };
 
   const handleDeleteClick = (device) => {
-    onDeleteDevice(device);
-    setVisibleActions(null);
+      onDeleteDevice(device);
+      setVisibleActions(null);
   };
 
   return (
     <>
+        <Dialog 
+          header={`Edit Device - ${editingDevice?.label || ''}`}
+          visible={editDialog} 
+          onHide={() => setEditDialog(false)}
+          style={{width: '400px'}}
+        >
+    <div className="flex flex-col gap-4 p-4">
+        <InputText 
+            className={!editLabel ? 'p-invalid' : ''}
+            value={editLabel} 
+            onChange={(e) => setEditLabel(e.target.value)}
+            placeholder="Device Label*" 
+        />
+        <InputText 
+            className={!editCommandOn ? 'p-invalid' : ''}
+            value={editCommandOn} 
+            onChange={(e) => setEditCommandOn(e.target.value)}
+            placeholder="Command to turn on*" 
+        />
+        <InputText 
+            className={!editCommandOff ? 'p-invalid' : ''}
+            value={editCommandOff} 
+            onChange={(e) => setEditCommandOff(e.target.value)}
+            placeholder="Command to turn off*" 
+        />
+        <small className="text-red-500">* Required fields</small>
+        <Button label="Save" onClick={handleEditDevice} />
+    </div>
+</Dialog>
       <div className="flex xl:flex-row flex-col xl:gap-0 gap-4 justify-between items-center mb-4">
         <h2 className="text-2xl">Devices</h2>
         <div className='flex gap-4'>
@@ -514,7 +634,7 @@ const protocols = [
           <Button label="Other devices" icon="pi pi-plus" onClick={() => AddManually()} />
         </div>
       </div>
-      <div className={`grid ${columnClasses[roomsWithDevices.length - 1]} gap-4`}>
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-[2000px] mx-auto`}>
         {roomsWithDevices.map((room, index) => (
           <div key={index} className="bg-[#151513] rounded-xl p-6">
             <h3 className="text-lg font-semibold mb-2">{room}</h3>
@@ -543,8 +663,8 @@ const protocols = [
                         <Knob
                             value={deviceStates[device.device_id]?.brightness || 100}
                             onChange={(e) => {
-                              onKnobChange(device, deviceStates[device.device_id]?.isOn, e.value, true); // natychmiastowa aktualizacja UI
-                              debouncedKnobChange(device, deviceStates[device.device_id]?.isOn, e.value); // opóźnione wysłanie do backendu
+                              onKnobChange(device, deviceStates[device.device_id]?.isOn, e.value, true); 
+                              debouncedKnobChange(device, deviceStates[device.device_id]?.isOn, e.value); 
                             }}
                             valueTemplate="{value}%"
                             size={60}

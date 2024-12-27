@@ -23,7 +23,6 @@ const ScenarioCard = ({ scenarios, scenariosStates, onToggle }) => {
         </span>
       </div>
       <div className="flex items-center gap-4">
-        {/* Switch */}
         <div 
           className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-200 ease-in-out ${
             isActive ? 'bg-blue-600' : 'bg-gray-600'
@@ -36,7 +35,6 @@ const ScenarioCard = ({ scenarios, scenariosStates, onToggle }) => {
             }`}
           />
         </div>
-        {/* Circle indicator */}
         <div className="w-3 h-3 rounded-full bg-green-500" />
       </div>
     </div>
