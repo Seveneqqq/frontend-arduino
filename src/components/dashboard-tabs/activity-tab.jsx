@@ -140,12 +140,26 @@ function ScenariosTab() {
         }
     };
 
-    const actionBodyTemplate = (rowData) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
-            ${rowData.action === 'added' ? 'bg-[#C7EE7C] text-[#080808]' : 'bg-red-100 text-red-800'}`}>
-            {rowData.action.toUpperCase()}
-        </span>
-    );
+    const actionBodyTemplate = (rowData) => {
+        let styleClass = '';
+        
+        switch(rowData.action) {
+            case 'added':
+                styleClass = 'bg-[#C7EE7C] text-[#080808]';
+                break;
+            case 'removed':
+                styleClass = 'bg-red-500 text-white';
+                break;
+            default:
+                styleClass = 'bg-red-100 text-red-800';
+        }
+        
+        return (
+            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${styleClass}`}>
+                {rowData.action.toUpperCase()}
+            </span>
+        );
+    };;
 
     const dateBodyTemplate = (rowData) => (
         <span className="text-sm">{new Date(rowData.timestamp).toLocaleString()}</span>
