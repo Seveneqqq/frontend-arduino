@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import SessionTimedOut from './sessionTimedOut';
 
 export default function StatisticComponent() {
+
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [stats, setStats] = useState({
     devices: 0,
     users: 0,
@@ -16,6 +19,11 @@ export default function StatisticComponent() {
           }
         });
         
+        if (response.status === 401 || response.status === 403) {
+          setSessionExpired(true); 
+          return;
+        }
+
         if (response.ok) {
           const data = await response.json();
           setStats(data);
@@ -30,6 +38,10 @@ export default function StatisticComponent() {
 
   return (
     <div className="h-full flex flex-col">
+      <SessionTimedOut 
+            visible={sessionExpired} 
+            setVisible={setSessionExpired}
+        />
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-semibold">Statistics</h2>
       </div>

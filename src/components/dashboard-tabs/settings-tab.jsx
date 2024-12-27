@@ -1,12 +1,15 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import 'primeicons/primeicons.css';
+import SessionTimedOut from '../sessionTimedOut';
 
 export default function SettingTab() {
+
   let [data, setData] = useState(null);
   let [copyText, setCopyText] = useState("Copy");
   let [isEditing, setIsEditing] = useState(false);
   let [newName, setNewName] = useState("");
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   const fetchHouseInfo = async() => {
     try {
@@ -18,6 +21,12 @@ export default function SettingTab() {
           'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
         },
       });
+
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true); 
+        return;
+      }
+
       const responseData = await response.json();
       setData(responseData);
     } catch (error) {
@@ -61,6 +70,11 @@ export default function SettingTab() {
         })
       });
 
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true); 
+        return;
+      }
+
       if (response.ok) {
         setIsEditing(false);
         fetchHouseInfo();
@@ -86,6 +100,10 @@ export default function SettingTab() {
 
   return (
     <div className="flex flex-col py-5 gap-6 max-w-3xl mx-auto">
+      <SessionTimedOut 
+            visible={sessionExpired} 
+            setVisible={setSessionExpired}
+        />
       <div className="bg-[#1E1E1C] rounded-lg overflow-hidden">
         <div className="px-6 py-4">
           <h2 className="text-xl font-semibold mb-4">Home</h2>

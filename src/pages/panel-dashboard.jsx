@@ -18,6 +18,7 @@ import CameraStreamComponent from '../components/cameraStreamComponent';
 import StatisticCompomnent from '../components/statisticCompomnent';
 import FrontGateComponent from '../components/frontGateComponent';
 import { Toast } from 'primereact/toast';
+import SessionTimedOut from '../components/sessionTimedOut';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -170,7 +171,7 @@ export default function PanelDashboard() {
     const [cameraAdded, setCameraAdded] = useState(false);
     const [cameraAddress, setCameraAddress] = useState("");
     const [isCameraEditing, setIsCameraEditing] = useState(false);
-    
+    const [sessionExpired, setSessionExpired] = useState(false);
 
 useEffect(() => {
     const socket = io('http://localhost:4000', {
@@ -222,6 +223,11 @@ const saveAlarmAndNotify = useCallback(async (alarmData) => {
             },
             body: JSON.stringify(alarmData)
         });
+
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
 
         if (response.ok) {
             const notificationText = `${alarmData.type === 'temperature' ? 'Temperature' : 'Humidity'} 
@@ -362,6 +368,11 @@ useEffect(() => {
                 }
             });
     
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Failed to fetch alarm settings');
             }
@@ -393,6 +404,12 @@ useEffect(() => {
             const response = await fetch('http://localhost:4000/api/home/app-start');
             const data = await response.json();
             console.log('Sensor reading started:', data);
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
         } catch (error) {
             console.error('Error starting sensors:', error);
         }
@@ -448,6 +465,11 @@ useEffect(() => {
                 body: JSON.stringify(payload)
             });
     
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -577,6 +599,11 @@ useEffect(() => {
             })
         });
 
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
         const data = await response.json();
         console.log("ponizej dane urzadzen");
         console.log(data);
@@ -651,6 +678,11 @@ useEffect(() => {
             })
         });
     
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
         if (response.ok) {
             toast.current.show({
                 severity: 'success',
@@ -674,6 +706,11 @@ useEffect(() => {
             }
         });
     
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
         if (response.ok) {
             toast.current.show({
                 severity: 'success',
@@ -710,6 +747,11 @@ useEffect(() => {
             }
           });
       
+          if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
           if (response.ok) {
             setCameraAdded(false);
             setCameraAddress('');
@@ -726,7 +768,14 @@ useEffect(() => {
               'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
             }
           });
+
+          if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
           const data = await response.json();
+
           if (data) {
             if(data.error == "Camera not found"){
                 setCameraAdded(false);
@@ -759,6 +808,11 @@ useEffect(() => {
             })
           });
       
+          if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
           console.log("Response status:", response.status);
           const data = await response.json();
           console.log("Response data:", data);
@@ -781,6 +835,10 @@ useEffect(() => {
             case 'dashboard':
                 return (
                     <div className="flex-1 px-5 py-5 flex flex-col gap-5">
+                        <SessionTimedOut 
+                            visible={sessionExpired} 
+                            setVisible={setSessionExpired}
+                        />
                         <div
                             ref={scrollRef}
                             className="flex gap-5 md:overflow-x-hidden overflow-x-scroll select-none px-2"

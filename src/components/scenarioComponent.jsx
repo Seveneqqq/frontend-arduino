@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SessionTimedOut from './sessionTimedOut';
 
 const ScenarioCard = ({ scenarios, scenariosStates, onToggle }) => {
   const [randomScenario, setRandomScenario] = useState(null);
@@ -42,6 +43,8 @@ const ScenarioCard = ({ scenarios, scenariosStates, onToggle }) => {
 };
 
 const ScenarioComponent = ({ devices, deviceStates }) => {
+
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [scenarios, setScenarios] = useState([]);
   const [scenariosStates, setScenariosStates] = useState({});
 
@@ -57,6 +60,11 @@ const ScenarioComponent = ({ devices, deviceStates }) => {
           'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
         }
       });
+
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true); 
+        return;
+      }
       const data = await response.json();
       setScenarios(data);
 
@@ -101,6 +109,11 @@ const ScenarioComponent = ({ devices, deviceStates }) => {
         })
       });
 
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true); 
+        return;
+      }
+
       if (response.ok) {
         setScenariosStates(prev => {
           const newStates = { ...prev, [scenarioId]: newState };
@@ -117,6 +130,10 @@ const ScenarioComponent = ({ devices, deviceStates }) => {
 
   return (
     <div className="w-full h-full">
+      <SessionTimedOut 
+            visible={sessionExpired} 
+            setVisible={setSessionExpired}
+        />
       <h2 className="text-xl mb-2">Scenario</h2>
       <ScenarioCard 
         scenarios={scenarios}

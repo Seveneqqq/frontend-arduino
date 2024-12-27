@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { TabMenu } from 'primereact/tabmenu';
+import SessionTimedOut from '../sessionTimedOut';
 
 export default function ActivityTab() {
+
     const [activeIndex, setActiveIndex] = useState(0);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     const items = [
         { label: 'Alarms', icon: 'pi pi-bell' },
@@ -15,6 +18,10 @@ export default function ActivityTab() {
 
     return (
         <div className="card bg-transparent menu-bg-transparent">
+            <SessionTimedOut 
+                visible={sessionExpired} 
+                setVisible={setSessionExpired}
+            />
             <TabMenu
                 model={items}
                 activeIndex={activeIndex}
@@ -33,6 +40,7 @@ export default function ActivityTab() {
 function DevicesTab() {
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchDevicesHistory();
@@ -49,6 +57,11 @@ function DevicesTab() {
                     }
                 }
             );
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
 
             if (response.ok) {
                 const data = await response.json();
@@ -112,6 +125,7 @@ function DevicesTab() {
 function ScenariosTab() {
     const [scenarios, setScenarios] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchScenariosHistory();
@@ -128,6 +142,11 @@ function ScenariosTab() {
                     }
                 }
             );
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
 
             if (response.ok) {
                 const data = await response.json();
@@ -159,7 +178,7 @@ function ScenariosTab() {
                 {rowData.action.toUpperCase()}
             </span>
         );
-    };;
+    };
 
     const dateBodyTemplate = (rowData) => (
         <span className="text-sm">{new Date(rowData.timestamp).toLocaleString()}</span>
@@ -196,6 +215,7 @@ function ScenariosTab() {
 function UsersTab() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchUsersHistory();
@@ -212,6 +232,11 @@ function UsersTab() {
                     }
                 }
             );
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
 
             if (response.ok) {
                 const data = await response.json();
@@ -265,6 +290,7 @@ function UsersTab() {
 function AlarmsTab() {
     const [alarms, setAlarms] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchAlarmHistory();
@@ -281,6 +307,11 @@ function AlarmsTab() {
                     }
                 }
             );
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
 
             if (response.ok) {
                 const data = await response.json();

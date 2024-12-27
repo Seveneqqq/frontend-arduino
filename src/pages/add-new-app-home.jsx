@@ -10,7 +10,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-
+import SessionTimedOut from "../components/sessionTimedOut";
 
 
 export default function AddNewAppHome(){
@@ -34,10 +34,13 @@ export default function AddNewAppHome(){
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProtocol, setSelectedProtocol] = useState(null);
     const [formVisible, setFormVisible] = useState(false);
+    const [sessionExpired, setSessionExpired] = useState(false);
+
     const [zigbeeId, setZigbeeId] = useState('');
     const [zigbeeChannel, setZigbeeChannel] = useState('');
     const [zigbeeGroupId, setZigbeeGroupId] = useState('');
     const [zigbeeHub, setZigbeeHub] = useState('');
+    
 
     const [ipAddress, setIpAddress] = useState('');
     const [macAddress, setMacAddress] = useState('');
@@ -101,7 +104,9 @@ export default function AddNewAppHome(){
         'Heating',
         'Camera',
         'Vacuum device',
-        'Multimedia device'
+        'Multimedia device',
+        'Other device',
+        'Air device'
     ];
 
     const protocols = [
@@ -245,6 +250,11 @@ export default function AddNewAppHome(){
             })
         })
 
+        if (responseNewHome.status === 401 || responseNewHome.status === 403) {
+            setSessionExpired(true); 
+            return;
+        }
+
         const dataNewHome = await responseNewHome.json();
 
         const homeId = dataNewHome.home_id; 
@@ -268,6 +278,11 @@ export default function AddNewAppHome(){
                 })
             })
 
+            if (responseAddDevices.status === 401 || responseAddDevices.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
+
             const dataAddDevices = await responseAddDevices.json();
             console.log(dataAddDevices);
 
@@ -283,6 +298,11 @@ export default function AddNewAppHome(){
                     "humidityRange": [40, 60]
                 })
             });
+
+            if (responseAddAlarm.status === 401 || responseAddAlarm.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
     
             const dataAddAlarm = await responseAddAlarm.json();
             console.log('Alarm settings created:', dataAddAlarm);
@@ -331,6 +351,11 @@ export default function AddNewAppHome(){
                     },
                 });
 
+                if (response.status === 401 || response.status === 403) {
+                    setSessionExpired(true); 
+                    return;
+                }
+
                 let list = await response.json();
                 let devicesArr = list.devices;
                 setDevicesList(devicesArr);
@@ -364,6 +389,11 @@ export default function AddNewAppHome(){
                 'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
             },
         });
+
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true); 
+            return;
+        }
         
         if( response.ok){
 
@@ -587,6 +617,11 @@ export default function AddNewAppHome(){
                     "home_invite_code": joinCode
                 })
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
     
             if (response.ok) {
                 let data = await response.json();
@@ -605,6 +640,11 @@ export default function AddNewAppHome(){
                             timestamp: new Date()
                         })
                     });
+
+                    if (historyResponse.status === 401 || historyResponse.status === 403) {
+                        setSessionExpired(true); 
+                        return;
+                    }
     
                     if (historyResponse.ok) {
                         showSuccess();
@@ -640,6 +680,10 @@ export default function AddNewAppHome(){
 
     return (
       <div className="card flex justify-center h-[100vh] w-[100vw] !bg-slate-800">
+        <SessionTimedOut 
+            visible={sessionExpired} 
+            setVisible={setSessionExpired}
+        />
         <Stepper
           ref={stepperRef}
           className="md:w-[80vw] w-[100vw] h-[100vh] !bg-slate-800"

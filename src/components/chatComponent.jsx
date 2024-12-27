@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import SessionTimedOut from './sessionTimedOut';
 
 const ChatComponent = () => {
+
+    const [sessionExpired, setSessionExpired] = useState(false);
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +39,11 @@ const ChatComponent = () => {
                 },
                 body: JSON.stringify({ prompt: inputMessage })
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
 
             const data = await response.json();
 
@@ -72,6 +80,10 @@ const ChatComponent = () => {
 
     return (
         <div className="xl:h-[342px] h-[500px] flex flex-col rounded-xl overflow-hidden">
+            <SessionTimedOut 
+                visible={sessionExpired} 
+                setVisible={setSessionExpired}
+            />
             <div className="px-4 py-1 border-b border-gray-700 flex-shrink-0">
                 <h2 className="text-lg font-semibold">Smart Home Assistant</h2>
             </div>

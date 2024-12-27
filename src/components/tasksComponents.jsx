@@ -4,6 +4,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
+import SessionTimedOut from './sessionTimedOut';
 
 const TasksComponent = () => {
     const [tasks, setTasks] = useState([]);
@@ -12,6 +13,8 @@ const TasksComponent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const toast = useRef(null);
     const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
+    const [sessionExpired, setSessionExpired] = useState(false);
+
 
     useEffect(() => {
         fetchTasks();
@@ -25,6 +28,12 @@ const TasksComponent = () => {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
                 }
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
+
             const data = await response.json();
             const sortedTasks = data.sort((a, b) => {
                 if (a.isCompleted === b.isCompleted) {
@@ -60,6 +69,11 @@ const TasksComponent = () => {
                 })
             });
 
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
+
             const data = await response.json();
             if (data.success) {
                 toast.current.show({
@@ -91,6 +105,11 @@ const TasksComponent = () => {
                 }
             });
 
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
+
             if (response.ok) {
                 await fetchTasks();
                 toast.current.show({
@@ -120,6 +139,11 @@ const TasksComponent = () => {
                     user_id: sessionStorage.getItem('UserId')
                 })
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
 
             if (response.ok) {
                 await fetchTasks();
@@ -153,6 +177,10 @@ const TasksComponent = () => {
     return (
         <div className="h-full flex flex-col">
             <Toast ref={toast} />
+            <SessionTimedOut 
+                visible={sessionExpired} 
+                setVisible={setSessionExpired}
+            />
             
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-semibold">Tasks</h2>

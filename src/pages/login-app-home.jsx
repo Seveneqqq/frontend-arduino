@@ -1,12 +1,13 @@
 import React, { useState,useRef, useEffect } from "react";
 import { Button } from 'primereact/button';
 import { useNavigate } from "react-router-dom";
-
+import SessionTimedOut from "../components/sessionTimedOut";
 
 export default function LoginAppHome(){
 
     const [fetchData, setFetchData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() =>{
@@ -21,6 +22,11 @@ export default function LoginAppHome(){
                     "user_id": sessionStorage.getItem('UserId'),
                 })
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
 
             setFetchData(await response.json());
             console.log(await fetchData);
@@ -53,6 +59,10 @@ export default function LoginAppHome(){
     return (
 
         <div className="card flex flex-col justify-content-center w-[100vw] h-[100vh] !bg-slate-800">
+            <SessionTimedOut 
+                visible={sessionExpired} 
+                setVisible={setSessionExpired}
+            />
         <div className="flex flex-col gap-[6vw] justify-center text-center w-[100%] mt-[5%] text-4xl">
             {fetchData.length > 0 ? (
             <>

@@ -5,6 +5,7 @@ import { Dialog } from 'primereact/dialog';
 import { Password } from 'primereact/password';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Toast } from 'primereact/toast';
+import SessionTimedOut from '../sessionTimedOut';
 
 export default function AccountTab() {
   const toast = useRef(null);
@@ -13,6 +14,7 @@ export default function AccountTab() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   const fetchAccountInfo = async() => {
     try {
@@ -23,6 +25,12 @@ export default function AccountTab() {
           'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
         },
       });
+
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true);
+        return;
+      }
+
       const responseData = await response.json();
       setData(responseData);
     } catch (error) {
@@ -49,6 +57,11 @@ export default function AccountTab() {
           user_id: sessionStorage.getItem('UserId')
         })
       });
+
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true);
+        return;
+      }
   
       if (response.ok) {
         toast.current.show({
@@ -103,6 +116,11 @@ export default function AccountTab() {
         })
       });
 
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true);
+        return;
+      }
+
       if (response.ok) {
         toast.current.show({
           severity: 'success',
@@ -143,6 +161,10 @@ export default function AccountTab() {
 
   return (
     <div className="flex flex-col py-5 gap-6 max-w-3xl mx-auto">
+      <SessionTimedOut 
+            visible={sessionExpired} 
+            setVisible={setSessionExpired}
+        />
       <Toast ref={toast} />
       <div className="bg-[#1E1E1C] rounded-lg overflow-hidden">
         <div className="px-6 py-4">

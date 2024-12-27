@@ -8,6 +8,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Slider } from 'primereact/slider';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Toast } from 'primereact/toast';
+import SessionTimedOut from '../sessionTimedOut';
 
 export default function AutomationTab({ devices, deviceStates }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +20,7 @@ export default function AutomationTab({ devices, deviceStates }) {
     const [scenariosStates, setScenariosStates] = useState({});
     const [selectedDevices, setSelectedDevices] = useState([]);
     const [previousDeviceStates, setPreviousDeviceStates] = useState({});
+    const [sessionExpired, setSessionExpired] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         scenarioTurnOn: '',
@@ -44,6 +46,12 @@ export default function AutomationTab({ devices, deviceStates }) {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
                 }
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             const data = await response.json();
             setScenarios(data);
 
@@ -87,6 +95,11 @@ export default function AutomationTab({ devices, deviceStates }) {
                     devices: activeDevices
                 })
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
     
             if (response.ok) {
                 setScenariosStates(prev => {
@@ -138,6 +151,11 @@ export default function AutomationTab({ devices, deviceStates }) {
                 })
             });
 
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             if (response.ok) {
                 setScenarios(scenarios.filter(s => s._id !== scenarioId));
                 toast.current.show({
@@ -175,6 +193,11 @@ export default function AutomationTab({ devices, deviceStates }) {
                     user_id: sessionStorage.getItem('UserId')
                 })
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
 
             if (response.ok) {
                 const updatedScenario = await response.json();
@@ -264,6 +287,11 @@ export default function AutomationTab({ devices, deviceStates }) {
                 body: JSON.stringify(dataToSend)
             });
     
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             if (response.ok) {
                 const savedScenario = await response.json();
                 setScenarios(prevScenarios => [...prevScenarios, savedScenario]);
@@ -433,6 +461,10 @@ export default function AutomationTab({ devices, deviceStates }) {
         
             return (
                 <div>
+                    <SessionTimedOut 
+                        visible={sessionExpired} 
+                        setVisible={setSessionExpired}
+                    />
                     <Toast ref={toast} />
                     <div className="flex xl:flex-row flex-col xl:gap-0 gap-4 justify-between items-center mb-4">
                         <h2 className="text-2xl">Automation</h2>
