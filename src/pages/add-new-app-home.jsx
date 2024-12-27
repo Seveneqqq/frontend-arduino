@@ -902,7 +902,11 @@ export default function AddNewAppHome(){
                       <Column field="name" header="Name" />
                       <Column field="label" header="Label" />
                       <Column field="status" header="Status" />
-                      <Column field="selectedRoom" header="Room" />
+                      <Column 
+                        field="room_id" 
+                        header="Room" 
+                        body={(rowData) => rooms[rowData.room_id]} 
+                      />
                       <Column field="command_on" header="Turn On Command" />
                       <Column field="command_off" header="Turn Off Command" />
                       <Column
