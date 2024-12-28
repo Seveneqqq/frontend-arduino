@@ -210,6 +210,9 @@ export default function AddNewAppHome(){
     const showError = () => {
         toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
     }
+    const noAddedDevicesError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Add devices before creating house.',life: 2000,});
+    }
     const devicesSaved = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully devices are saved',life: 1000,});
     }
@@ -236,7 +239,11 @@ export default function AddNewAppHome(){
         const userId = sessionStorage.getItem('UserId');
         const homeName = valueHomeName;
 
-        //userDevices
+        if(userDevices.length == 0 ){
+            console.log('przerwano');
+            noAddedDevicesError();
+            return;
+        }
 
         const responseNewHome = await fetch(`http://localhost:4000/api/new-home`,{
             method: 'POST',
@@ -679,7 +686,8 @@ export default function AddNewAppHome(){
     }
 
     return (
-      <div className="card flex justify-center h-[100vh] w-[100vw] !bg-slate-800">
+     <div className="card flex justify-center h-[100vh] w-[100vw] !bg-slate-800">
+        <Toast ref={toast} />
         <SessionTimedOut 
             visible={sessionExpired} 
             setVisible={setSessionExpired}
@@ -692,7 +700,7 @@ export default function AddNewAppHome(){
             <div className="flex flex-column h-[80vh]">
               <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                 <div className="flex flex-col items-center w-[100%] gap-5 justify-center">
-                  <Toast ref={toast} />
+                  
 
                   {!isClicked ? (
                     <>
@@ -769,8 +777,7 @@ export default function AddNewAppHome(){
               <div
                 className={`!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%] ${blur}`}
               >
-                <Toast ref={toast} />
-
+                
                 <div
                   className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600"
                   onClick={() => findDevices()}
