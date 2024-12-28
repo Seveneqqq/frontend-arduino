@@ -85,12 +85,29 @@ function DevicesTab() {
         }
     };
 
-    const actionBodyTemplate = (rowData) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
-            ${rowData.action === 'added' ? 'bg-[#C7EE7C] text-[#080808]' : 'bg-red-100 text-red-800'}`}>
-            {rowData.action.toUpperCase()}
-        </span>
-    );
+    const actionBodyTemplate = (rowData) => {
+        let styleClass = '';
+        
+        switch(rowData.action) {
+            case 'added':
+                styleClass = 'bg-[#C7EE7C] text-[#080808]';
+                break;
+            case 'removed':
+                styleClass = 'bg-red-500 text-white';
+                break;
+            case 'edited':
+                styleClass = 'bg-blue-500 text-white';
+                break;
+            default:
+                styleClass = 'bg-gray-200 text-gray-800';
+        }
+
+        return (
+            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${styleClass}`}>
+                {rowData.action.toUpperCase()}
+            </span>
+        );
+    };
 
     const statusBodyTemplate = (rowData) => (
         <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
@@ -124,15 +141,16 @@ function DevicesTab() {
             >
                 <Column style={{ backgroundColor: '#151513' }} field="timestamp" header="Date & Time" sortable body={dateBodyTemplate} />
                 <Column style={{ backgroundColor: '#151513' }} field="device_name" header="Device" sortable />
-                <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
                 <Column style={{ backgroundColor: '#151513' }} field="device_status" header="Status" sortable body={statusBodyTemplate} />
                 <Column 
                   field="room" 
                   header="Room"
                   style={{ backgroundColor: '#151513' }} 
                   body={(rowData) => rooms[rowData.room]} 
+                  sortable
                 />
                 <Column style={{ backgroundColor: '#151513' }} field="category" header="Category" sortable />
+                <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
             </DataTable>
         </div>
     );
@@ -185,8 +203,11 @@ function ScenariosTab() {
             case 'removed':
                 styleClass = 'bg-red-500 text-white';
                 break;
+            case 'edited':
+                styleClass = 'bg-blue-500 text-white';
+                break;
             default:
-                styleClass = 'bg-red-100 text-red-800';
+                styleClass = 'bg-gray-200 text-gray-800';
         }
         
         return (
