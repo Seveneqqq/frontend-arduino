@@ -870,10 +870,6 @@ const groupDevicesByRoom = () => {
         </Dialog>
                       </div>
                     </div>
-                    
-
-
-
     </>
   );
 }

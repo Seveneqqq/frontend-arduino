@@ -172,6 +172,9 @@ export default function PanelDashboard() {
     const [cameraAddress, setCameraAddress] = useState("");
     const [isCameraEditing, setIsCameraEditing] = useState(false);
     const [sessionExpired, setSessionExpired] = useState(false);
+    
+    const [scenarios, setScenarios] = useState([]);
+    const [scenariosStates, setScenariosStates] = useState({});
 
 useEffect(() => {
     const socket = io('http://localhost:4000', {
@@ -212,6 +215,37 @@ useEffect(() => {
         }
     };
 }, []);
+
+    useEffect(() => {
+        fetchScenarios();
+      }, []);
+
+  const fetchScenarios = async () => {
+    try {
+      const home_id = sessionStorage.getItem('selected-home-id');
+      const response = await fetch(`http://localhost:4000/api/mongodb/scenarios/${home_id}`, {
+        headers: {
+          'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+        }
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true); 
+        return;
+      }
+      const data = await response.json();
+      setScenarios(data);
+
+      const savedStates = JSON.parse(localStorage.getItem('scenarioStates') || '{}');
+      const initialStates = data.reduce((acc, scenario) => {
+        acc[scenario._id] = savedStates[scenario._id] || false;
+        return acc;
+      }, {});
+      setScenariosStates(initialStates);
+    } catch (error) {
+      console.error('Error fetching scenarios:', error);
+    }
+  };
 
 const saveAlarmAndNotify = useCallback(async (alarmData) => {
     try {
@@ -480,13 +514,10 @@ useEffect(() => {
 
     useEffect(() => {
         let recognition = null;
-
-        const createDeviceCommands = () => {
-            if (!devices || devices.length === 0) {
-                return [];
-            }
-
-            return devices.map(device => ({
+    
+        const createCommands = () => {
+            const deviceCommands = !devices ? [] : devices.map(device => ({
+                type: 'device',
                 name: device.name,
                 label: device.label,
                 commands: [
@@ -499,47 +530,83 @@ useEffect(() => {
                     device.command_off || 'light off'
                 ]
             }));
+    
+            const scenarioCommands = !scenarios ? [] : scenarios.map(scenario => ({
+                type: 'scenario',
+                id: scenario._id,
+                name: scenario.name,
+                commands: [
+                    scenario.name,
+                    scenario.scenarioTurnOn,
+                    scenario.scenarioTurnOff
+                ]
+            }));
+    
+            return [...deviceCommands, ...scenarioCommands];
         };
-
+    
         const startRecording = () => {
             try {
                 if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
                     console.error('Twoja przeglądarka nie obsługuje rozpoznawania mowy');
                     return;
                 }
-
+    
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
-
+    
                 if (!recognition) {
                     console.error('Nie udało się włączyć rozpoznawania mowy');
                     return;
                 }
-
+    
                 recognition.continuous = false;
                 recognition.interimResults = false;
                 recognition.lang = 'pl-PL';
-
+    
                 recognition.onstart = () => {
                     console.log('Rozpoczęto nasłuchiwanie');
                 };
-
+    
                 recognition.onresult = (event) => {
                     if (!event.results || !event.results[0]) {
                         return;
                     }
-
+    
                     const transcript = event.results[0][0].transcript.toLowerCase();
                     console.log('Rozpoznany tekst:', transcript);
-
-                    const deviceCommands = createDeviceCommands();
-                    deviceCommands.forEach(device => {
-                        if (device.commands.some(cmd => transcript.includes(cmd.toLowerCase()))) {
-                            console.log('Wykryto komendę dla urządzenia:', device.name);
+    
+                    const commands = createCommands();
+                    commands.forEach(item => {
+                        if (item.commands.some(cmd => transcript.includes(cmd.toLowerCase()))) {
+                            if (item.type === 'device') {
+                                console.log('Wykryto komendę dla urządzenia:', item.name);
+                                // tutaj można dodać obsługę komend dla urządzeń
+                                if (transcript.includes('włącz')) {
+                                    updateDeviceState(item, true, item.category === 'Light' ? deviceStates[item.device_id]?.brightness : deviceStates[item.device_id]?.temperature);
+                                } else if (transcript.includes('wyłącz')) {
+                                    updateDeviceState(item, false, item.category === 'Light' ? deviceStates[item.device_id]?.brightness : deviceStates[item.device_id]?.temperature);
+                                }
+                            } else if (item.type === 'scenario') {
+                                console.log('Wykryto komendę dla scenariusza:', item.name);
+                                if (transcript.includes(item.commands[1].toLowerCase())) {
+                                    // Włączanie scenariusza
+                                    setScenariosStates(prev => ({
+                                        ...prev,
+                                        [item.id]: true
+                                    }));
+                                } else if (transcript.includes(item.commands[2].toLowerCase())) {
+                                    // Wyłączanie scenariusza
+                                    setScenariosStates(prev => ({
+                                        ...prev,
+                                        [item.id]: false
+                                    }));
+                                }
+                            }
                         }
                     });
                 };
-
+    
                 recognition.onerror = (event) => {
                     console.error('Błąd rozpoznawania:', event.error);
                     
@@ -549,7 +616,7 @@ useEffect(() => {
                         setMicrophoneActivatedColor('bg-[#080808]');
                     }
                 };
-
+    
                 recognition.onend = () => {
                     if (microphoneActivated && recognition) {
                         setTimeout(() => {
@@ -561,20 +628,20 @@ useEffect(() => {
                         }, 200);
                     }
                 };
-
+    
                 recognition.start();
-
+    
             } catch (error) {
                 console.error('Błąd podczas inicjalizacji rozpoznawania mowy:', error);
                 setMicrophoneActivated(false);
                 setMicrophoneActivatedColor('bg-[#080808]');
             }
         };
-
+    
         if (microphoneActivated) {
             startRecording();
         }
-
+    
         return () => {
             if (recognition) {
                 try {
@@ -585,7 +652,7 @@ useEffect(() => {
                 }
             }
         };
-    }, [microphoneActivated, devices]);
+    }, [microphoneActivated, devices, scenarios, updateDeviceState, deviceStates]);
 
     const fetchDevices = async() => {
         const response = await fetch(`http://localhost:4000/api/home/get-devices`,{
