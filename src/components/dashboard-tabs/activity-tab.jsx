@@ -38,9 +38,20 @@ export default function ActivityTab() {
 }
 
 function DevicesTab() {
+
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sessionExpired, setSessionExpired] = useState(false);
+
+    const rooms = [
+        'Kitchen',
+        'Living room', 
+        'Bathroom', 
+        'Garden', 
+        'Childrens room', 
+        'Garage', 
+        'Office',
+    ];
 
     useEffect(() => {
         fetchDevicesHistory();
@@ -115,7 +126,12 @@ function DevicesTab() {
                 <Column style={{ backgroundColor: '#151513' }} field="device_name" header="Device" sortable />
                 <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
                 <Column style={{ backgroundColor: '#151513' }} field="device_status" header="Status" sortable body={statusBodyTemplate} />
-                <Column style={{ backgroundColor: '#151513' }} field="room" header="Room" sortable />
+                <Column 
+                  field="room" 
+                  header="Room"
+                  style={{ backgroundColor: '#151513' }} 
+                  body={(rowData) => rooms[rowData.room]} 
+                />
                 <Column style={{ backgroundColor: '#151513' }} field="category" header="Category" sortable />
             </DataTable>
         </div>
