@@ -770,6 +770,10 @@ useEffect(() => {
             method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body:{
+                label: device.label,
+                room: device.room_id
             }
         });
     
