@@ -6,12 +6,11 @@ import { useNavigate } from 'react-router-dom';
 
 export default function SessionTimedOut({ visible, setVisible }) {
     const [loginMessage, setLoginMessage] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
     async function submitLogin() {
-        let username = document.querySelector('#username').value;
-        let password = document.querySelector('#password').value;
-
         try {
             const request = new Request("http://localhost:4000/api/login", {
                 method: "POST",
@@ -68,7 +67,8 @@ export default function SessionTimedOut({ visible, setVisible }) {
                     </label>
                     <InputText 
                         id="username" 
-                        label="Username" 
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         className="bg-white-alpha-20 border-none p-3 text-primary-50"
                     />
                 </div>
@@ -78,7 +78,8 @@ export default function SessionTimedOut({ visible, setVisible }) {
                     </label>
                     <InputText 
                         id="password" 
-                        label="Password" 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className="bg-white-alpha-20 border-none p-3 text-primary-50" 
                         type="password"
                         onKeyPress={(e) => {
