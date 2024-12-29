@@ -11,6 +11,7 @@ import { Toast } from 'primereact/toast';
 import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
 import _ from 'lodash';
+import SessionTimedOut from '../sessionTimedOut';
 
 export default function DevicesTab({ devices, deviceStates, onEditDevice, onDeleteDevice, onSwitchChange, onKnobChange }) {
   
@@ -31,6 +32,8 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
       const [selectedCategory, setSelectedCategory] = useState(null);
       const [selectedProtocol, setSelectedProtocol] = useState(null);
       const [formVisible, setFormVisible] = useState(false);
+      const [sessionExpired, setSessionExpired] = useState(false);
+
       const [zigbeeId, setZigbeeId] = useState('');
       const [zigbeeChannel, setZigbeeChannel] = useState('');
       const [zigbeeGroupId, setZigbeeGroupId] = useState('');
@@ -187,7 +190,12 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                                 'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
                             },
                         });
-        
+                        
+                        if (response.status === 401 || response.status === 403) {
+                            setSessionExpired(true); 
+                            return;
+                        }
+
                         let list = await response.json();
                         let devicesArr = list.devices;
                         setDevicesList(devicesArr);
@@ -221,6 +229,11 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                         'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
                     },
                 });
+
+                if (response.status === 401 || response.status === 403) {
+                    setSessionExpired(true); 
+                    return;
+                }
                 
                 if( response.ok){
         
@@ -321,6 +334,11 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                       })
                   });
           
+                  if (response.status === 401 || response.status === 403) {
+                    setSessionExpired(true); 
+                    return;
+                }
+
                   if (response.ok) {
                       toast.current.show({severity:'success', summary: 'Success', detail:'Device added successfully', life: 2000});
                       setPanelVisible1(false);
@@ -405,6 +423,11 @@ export default function DevicesTab({ devices, deviceStates, onEditDevice, onDele
                           devices: [newDevice]
                       })
                   });
+
+                  if (response.status === 401 || response.status === 403) {
+                    setSessionExpired(true); 
+                    return;
+                }
           
                   if (response.ok) {
                       toast.current.show({severity:'success', summary: 'Success', detail:'Device added successfully', life: 2000});
@@ -573,6 +596,11 @@ const groupDevicesByRoom = () => {
             })
         });
 
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true); 
+            return;
+        }
+
         if (response.ok) {
             toast.current.show({severity: 'success', summary: 'Success', detail: 'Device updated successfully'});
             setEditDialog(false);
@@ -598,6 +626,10 @@ const groupDevicesByRoom = () => {
 
   return (
     <>
+        <SessionTimedOut 
+            visible={sessionExpired} 
+            setVisible={setSessionExpired}
+        />
         <Dialog 
           header={`Edit Device - ${editingDevice?.label || ''}`}
           visible={editDialog} 
@@ -838,10 +870,6 @@ const groupDevicesByRoom = () => {
         </Dialog>
                       </div>
                     </div>
-                    
-
-
-
     </>
   );
 }

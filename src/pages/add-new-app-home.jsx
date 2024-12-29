@@ -10,7 +10,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-
+import SessionTimedOut from "../components/sessionTimedOut";
 
 
 export default function AddNewAppHome(){
@@ -34,10 +34,13 @@ export default function AddNewAppHome(){
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProtocol, setSelectedProtocol] = useState(null);
     const [formVisible, setFormVisible] = useState(false);
+    const [sessionExpired, setSessionExpired] = useState(false);
+
     const [zigbeeId, setZigbeeId] = useState('');
     const [zigbeeChannel, setZigbeeChannel] = useState('');
     const [zigbeeGroupId, setZigbeeGroupId] = useState('');
     const [zigbeeHub, setZigbeeHub] = useState('');
+    
 
     const [ipAddress, setIpAddress] = useState('');
     const [macAddress, setMacAddress] = useState('');
@@ -101,7 +104,9 @@ export default function AddNewAppHome(){
         'Heating',
         'Camera',
         'Vacuum device',
-        'Multimedia device'
+        'Multimedia device',
+        'Other device',
+        'Air device'
     ];
 
     const protocols = [
@@ -205,6 +210,9 @@ export default function AddNewAppHome(){
     const showError = () => {
         toast.current.show({severity:'error', summary: 'Error', detail:'Something goes wrong.',life: 2000,});
     }
+    const noAddedDevicesError = () => {
+        toast.current.show({severity:'error', summary: 'Error', detail:'Add devices before creating house.',life: 2000,});
+    }
     const devicesSaved = () => {
         toast.current.show({severity:'success', summary: 'Success', detail:'Succesfully devices are saved',life: 1000,});
     }
@@ -231,7 +239,11 @@ export default function AddNewAppHome(){
         const userId = sessionStorage.getItem('UserId');
         const homeName = valueHomeName;
 
-        //userDevices
+        if(userDevices.length == 0 ){
+            console.log('przerwano');
+            noAddedDevicesError();
+            return;
+        }
 
         const responseNewHome = await fetch(`http://localhost:4000/api/new-home`,{
             method: 'POST',
@@ -244,6 +256,11 @@ export default function AddNewAppHome(){
                 "homeName": homeName
             })
         })
+
+        if (responseNewHome.status === 401 || responseNewHome.status === 403) {
+            setSessionExpired(true); 
+            return;
+        }
 
         const dataNewHome = await responseNewHome.json();
 
@@ -268,6 +285,11 @@ export default function AddNewAppHome(){
                 })
             })
 
+            if (responseAddDevices.status === 401 || responseAddDevices.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
+
             const dataAddDevices = await responseAddDevices.json();
             console.log(dataAddDevices);
 
@@ -283,6 +305,11 @@ export default function AddNewAppHome(){
                     "humidityRange": [40, 60]
                 })
             });
+
+            if (responseAddAlarm.status === 401 || responseAddAlarm.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
     
             const dataAddAlarm = await responseAddAlarm.json();
             console.log('Alarm settings created:', dataAddAlarm);
@@ -331,6 +358,11 @@ export default function AddNewAppHome(){
                     },
                 });
 
+                if (response.status === 401 || response.status === 403) {
+                    setSessionExpired(true); 
+                    return;
+                }
+
                 let list = await response.json();
                 let devicesArr = list.devices;
                 setDevicesList(devicesArr);
@@ -364,6 +396,11 @@ export default function AddNewAppHome(){
                 'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
             },
         });
+
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true); 
+            return;
+        }
         
         if( response.ok){
 
@@ -587,6 +624,11 @@ export default function AddNewAppHome(){
                     "home_invite_code": joinCode
                 })
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
     
             if (response.ok) {
                 let data = await response.json();
@@ -605,6 +647,11 @@ export default function AddNewAppHome(){
                             timestamp: new Date()
                         })
                     });
+
+                    if (historyResponse.status === 401 || historyResponse.status === 403) {
+                        setSessionExpired(true); 
+                        return;
+                    }
     
                     if (historyResponse.ok) {
                         showSuccess();
@@ -641,7 +688,12 @@ export default function AddNewAppHome(){
     }
 
     return (
-      <div className="card flex justify-center h-[100vh] w-[100vw] !bg-slate-800">
+     <div className="card flex justify-center h-[100vh] w-[100vw] !bg-slate-800">
+        <Toast ref={toast} />
+        <SessionTimedOut 
+            visible={sessionExpired} 
+            setVisible={setSessionExpired}
+        />
         <Stepper
           ref={stepperRef}
           className="md:w-[80vw] w-[100vw] h-[100vh] !bg-slate-800"
@@ -650,7 +702,7 @@ export default function AddNewAppHome(){
             <div className="flex flex-column h-[80vh]">
               <div className="!bg-slate-800 surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                 <div className="flex flex-col items-center w-[100%] gap-5 justify-center">
-                  <Toast ref={toast} />
+                  
 
                   {!isClicked ? (
                     <>
@@ -727,8 +779,7 @@ export default function AddNewAppHome(){
               <div
                 className={`!bg-slate-800 flex-row gap-[2vw] flex justify-center items-center w-[100%] ${blur}`}
               >
-                <Toast ref={toast} />
-
+                
                 <div
                   className="md:w-72 w-48 md:h-72 h-48 bg-slate-500 flex flex-col rounded-xl text-center items-center justify-end transition-[0.5s] hover:transition-[0.5s] hover:bg-slate-600"
                   onClick={() => findDevices()}
@@ -860,7 +911,11 @@ export default function AddNewAppHome(){
                       <Column field="name" header="Name" />
                       <Column field="label" header="Label" />
                       <Column field="status" header="Status" />
-                      <Column field="selectedRoom" header="Room" />
+                      <Column 
+                        field="room_id" 
+                        header="Room" 
+                        body={(rowData) => rooms[rowData.room_id]} 
+                      />
                       <Column field="command_on" header="Turn On Command" />
                       <Column field="command_off" header="Turn Off Command" />
                       <Column

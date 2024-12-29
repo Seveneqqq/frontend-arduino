@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { TabMenu } from 'primereact/tabmenu';
+import SessionTimedOut from '../sessionTimedOut';
 
 export default function ActivityTab() {
+
     const [activeIndex, setActiveIndex] = useState(0);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     const items = [
         { label: 'Alarms', icon: 'pi pi-bell' },
@@ -15,6 +18,10 @@ export default function ActivityTab() {
 
     return (
         <div className="card bg-transparent menu-bg-transparent">
+            <SessionTimedOut 
+                visible={sessionExpired} 
+                setVisible={setSessionExpired}
+            />
             <TabMenu
                 model={items}
                 activeIndex={activeIndex}
@@ -31,8 +38,20 @@ export default function ActivityTab() {
 }
 
 function DevicesTab() {
+
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
+
+    const rooms = [
+        'Kitchen',
+        'Living room', 
+        'Bathroom', 
+        'Garden', 
+        'Childrens room', 
+        'Garage', 
+        'Office',
+    ];
 
     useEffect(() => {
         fetchDevicesHistory();
@@ -50,6 +69,11 @@ function DevicesTab() {
                 }
             );
 
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             if (response.ok) {
                 const data = await response.json();
                 setDevices(data);
@@ -61,12 +85,29 @@ function DevicesTab() {
         }
     };
 
-    const actionBodyTemplate = (rowData) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
-            ${rowData.action === 'added' ? 'bg-[#C7EE7C] text-[#080808]' : 'bg-red-100 text-red-800'}`}>
-            {rowData.action.toUpperCase()}
-        </span>
-    );
+    const actionBodyTemplate = (rowData) => {
+        let styleClass = '';
+        
+        switch(rowData.action) {
+            case 'added':
+                styleClass = 'bg-[#C7EE7C] text-[#080808]';
+                break;
+            case 'removed':
+                styleClass = 'bg-red-500 text-white';
+                break;
+            case 'edited':
+                styleClass = 'bg-blue-500 text-white';
+                break;
+            default:
+                styleClass = 'bg-gray-200 text-gray-800';
+        }
+
+        return (
+            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${styleClass}`}>
+                {rowData.action.toUpperCase()}
+            </span>
+        );
+    };
 
     const statusBodyTemplate = (rowData) => (
         <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
@@ -100,10 +141,16 @@ function DevicesTab() {
             >
                 <Column style={{ backgroundColor: '#151513' }} field="timestamp" header="Date & Time" sortable body={dateBodyTemplate} />
                 <Column style={{ backgroundColor: '#151513' }} field="device_name" header="Device" sortable />
-                <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
                 <Column style={{ backgroundColor: '#151513' }} field="device_status" header="Status" sortable body={statusBodyTemplate} />
-                <Column style={{ backgroundColor: '#151513' }} field="room" header="Room" sortable />
+                <Column 
+                  field="room" 
+                  header="Room"
+                  style={{ backgroundColor: '#151513' }} 
+                  body={(rowData) => rooms[rowData.room]} 
+                  sortable
+                />
                 <Column style={{ backgroundColor: '#151513' }} field="category" header="Category" sortable />
+                <Column style={{ backgroundColor: '#151513' }} field="action" header="Action" sortable body={actionBodyTemplate} />
             </DataTable>
         </div>
     );
@@ -112,6 +159,7 @@ function DevicesTab() {
 function ScenariosTab() {
     const [scenarios, setScenarios] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchScenariosHistory();
@@ -129,6 +177,11 @@ function ScenariosTab() {
                 }
             );
 
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             if (response.ok) {
                 const data = await response.json();
                 setScenarios(data);
@@ -140,12 +193,29 @@ function ScenariosTab() {
         }
     };
 
-    const actionBodyTemplate = (rowData) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full
-            ${rowData.action === 'added' ? 'bg-[#C7EE7C] text-[#080808]' : 'bg-red-100 text-red-800'}`}>
-            {rowData.action.toUpperCase()}
-        </span>
-    );
+    const actionBodyTemplate = (rowData) => {
+        let styleClass = '';
+        
+        switch(rowData.action) {
+            case 'added':
+                styleClass = 'bg-[#C7EE7C] text-[#080808]';
+                break;
+            case 'removed':
+                styleClass = 'bg-red-500 text-white';
+                break;
+            case 'edited':
+                styleClass = 'bg-blue-500 text-white';
+                break;
+            default:
+                styleClass = 'bg-gray-200 text-gray-800';
+        }
+        
+        return (
+            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${styleClass}`}>
+                {rowData.action.toUpperCase()}
+            </span>
+        );
+    };
 
     const dateBodyTemplate = (rowData) => (
         <span className="text-sm">{new Date(rowData.timestamp).toLocaleString()}</span>
@@ -182,6 +252,7 @@ function ScenariosTab() {
 function UsersTab() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchUsersHistory();
@@ -198,6 +269,11 @@ function UsersTab() {
                     }
                 }
             );
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
 
             if (response.ok) {
                 const data = await response.json();
@@ -251,6 +327,7 @@ function UsersTab() {
 function AlarmsTab() {
     const [alarms, setAlarms] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchAlarmHistory();
@@ -267,6 +344,11 @@ function AlarmsTab() {
                     }
                 }
             );
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
 
             if (response.ok) {
                 const data = await response.json();

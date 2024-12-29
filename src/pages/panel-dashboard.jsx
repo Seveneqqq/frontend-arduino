@@ -18,6 +18,7 @@ import CameraStreamComponent from '../components/cameraStreamComponent';
 import StatisticCompomnent from '../components/statisticCompomnent';
 import FrontGateComponent from '../components/frontGateComponent';
 import { Toast } from 'primereact/toast';
+import SessionTimedOut from '../components/sessionTimedOut';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -170,7 +171,10 @@ export default function PanelDashboard() {
     const [cameraAdded, setCameraAdded] = useState(false);
     const [cameraAddress, setCameraAddress] = useState("");
     const [isCameraEditing, setIsCameraEditing] = useState(false);
+    const [sessionExpired, setSessionExpired] = useState(false);
     
+    const [scenarios, setScenarios] = useState([]);
+    const [scenariosStates, setScenariosStates] = useState({});
 
 useEffect(() => {
     const socket = io('http://localhost:4000', {
@@ -212,6 +216,37 @@ useEffect(() => {
     };
 }, []);
 
+    useEffect(() => {
+        fetchScenarios();
+      }, []);
+
+  const fetchScenarios = async () => {
+    try {
+      const home_id = sessionStorage.getItem('selected-home-id');
+      const response = await fetch(`http://localhost:4000/api/mongodb/scenarios/${home_id}`, {
+        headers: {
+          'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+        }
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true); 
+        return;
+      }
+      const data = await response.json();
+      setScenarios(data);
+
+      const savedStates = JSON.parse(localStorage.getItem('scenarioStates') || '{}');
+      const initialStates = data.reduce((acc, scenario) => {
+        acc[scenario._id] = savedStates[scenario._id] || false;
+        return acc;
+      }, {});
+      setScenariosStates(initialStates);
+    } catch (error) {
+      console.error('Error fetching scenarios:', error);
+    }
+  };
+
 const saveAlarmAndNotify = useCallback(async (alarmData) => {
     try {
         const response = await fetch('http://localhost:4000/api/mongodb/alarms/history', {
@@ -222,6 +257,11 @@ const saveAlarmAndNotify = useCallback(async (alarmData) => {
             },
             body: JSON.stringify(alarmData)
         });
+
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
 
         if (response.ok) {
             const notificationText = `${alarmData.type === 'temperature' ? 'Temperature' : 'Humidity'} 
@@ -362,6 +402,11 @@ useEffect(() => {
                 }
             });
     
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Failed to fetch alarm settings');
             }
@@ -393,6 +438,12 @@ useEffect(() => {
             const response = await fetch('http://localhost:4000/api/home/app-start');
             const data = await response.json();
             console.log('Sensor reading started:', data);
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
         } catch (error) {
             console.error('Error starting sensors:', error);
         }
@@ -448,6 +499,11 @@ useEffect(() => {
                 body: JSON.stringify(payload)
             });
     
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true);
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -458,13 +514,10 @@ useEffect(() => {
 
     useEffect(() => {
         let recognition = null;
-
-        const createDeviceCommands = () => {
-            if (!devices || devices.length === 0) {
-                return [];
-            }
-
-            return devices.map(device => ({
+    
+        const createCommands = () => {
+            const deviceCommands = !devices ? [] : devices.map(device => ({
+                type: 'device',
                 name: device.name,
                 label: device.label,
                 commands: [
@@ -477,47 +530,83 @@ useEffect(() => {
                     device.command_off || 'light off'
                 ]
             }));
+    
+            const scenarioCommands = !scenarios ? [] : scenarios.map(scenario => ({
+                type: 'scenario',
+                id: scenario._id,
+                name: scenario.name,
+                commands: [
+                    scenario.name,
+                    scenario.scenarioTurnOn,
+                    scenario.scenarioTurnOff
+                ]
+            }));
+    
+            return [...deviceCommands, ...scenarioCommands];
         };
-
+    
         const startRecording = () => {
             try {
                 if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
                     console.error('Twoja przeglądarka nie obsługuje rozpoznawania mowy');
                     return;
                 }
-
+    
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
-
+    
                 if (!recognition) {
                     console.error('Nie udało się włączyć rozpoznawania mowy');
                     return;
                 }
-
+    
                 recognition.continuous = false;
                 recognition.interimResults = false;
                 recognition.lang = 'pl-PL';
-
+    
                 recognition.onstart = () => {
                     console.log('Rozpoczęto nasłuchiwanie');
                 };
-
+    
                 recognition.onresult = (event) => {
                     if (!event.results || !event.results[0]) {
                         return;
                     }
-
+    
                     const transcript = event.results[0][0].transcript.toLowerCase();
                     console.log('Rozpoznany tekst:', transcript);
-
-                    const deviceCommands = createDeviceCommands();
-                    deviceCommands.forEach(device => {
-                        if (device.commands.some(cmd => transcript.includes(cmd.toLowerCase()))) {
-                            console.log('Wykryto komendę dla urządzenia:', device.name);
+    
+                    const commands = createCommands();
+                    commands.forEach(item => {
+                        if (item.commands.some(cmd => transcript.includes(cmd.toLowerCase()))) {
+                            if (item.type === 'device') {
+                                console.log('Wykryto komendę dla urządzenia:', item.name);
+                                // tutaj można dodać obsługę komend dla urządzeń
+                                if (transcript.includes('włącz')) {
+                                    updateDeviceState(item, true, item.category === 'Light' ? deviceStates[item.device_id]?.brightness : deviceStates[item.device_id]?.temperature);
+                                } else if (transcript.includes('wyłącz')) {
+                                    updateDeviceState(item, false, item.category === 'Light' ? deviceStates[item.device_id]?.brightness : deviceStates[item.device_id]?.temperature);
+                                }
+                            } else if (item.type === 'scenario') {
+                                console.log('Wykryto komendę dla scenariusza:', item.name);
+                                if (transcript.includes(item.commands[1].toLowerCase())) {
+                                    // Włączanie scenariusza
+                                    setScenariosStates(prev => ({
+                                        ...prev,
+                                        [item.id]: true
+                                    }));
+                                } else if (transcript.includes(item.commands[2].toLowerCase())) {
+                                    // Wyłączanie scenariusza
+                                    setScenariosStates(prev => ({
+                                        ...prev,
+                                        [item.id]: false
+                                    }));
+                                }
+                            }
                         }
                     });
                 };
-
+    
                 recognition.onerror = (event) => {
                     console.error('Błąd rozpoznawania:', event.error);
                     
@@ -527,7 +616,7 @@ useEffect(() => {
                         setMicrophoneActivatedColor('bg-[#080808]');
                     }
                 };
-
+    
                 recognition.onend = () => {
                     if (microphoneActivated && recognition) {
                         setTimeout(() => {
@@ -539,20 +628,20 @@ useEffect(() => {
                         }, 200);
                     }
                 };
-
+    
                 recognition.start();
-
+    
             } catch (error) {
                 console.error('Błąd podczas inicjalizacji rozpoznawania mowy:', error);
                 setMicrophoneActivated(false);
                 setMicrophoneActivatedColor('bg-[#080808]');
             }
         };
-
+    
         if (microphoneActivated) {
             startRecording();
         }
-
+    
         return () => {
             if (recognition) {
                 try {
@@ -563,7 +652,7 @@ useEffect(() => {
                 }
             }
         };
-    }, [microphoneActivated, devices]);
+    }, [microphoneActivated, devices, scenarios, updateDeviceState, deviceStates]);
 
     const fetchDevices = async() => {
         const response = await fetch(`http://localhost:4000/api/home/get-devices`,{
@@ -576,6 +665,11 @@ useEffect(() => {
                 home_id: sessionStorage.getItem('selected-home-id')
             })
         });
+
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
 
         const data = await response.json();
         console.log("ponizej dane urzadzen");
@@ -651,6 +745,11 @@ useEffect(() => {
             })
         });
     
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
         if (response.ok) {
             toast.current.show({
                 severity: 'success',
@@ -671,9 +770,18 @@ useEffect(() => {
             method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+            },
+            body:{
+                label: device.label,
+                room: device.room_id
             }
         });
     
+        if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
         if (response.ok) {
             toast.current.show({
                 severity: 'success',
@@ -710,6 +818,11 @@ useEffect(() => {
             }
           });
       
+          if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
           if (response.ok) {
             setCameraAdded(false);
             setCameraAddress('');
@@ -726,7 +839,14 @@ useEffect(() => {
               'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
             }
           });
+
+          if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
           const data = await response.json();
+
           if (data) {
             if(data.error == "Camera not found"){
                 setCameraAdded(false);
@@ -759,6 +879,11 @@ useEffect(() => {
             })
           });
       
+          if (response.status === 401 || response.status === 403) {
+            setSessionExpired(true);
+            return;
+        }
+
           console.log("Response status:", response.status);
           const data = await response.json();
           console.log("Response data:", data);
@@ -781,6 +906,10 @@ useEffect(() => {
             case 'dashboard':
                 return (
                     <div className="flex-1 px-5 py-5 flex flex-col gap-5">
+                        <SessionTimedOut 
+                            visible={sessionExpired} 
+                            setVisible={setSessionExpired}
+                        />
                         <div
                             ref={scrollRef}
                             className="flex gap-5 md:overflow-x-hidden overflow-x-scroll select-none px-2"

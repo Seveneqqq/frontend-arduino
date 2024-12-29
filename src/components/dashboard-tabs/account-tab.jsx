@@ -5,6 +5,9 @@ import { Dialog } from 'primereact/dialog';
 import { Password } from 'primereact/password';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Toast } from 'primereact/toast';
+import SessionTimedOut from '../sessionTimedOut';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function AccountTab() {
   const toast = useRef(null);
@@ -13,7 +16,62 @@ export default function AccountTab() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const navigate = useNavigate();
 
+
+  const handleDeleteHome = async (home_id, homeName) => {
+    
+    if (window.confirm(`Are you sure you want to delete "${homeName}"? This action cannot be undone.`)) {
+      try {
+        const response = await fetch(`http://localhost:4000/api/home/${home_id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+          }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          setSessionExpired(true);
+          return;
+        }
+
+        if (response.ok) {
+          toast.current.show({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Home deleted successfully',
+            life: 3000
+          });
+
+          if (sessionStorage.getItem('selected-home-id') === home_id.toString()) {
+            sessionStorage.removeItem('selected-home-id');
+            sessionStorage.removeItem('selected-home-name');
+            navigate('/login-app-home');
+          } else {
+            fetchAccountInfo(); 
+          }
+        } else {
+          const errorData = await response.json();
+          toast.current.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: errorData.error || 'Failed to delete home',
+            life: 3000
+          });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete home',
+          life: 3000
+        });
+      }
+    }
+  };
   const fetchAccountInfo = async() => {
     try {
       let response = await fetch(`http://localhost:4000/api/account/${sessionStorage.getItem('UserId')}`, {
@@ -23,6 +81,12 @@ export default function AccountTab() {
           'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
         },
       });
+
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true);
+        return;
+      }
+
       const responseData = await response.json();
       setData(responseData);
     } catch (error) {
@@ -49,6 +113,11 @@ export default function AccountTab() {
           user_id: sessionStorage.getItem('UserId')
         })
       });
+
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true);
+        return;
+      }
   
       if (response.ok) {
         toast.current.show({
@@ -103,6 +172,11 @@ export default function AccountTab() {
         })
       });
 
+      if (response.status === 401 || response.status === 403) {
+        setSessionExpired(true);
+        return;
+      }
+
       if (response.ok) {
         toast.current.show({
           severity: 'success',
@@ -143,6 +217,10 @@ export default function AccountTab() {
 
   return (
     <div className="flex flex-col py-5 gap-6 max-w-3xl mx-auto">
+      <SessionTimedOut 
+            visible={sessionExpired} 
+            setVisible={setSessionExpired}
+        />
       <Toast ref={toast} />
       <div className="bg-[#1E1E1C] rounded-lg overflow-hidden">
         <div className="px-6 py-4">
@@ -173,7 +251,7 @@ export default function AccountTab() {
           </div>
         </div>
       </div>
-
+ 
       <Dialog 
         header="Change password" 
         visible={visible} 
@@ -217,11 +295,11 @@ export default function AccountTab() {
             />
             <label htmlFor="repeatPassword">Repeat password</label>
           </FloatLabel>
-
+ 
           <Button label="Save" className='w-[90%]' onClick={handlePasswordChange}/>
         </div>
       </Dialog>
-
+ 
       <div className="bg-[#1E1E1C] rounded-lg overflow-hidden">
         <div className="px-6 py-4">
           <h2 className="text-xl font-semibold mb-4">My Homes</h2>
@@ -254,14 +332,25 @@ export default function AccountTab() {
                       />
                     </div>
                   </div>
-                  {home.owner_id !== parseInt(sessionStorage.getItem('UserId')) && (
-                    <Button
-                      icon="pi pi-sign-out"
-                      className="p-button-danger p-button-text p-button-sm"
-                      tooltip="Leave Home"
-                      onClick={() => handleLeaveHome(home.home_id)}
-                    />
-                  )}
+                  <div className="flex gap-2">
+                    {home.owner_id === parseInt(sessionStorage.getItem('UserId')) ? (
+                      <Button
+                        icon="pi pi-trash"
+                        severity="danger" 
+                        className="p-button-text p-button-sm"
+                        tooltip="Delete Home"
+                        onClick={() => handleDeleteHome(home.home_id, home.name)}
+                      />
+                    ) : (
+                      <Button
+                        icon="pi pi-sign-out"
+                        severity="danger"
+                        className="p-button-text p-button-sm"
+                        tooltip="Leave Home"
+                        onClick={() => handleLeaveHome(home.home_id)}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

@@ -2,9 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Slider } from "primereact/slider";
 import { Toast } from 'primereact/toast';
 import _ from 'lodash';
+import SessionTimedOut from './sessionTimedOut';
 
 export default function SensorAlarmComponent({temperatureRange, humidityRange, setTemperatureRange, setHumidityRange}) {
+
     const toast = useRef(null);
+    const [sessionExpired, setSessionExpired] = useState(false);
     const [valueTemperature, setValueTemperature] = useState(temperatureRange || [19, 24]);
     const [valueHumidity, setValueHumidity] = useState(humidityRange || [40, 60]);
 
@@ -33,6 +36,11 @@ export default function SensorAlarmComponent({temperatureRange, humidityRange, s
                     humidityRange: newHumidityRange
                 })
             });
+
+            if (response.status === 401 || response.status === 403) {
+                setSessionExpired(true); 
+                return;
+            }
 
             if (!response.ok) {
                 throw new Error('Failed to update alarm settings');
@@ -77,6 +85,10 @@ export default function SensorAlarmComponent({temperatureRange, humidityRange, s
     return (
         <div>
             <Toast ref={toast} />
+            <SessionTimedOut 
+                visible={sessionExpired} 
+                setVisible={setSessionExpired}
+            />
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-semibold">Alarm Settings</h2>
             </div>

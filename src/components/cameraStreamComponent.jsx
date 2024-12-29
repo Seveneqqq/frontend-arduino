@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Toast } from 'primereact/toast';
 
 const CameraStreamComponent = ({cameraAdded, cameraAddress, onSaveAddress, onDeleteCamera}) => {
   const streamUrl = cameraAddress;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAddress, setNewAddress] = useState('');
-  const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const toast = useRef(null);
 
   const validateUrl = (url) => {
     try {
@@ -18,21 +19,37 @@ const CameraStreamComponent = ({cameraAdded, cameraAddress, onSaveAddress, onDel
 
   const handleSave = () => {
     if (!newAddress) {
-      setError('Camera address is required');
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Camera address is required',
+        life: 3000
+      });
       return;
     }
     if (!validateUrl(newAddress)) {
-      setError('Please enter a valid URL');
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please enter a valid URL',
+        life: 3000
+      });
       return;
     }
     console.log("Calling onSaveAddress with:", newAddress);
     onSaveAddress(newAddress);
-    setError('');
     setIsEditing(false);
+    toast.current.show({
+      severity: 'success',
+      summary: 'Success',
+      detail: cameraAdded ? 'Camera updated successfully' : 'Camera added successfully',
+      life: 3000
+    });
   };
 
   return (
     <>
+      <Toast ref={toast} />
       <div className="xl:h-[210px] h-[500px] flex flex-col rounded-xl overflow-hidden">
         <div className="px-4 py-1 border-b border-gray-700 flex-shrink-0 flex justify-between items-center">
           <h2 className="text-lg font-semibold">Camera</h2>
@@ -85,7 +102,6 @@ const CameraStreamComponent = ({cameraAdded, cameraAddress, onSaveAddress, onDel
                 placeholder="Enter camera URL (e.g., http://192.168.1.100:81/stream)"
                 className="w-full p-2 border rounded bg-gray-700 text-white placeholder-gray-400"
               />
-              {error && <p className="text-red-500 text-sm">{error}</p>}
               <div className="flex gap-2">
                 <button
                   onClick={handleSave}
@@ -99,6 +115,12 @@ const CameraStreamComponent = ({cameraAdded, cameraAddress, onSaveAddress, onDel
                       onClick={() => {
                         onDeleteCamera();
                         setIsEditing(false);
+                        toast.current.show({
+                          severity: 'success',
+                          summary: 'Success',
+                          detail: 'Camera deleted successfully',
+                          life: 3000
+                        });
                       }}
                       className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                     >
