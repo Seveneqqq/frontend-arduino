@@ -1111,13 +1111,14 @@ useEffect(() => {
                     <div className="flex-1 px-5 py-5">
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
                         <DevicesTab
-                          devices={devices}
-                          deviceStates={deviceStates}
-                          onEditDevice={handleEditDevice}
-                          onDeleteDevice={handleDeleteDevice}
-                          onSwitchChange={updateDeviceState}
-                          onKnobChange={updateDeviceState}
-                        />
+                                devices={devices}
+                                deviceStates={deviceStates}
+                                onEditDevice={handleEditDevice}
+                                onDeleteDevice={handleDeleteDevice}
+                                onSwitchChange={handleSwitchChange}
+                                onKnobChange={handleKnobChange}
+                                onRefresh={fetchDevices}  
+                            />
                         </div>
                     </div>
                 );

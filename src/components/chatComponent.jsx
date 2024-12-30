@@ -6,7 +6,11 @@ import SessionTimedOut from './sessionTimedOut';
 const ChatComponent = () => {
 
     const [sessionExpired, setSessionExpired] = useState(false);
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([{
+        text: "Hello! I am your Smart Home Assistant. I can help you with quick answers about recipes, mathematical calculations, and general knowledge questions. Note that while I can provide information and guidance, I cannot directly control your home devices. How can I assist you today?",
+        isUser: false,
+        timestamp: new Date()
+    }]);
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const chatContainerRef = useRef(null);
