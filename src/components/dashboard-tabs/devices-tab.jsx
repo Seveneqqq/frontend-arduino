@@ -806,17 +806,17 @@ const groupDevicesByRoom = () => {
                     <>
                         <p className="font-semibold">Set your devices - {name}</p>
         
-                        <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
+                        <InputText placeholder="label" id="label" className="!w-64" value={label} onChange={(e)=>onChangeSetLabel(e)} />
         
                         <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
-                            placeholder="Select room" className="!w-56" />
+                            placeholder="Select room" className="!w-64" />
         
                         <Dropdown value={selectedCategory} onChange={(e) => setSelectedCategory(e.value)} options={categories} id="category_id" optionLabel="Device category" 
-                            placeholder="Select device category" className="!w-56" />
+                            placeholder="Select device category" className="!w-64" />
         
-                        <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
+                        <InputText placeholder="Say to turn on" id="command_on" className="!w-64" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
         
-                        <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
+                        <InputText placeholder="Say to turn off" id="command_off" className="!w-64" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
         
                         <Button label="Save" onClick={saveDevice}/>
                     </>
@@ -851,17 +851,17 @@ const groupDevicesByRoom = () => {
                     <>
                         {formVisible ? <p className="font-semibold">Set your devices - {name}</p> : <p className="font-semibold">Select device</p>}
         
-                        <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
+                        <InputText placeholder="label" id="label" className="!w-64" value={label} onChange={(e)=>onChangeSetLabel(e)} />
         
                         <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
-                            placeholder="Select room" className="!w-56" />
+                            placeholder="Select room" className="!w-64" />
         
-                        <InputText placeholder="Say to turn on" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
+                        <InputText placeholder="Say to turn on" className="!w-64" id="command_on" value={command_on} onChange={(e)=>onChangeSetTurnOn(e)} />
         
-                        <InputText placeholder="Say to turn off" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
+                        <InputText placeholder="Say to turn off" className="!w-64" id="command_off" value={command_off} onChange={(e)=>onChangeSetTurnOff(e)} />
                         
                         <Dropdown value={selectedProtocol} onChange={(e) => setSelectedProtocol(e.value)} options={protocols} id="protocol_id" optionLabel="Protocol" 
-                            placeholder="Select protocol" className="!w-56" />
+                            placeholder="Select protocol" className="!w-64" />
                         {selectedProtocol && showFormFields()}
                         {formVisible ? <Button label="Save" onClick={saveDeviceManually}/> : "" }
                     </>
