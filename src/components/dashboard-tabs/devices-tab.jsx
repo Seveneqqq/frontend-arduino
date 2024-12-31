@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
 import _ from 'lodash';
 import SessionTimedOut from '../sessionTimedOut';
+import HeatPumpController from '../heatPumpController';
 
 export default function DevicesTab({ 
     devices, 
@@ -20,7 +21,9 @@ export default function DevicesTab({
     onDeleteDevice, 
     onSwitchChange, 
     onKnobChange,
-    onRefresh 
+    onRefresh,
+    sensorValue,
+    updateDeviceState
 }) {
     const toast = useRef(null);
     const [isClicked, clickedButton] = useState(false);
@@ -41,7 +44,6 @@ export default function DevicesTab({
     const [formVisible, setFormVisible] = useState(false);
     const [sessionExpired, setSessionExpired] = useState(false);
 
-    // Protocol-specific states
     const [zigbeeId, setZigbeeId] = useState('');
     const [zigbeeChannel, setZigbeeChannel] = useState('');
     const [zigbeeGroupId, setZigbeeGroupId] = useState('');
@@ -684,6 +686,12 @@ export default function DevicesTab({
                                         )}
                                         {device.status === 'active' && device.category === 'Heating' && (
                                             <>
+                                            <HeatPumpController 
+                                                devices={devices}
+                                                deviceStates={deviceStates}
+                                                sensorValue={sensorValue}
+                                                onUpdateDeviceState={updateDeviceState}
+                                            />
                                                 <InputSwitch
                                                     checked={deviceStates[device.device_id]?.isOn || false}
                                                     onChange={(e) => onSwitchChange(device, e.value, deviceStates[device.device_id]?.temperature)}

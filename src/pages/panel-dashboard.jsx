@@ -641,7 +641,6 @@ useEffect(() => {
                                     return;
                                 }
     
-                                // Sprawdzanie czy wypowiedziana komenda to dokładnie command_on lub command_off
                                 if (transcript.includes(item.command_on?.toLowerCase())) {
                                     const value = item.category === 'Light' ? 
                                         deviceStates[item.device_id]?.brightness || 100 :
@@ -653,7 +652,6 @@ useEffect(() => {
                                 } else if (transcript.includes(item.command_off?.toLowerCase())) {
                                     updateDeviceState(item, false);
                                 } 
-                                // Sprawdzanie standardowych komend włącz/wyłącz
                                 else if (transcript.includes('włącz')) {
                                     const value = item.category === 'Light' ? 
                                         deviceStates[item.device_id]?.brightness || 100 :
@@ -670,10 +668,8 @@ useEffect(() => {
                                         const value = parseInt(matches[1]);
                                         
                                         if (item.category === 'Light' && value >= 0 && value <= 100) {
-                                            // Dla świateł - jasność 0-100
                                             updateDeviceState(item, true, value);
                                         } else if (item.category === 'Heating' && value >= 10 && value <= 36) {
-                                            // Dla ogrzewania - temperatura 10-36
                                             updateDeviceState(item, true, value);
                                         } else {
                                             console.log('Nieprawidłowa wartość dla tego typu urządzenia');
@@ -688,8 +684,7 @@ useEffect(() => {
                                         ...prev,
                                         [item.id]: true
                                     }));
-    
-                                    // Wykonaj akcje dla wszystkich urządzeń w scenariuszu
+
                                     item.devices.forEach(device => {
                                         if (device.status === 'active') {
                                             updateDeviceState(device, device.actions.state === 1, 
@@ -705,7 +700,6 @@ useEffect(() => {
                                         [item.id]: false
                                     }));
     
-                                    // Wyłącz wszystkie urządzenia w scenariuszu
                                     item.devices.forEach(device => {
                                         if (device.status === 'active') {
                                             updateDeviceState(device, false);
@@ -1141,9 +1135,11 @@ useEffect(() => {
                                 deviceStates={deviceStates}
                                 onEditDevice={handleEditDevice}
                                 onDeleteDevice={handleDeleteDevice}
-                                onSwitchChange={handleSwitchChange}
-                                onKnobChange={handleKnobChange}
-                                onRefresh={fetchDevices}  
+                                onSwitchChange={updateDeviceState}  
+                                onKnobChange={updateDeviceState}    
+                                onRefresh={fetchDevices}
+                                sensorValue={sensorValue}
+                                updateDeviceState={updateDeviceState}
                             />
                         </div>
                     </div>
