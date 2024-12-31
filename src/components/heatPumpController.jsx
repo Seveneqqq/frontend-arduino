@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 const HeatPumpController = ({ devices, deviceStates, sensorValue, onUpdateDeviceState }) => {
   const [heatPump, setHeatPump] = useState(null);
   const [tempSensor, setTempSensor] = useState(null);
-  const [lastSentState, setLastSentState] = useState(null); 
+  const [lastSentState, setLastSentState] = useState(null);
+  const [previousIsOn, setPreviousIsOn] = useState(false);
 
   useEffect(() => {
     const pump = devices.find(d => d.name === 'HEAT_PUMP' && d.status === 'active');
@@ -17,14 +18,42 @@ const HeatPumpController = ({ devices, deviceStates, sensorValue, onUpdateDevice
   }, [devices]);
 
   useEffect(() => {
-    if (!heatPump || !tempSensor || !sensorValue || !deviceStates[heatPump.device_id]) {
+    if (!heatPump || !deviceStates[heatPump.device_id]) {
       return;
     }
 
     const heatPumpState = deviceStates[heatPump.device_id];
 
-    if (!heatPumpState.isOn || !heatPumpState.temperature) {
-      setLastSentState(null); 
+    if (previousIsOn && !heatPumpState.isOn) {
+      fetch('http://localhost:4000/api/home/do', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
+        },
+        body: JSON.stringify({
+          homeId: heatPump.home_id,
+          device: {
+            deviceName: heatPump.name,
+            category: heatPump.category,
+            label: heatPump.label,
+            status: heatPump.status
+          },
+          actions: {
+            state: 0,
+            temperature: heatPumpState.temperature
+          }
+        })
+      })
+      .then(() => {
+        setLastSentState(0);
+      })
+      .catch(error => console.error('Error sending heat pump signal:', error));
+    }
+
+    setPreviousIsOn(heatPumpState.isOn);
+
+    if (!heatPumpState.isOn || !heatPumpState.temperature || !tempSensor || !sensorValue) {
       return;
     }
 
@@ -60,11 +89,11 @@ const HeatPumpController = ({ devices, deviceStates, sensorValue, onUpdateDevice
         })
       })
       .then(() => {
-        setLastSentState(requiredState); 
+        setLastSentState(requiredState);
       })
       .catch(error => console.error('Error sending heat pump signal:', error));
     }
-  }, [heatPump, tempSensor, sensorValue, deviceStates, lastSentState, onUpdateDeviceState]);
+  }, [heatPump, tempSensor, sensorValue, deviceStates, lastSentState, previousIsOn]);
 
   return null;
 };
