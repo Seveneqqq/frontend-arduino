@@ -19,6 +19,7 @@ import StatisticCompomnent from '../components/statisticCompomnent';
 import FrontGateComponent from '../components/frontGateComponent';
 import { Toast } from 'primereact/toast';
 import SessionTimedOut from '../components/sessionTimedOut';
+import HeatPumpController from '../components/heatPumpController';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -29,10 +30,30 @@ const DeviceItem = React.memo(({
 }) => {
     const debouncedKnobChange = React.useCallback(
         _.debounce((newValue) => {
-            onKnobChange(device, true, newValue, false);
+            if (device.name !== 'HEAT_PUMP') {
+                onKnobChange(device, true, newValue, false);
+            }
         }, 200),
         [device, onKnobChange]
     );
+
+    const handleSwitchChange = (e) => {
+        if (device.name === 'HEAT_PUMP') {
+            onSwitchChange(device, e.value, deviceState?.temperature, true);
+        } else {
+            onSwitchChange(device, e.value, device.category === 'Light' ? deviceState?.brightness : deviceState?.temperature);
+        }
+    };
+
+    const handleKnobChange = (e) => {
+        const newValue = e.value;
+        if (device.name === 'HEAT_PUMP') {
+            onKnobChange(device, true, newValue, true);
+        } else {
+            onKnobChange(device, true, newValue, true);
+            debouncedKnobChange(newValue);
+        }
+    };
 
     return (
         <div 
@@ -49,18 +70,14 @@ const DeviceItem = React.memo(({
                 {device.status === 'active' && device.category !== 'Sensor' && (
                     <InputSwitch 
                         checked={deviceState?.isOn || false}
-                        onChange={(e) => onSwitchChange(device, e.value, device.category === 'Light' ? deviceState?.brightness : deviceState?.temperature)}
+                        onChange={handleSwitchChange}
                     />
                 )}
                 {dialogCategory === 'Light' && (
                     <div className="flex items-center">
                         <Knob 
                             value={deviceState?.brightness || 100}
-                            onChange={(e) => {
-                                const newValue = e.value;
-                                onKnobChange(device, true, newValue, true);
-                                debouncedKnobChange(newValue);
-                            }}
+                            onChange={handleKnobChange}
                             valueTemplate="{value}%"
                             size={70}
                             strokeWidth={8}
@@ -73,11 +90,7 @@ const DeviceItem = React.memo(({
                     <div className="flex items-center">
                         <Knob 
                             value={deviceState?.temperature || 20}
-                            onChange={(e) => {
-                                const newValue = e.value;
-                                onKnobChange(device, true, newValue, true);
-                                debouncedKnobChange(newValue);
-                            }}
+                            onChange={handleKnobChange}
                             valueTemplate="{value}°C"
                             min={15}
                             max={30}
@@ -450,6 +463,7 @@ useEffect(() => {
     };
 
     const updateDeviceState = useCallback(async (device, newState, newValue, isLocalUpdate = false) => {
+        // Zawsze aktualizuj stan lokalny
         setDeviceStates(prev => ({
             ...prev,
             [device.device_id]: {
@@ -464,7 +478,13 @@ useEffect(() => {
             }
         }));
       
-        if (isLocalUpdate || device.status !== 'active') return;
+        // Nie wysyłaj sygnału jeśli:
+        // - to jest aktualizacja lokalna
+        // - urządzenie nie jest aktywne
+        // - to jest pompa ciepła (nią zarządza HeatPumpController)
+        if (isLocalUpdate || device.status !== 'active' || device.name === 'HEAT_PUMP') {
+            return;
+        }
         
         try {
             const actionValue = device.category === 'Heating' ? 
@@ -503,7 +523,7 @@ useEffect(() => {
                 setSessionExpired(true);
                 return;
             }
-
+    
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -516,32 +536,66 @@ useEffect(() => {
         let recognition = null;
     
         const createCommands = () => {
-            const deviceCommands = !devices ? [] : devices.map(device => ({
-                type: 'device',
-                name: device.name,
-                label: device.label,
-                commands: [
-                    device.label,
-                    `włącz ${device.label}`,
-                    `wyłącz ${device.label}`,
-                    `włącz ${device.name}`,
-                    `wyłącz ${device.name}`,
-                    device.command_on || 'light',
-                    device.command_off || 'light off'
-                ]
-            }));
+            const deviceCommands = !devices ? [] : devices.map(device => {
+                const baseCommands = [];
+        
+                const turnOnCommands = !device.command_on?.toLowerCase().includes('włącz') 
+                    ? [`włącz ${device.label}`] 
+                    : [];
+                    
+                const turnOffCommands = !device.command_off?.toLowerCase().includes('wyłącz')
+                    ? [`wyłącz ${device.label}`]
+                    : [];
     
-            const scenarioCommands = !scenarios ? [] : scenarios.map(scenario => ({
-                type: 'scenario',
-                id: scenario._id,
-                name: scenario.name,
-                commands: [
-                    scenario.name,
-                    scenario.scenarioTurnOn,
-                    scenario.scenarioTurnOff
-                ]
-            }));
-    
+                // Komendy ustawiania wartości tylko dla świateł i ogrzewania
+                let setCommands = [];
+                if (device.category === 'Light' || device.category === 'Heating') {
+                    setCommands = [`${device.label} ustaw`];
+                }
+        
+                return {
+                    type: 'device',
+                    device_id: device.device_id,
+                    name: device.name,
+                    label: device.label,
+                    category: device.category,
+                    status: device.status,
+                    command_on: device.command_on,
+                    command_off: device.command_off,
+                    commands: [
+                        ...baseCommands,
+                        ...turnOnCommands,
+                        ...turnOffCommands,
+                        ...setCommands,
+                        device.command_on,
+                        device.command_off
+                    ].filter(Boolean)
+                };
+            });
+        
+            const scenarioCommands = !scenarios ? [] : scenarios.map(scenario => {
+                const turnOnCommand = !scenario.scenarioTurnOn?.toLowerCase().includes('włącz')
+                    ? [`włącz ${scenario.name}`]
+                    : [];
+                    
+                const turnOffCommand = !scenario.scenarioTurnOff?.toLowerCase().includes('wyłącz')
+                    ? [`wyłącz ${scenario.name}`]
+                    : [];
+        
+                return {
+                    type: 'scenario',
+                    id: scenario._id,
+                    name: scenario.name,
+                    commands: [
+                        ...turnOnCommand,
+                        ...turnOffCommand,
+                        scenario.scenarioTurnOn,
+                        scenario.scenarioTurnOff
+                    ].filter(Boolean),
+                    devices: scenario.devices
+                };
+            });
+        
             return [...deviceCommands, ...scenarioCommands];
         };
     
@@ -578,29 +632,79 @@ useEffect(() => {
     
                     const commands = createCommands();
                     commands.forEach(item => {
-                        if (item.commands.some(cmd => transcript.includes(cmd.toLowerCase()))) {
+                        if (item.commands.some(cmd => transcript.includes(cmd?.toLowerCase()))) {
                             if (item.type === 'device') {
                                 console.log('Wykryto komendę dla urządzenia:', item.name);
-                                // tutaj można dodać obsługę komend dla urządzeń
-                                if (transcript.includes('włącz')) {
-                                    updateDeviceState(item, true, item.category === 'Light' ? deviceStates[item.device_id]?.brightness : deviceStates[item.device_id]?.temperature);
+                                
+                                if (item.status !== 'active') {
+                                    console.log('Urządzenie nieaktywne');
+                                    return;
+                                }
+    
+                                if (transcript.includes(item.command_on?.toLowerCase())) {
+                                    const value = item.category === 'Light' ? 
+                                        deviceStates[item.device_id]?.brightness || 100 :
+                                        item.category === 'Heating' ? 
+                                        deviceStates[item.device_id]?.temperature || 24 : 
+                                        undefined;
+                                        
+                                    updateDeviceState(item, true, value);
+                                } else if (transcript.includes(item.command_off?.toLowerCase())) {
+                                    updateDeviceState(item, false);
+                                } 
+                                else if (transcript.includes('włącz')) {
+                                    const value = item.category === 'Light' ? 
+                                        deviceStates[item.device_id]?.brightness || 100 :
+                                        item.category === 'Heating' ? 
+                                        deviceStates[item.device_id]?.temperature || 24 : 
+                                        undefined;
+                                        
+                                    updateDeviceState(item, true, value);
                                 } else if (transcript.includes('wyłącz')) {
-                                    updateDeviceState(item, false, item.category === 'Light' ? deviceStates[item.device_id]?.brightness : deviceStates[item.device_id]?.temperature);
+                                    updateDeviceState(item, false);
+                                } else if (transcript.includes('ustaw')) {
+                                    const matches = transcript.match(/ustaw (\d+)/);
+                                    if (matches && matches[1]) {
+                                        const value = parseInt(matches[1]);
+                                        
+                                        if (item.category === 'Light' && value >= 0 && value <= 100) {
+                                            updateDeviceState(item, true, value);
+                                        } else if (item.category === 'Heating' && value >= 10 && value <= 36) {
+                                            updateDeviceState(item, true, value);
+                                        } else {
+                                            console.log('Nieprawidłowa wartość dla tego typu urządzenia');
+                                        }
+                                    }
                                 }
                             } else if (item.type === 'scenario') {
                                 console.log('Wykryto komendę dla scenariusza:', item.name);
-                                if (transcript.includes(item.commands[1].toLowerCase())) {
-                                    // Włączanie scenariusza
+                                
+                                if (transcript.includes('włącz') || transcript.includes(item.scenarioTurnOn?.toLowerCase())) {
                                     setScenariosStates(prev => ({
                                         ...prev,
                                         [item.id]: true
                                     }));
-                                } else if (transcript.includes(item.commands[2].toLowerCase())) {
-                                    // Wyłączanie scenariusza
+
+                                    item.devices.forEach(device => {
+                                        if (device.status === 'active') {
+                                            updateDeviceState(device, device.actions.state === 1, 
+                                                device.category === 'Light' ? device.actions.brightness : 
+                                                device.category === 'Heating' ? device.actions.temperature : 
+                                                undefined
+                                            );
+                                        }
+                                    });
+                                } else if (transcript.includes('wyłącz') || transcript.includes(item.scenarioTurnOff?.toLowerCase())) {
                                     setScenariosStates(prev => ({
                                         ...prev,
                                         [item.id]: false
                                     }));
+    
+                                    item.devices.forEach(device => {
+                                        if (device.status === 'active') {
+                                            updateDeviceState(device, false);
+                                        }
+                                    });
                                 }
                             }
                         }
@@ -910,6 +1014,12 @@ useEffect(() => {
                             visible={sessionExpired} 
                             setVisible={setSessionExpired}
                         />
+                        <HeatPumpController 
+                            devices={devices}
+                            deviceStates={deviceStates}
+                            sensorValue={sensorValue}
+                            onUpdateDeviceState={updateDeviceState}
+                        />
                         <div
                             ref={scrollRef}
                             className="flex gap-5 md:overflow-x-hidden overflow-x-scroll select-none px-2"
@@ -1021,13 +1131,16 @@ useEffect(() => {
                     <div className="flex-1 px-5 py-5">
                         <div className="bg-[#151513] rounded-xl p-6 h-full">
                         <DevicesTab
-                          devices={devices}
-                          deviceStates={deviceStates}
-                          onEditDevice={handleEditDevice}
-                          onDeleteDevice={handleDeleteDevice}
-                          onSwitchChange={updateDeviceState}
-                          onKnobChange={updateDeviceState}
-                        />
+                                devices={devices}
+                                deviceStates={deviceStates}
+                                onEditDevice={handleEditDevice}
+                                onDeleteDevice={handleDeleteDevice}
+                                onSwitchChange={updateDeviceState}  
+                                onKnobChange={updateDeviceState}    
+                                onRefresh={fetchDevices}
+                                sensorValue={sensorValue}
+                                updateDeviceState={updateDeviceState}
+                            />
                         </div>
                     </div>
                 );

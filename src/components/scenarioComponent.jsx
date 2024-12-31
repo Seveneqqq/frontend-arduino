@@ -11,7 +11,15 @@ const ScenarioCard = ({ scenarios, scenariosStates, onToggle }) => {
     }
   }, [scenarios]);
 
-  if (!randomScenario) return null;
+  if (!randomScenario) 
+    return (
+      <div className="w-full flex gap-2 p-2">
+        <div className='flex items-center gap-2 p-0'>
+          <i className="pi pi-exclamation-circle"></i>
+          <span className="text-xl font-semibold">No scenario added</span>
+        </div>
+      </div>
+    );
 
   const isActive = scenariosStates[randomScenario._id] || false;
 

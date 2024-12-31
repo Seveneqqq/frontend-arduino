@@ -18,8 +18,6 @@ export default function AutomationTab({ devices, deviceStates }) {
     const toast = useRef(null);
     const [scenarios, setScenarios] = useState([]);
     const [scenariosStates, setScenariosStates] = useState({});
-    const [selectedDevices, setSelectedDevices] = useState([]);
-    const [previousDeviceStates, setPreviousDeviceStates] = useState({});
     const [sessionExpired, setSessionExpired] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -40,7 +38,6 @@ export default function AutomationTab({ devices, deviceStates }) {
     const fetchScenarios = async () => {
         try {
             const home_id = sessionStorage.getItem('selected-home-id');
-
             const response = await fetch(`http://localhost:4000/api/mongodb/scenarios/${home_id}`, {
                 headers: {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('AuthToken')
@@ -82,7 +79,7 @@ export default function AutomationTab({ devices, deviceStates }) {
                     }
                     return device;
                 });
-    
+
             const response = await fetch(`http://localhost:4000/api/automation/toggle`, {
                 method: 'POST',
                 headers: {
@@ -100,14 +97,14 @@ export default function AutomationTab({ devices, deviceStates }) {
                 setSessionExpired(true);
                 return;
             }
-    
+
             if (response.ok) {
                 setScenariosStates(prev => {
                     const newStates = { ...prev, [scenarioId]: newState };
                     localStorage.setItem('scenarioStates', JSON.stringify(newStates));
                     return newStates;
                 });
-    
+
                 toast.current.show({
                     severity: 'success',
                     summary: 'Success',
@@ -126,6 +123,59 @@ export default function AutomationTab({ devices, deviceStates }) {
                 life: 3000
             });
         }
+    };
+
+    const handleAddDevice = () => {
+        if (!newDevice.device) return;
+        
+        // Validate device type and status
+        if (newDevice.device.category === 'Sensor' || newDevice.device.status !== 'active') {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'This device type cannot be added to scenario',
+                life: 3000
+            });
+            return;
+        }
+
+        // Check for duplicate devices
+        const deviceExists = formData.devices.some(
+            device => device.device_id === newDevice.device.device_id
+        );
+
+        if (deviceExists) {
+            toast.current.show({
+                severity: 'warn',
+                summary: 'Warning',
+                detail: 'This device is already added to the scenario',
+                life: 3000
+            });
+            return;
+        }
+
+        const deviceToAdd = {
+            device_id: newDevice.device.device_id,
+            name: newDevice.device.name,
+            label: newDevice.device.label,
+            room_id: newDevice.device.room_id,
+            category: newDevice.device.category,
+            command_on: newDevice.device.command_on,
+            command_off: newDevice.device.command_off,
+            status: newDevice.device.status,
+            actions: newDevice.actions,
+            protocolData: newDevice.device.protocolData
+        };
+
+        setFormData(prev => ({
+            ...prev,
+            devices: [...prev.devices, deviceToAdd]
+        }));
+
+        setNewDevice({
+            device: null,
+            actions: {}
+        });
     };
 
     const handleEditClick = (scenario) => {
@@ -226,38 +276,6 @@ export default function AutomationTab({ devices, deviceStates }) {
         }
     };
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-    };
-
-    const handleAddDevice = () => {
-        if (!newDevice.device) return;
-
-        const deviceToAdd = {
-            device_id: newDevice.device.device_id,
-            name: newDevice.device.name,
-            label: newDevice.device.label,
-            room_id: newDevice.device.room_id,
-            category: newDevice.device.category,
-            command_on: newDevice.device.command_on,
-            command_off: newDevice.device.command_off,
-            status: newDevice.device.status,
-            actions: newDevice.actions,
-            protocolData: newDevice.device.protocolData
-        };
-
-        setFormData(prev => ({
-            ...prev,
-            devices: [...prev.devices, deviceToAdd]
-        }));
-
-        setNewDevice({
-            device: null,
-            actions: {}
-        });
-    };
-
     const handleSave = async () => {
         const homeId = sessionStorage.getItem('selected-home-id');
 
@@ -265,7 +283,7 @@ export default function AutomationTab({ devices, deviceStates }) {
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'No home_id selected in sessionStorage',
+                detail: 'No home selected',
                 life: 3000
             });
             return;
@@ -276,7 +294,7 @@ export default function AutomationTab({ devices, deviceStates }) {
             user_id: sessionStorage.getItem('UserId'),
             home_id: homeId
         };
-    
+
         try {
             const response = await fetch('http://localhost:4000/api/mongodb/add-scenario', {
                 method: 'POST',
@@ -286,7 +304,7 @@ export default function AutomationTab({ devices, deviceStates }) {
                 },
                 body: JSON.stringify(dataToSend)
             });
-    
+
             if (response.status === 401 || response.status === 403) {
                 setSessionExpired(true);
                 return;
@@ -323,19 +341,9 @@ export default function AutomationTab({ devices, deviceStates }) {
         }
     };
 
-    const getCategoryIcon = (category) => {
-        switch (category) {
-            case 'Light':
-                return 'pi-lightbulb';
-            case 'Gate':
-                return 'pi-home';
-            case 'Climate':
-                return 'pi-cloud';
-            case 'Sensor':
-                return 'pi-chart-line';
-            default:
-                return 'pi-circle';
-        }
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
     };
 
     const renderDeviceActions = () => {
@@ -414,27 +422,6 @@ export default function AutomationTab({ devices, deviceStates }) {
                         </div>
                     </div>
                 );
-            case 'Sensor':
-                return (
-                    <div className="flex flex-col gap-4">
-                        <div className="field flex flex-col gap-2">
-                            <label>State</label>
-                            <Dropdown
-                                value={newDevice.actions.state}
-                                options={[
-                                    { label: 'Turn On', value: 1 },
-                                    { label: 'Turn Off', value: 0 }
-                                ]}
-                                onChange={(e) => setNewDevice(prev => ({
-                                    ...prev,
-                                    actions: { ...prev.actions, state: e.value }
-                                }))}
-                                placeholder="Select state"
-                                className="w-full"
-                            />
-                        </div>
-                    </div>
-                );
             default:
                 return (
                     <div className="flex flex-col gap-4">
@@ -453,271 +440,286 @@ export default function AutomationTab({ devices, deviceStates }) {
                                 placeholder="Select state"
                                 className="w-full"
                             />
-                        </div>
+                            </div>
                     </div>
-                    );
-                }
-            };
-        
-            return (
-                <div>
-                    <SessionTimedOut 
-                        visible={sessionExpired} 
-                        setVisible={setSessionExpired}
+                );
+        }
+    };
+
+    const getCategoryIcon = (category) => {
+        switch (category) {
+            case 'Light':
+                return 'pi-lightbulb';
+            case 'Gate':
+                return 'pi-home';
+            case 'Climate':
+                return 'pi-cloud';
+            case 'Sensor':
+                return 'pi-chart-line';
+            default:
+                return 'pi-circle';
+        }
+    };
+
+    return (
+        <div>
+            <SessionTimedOut 
+                visible={sessionExpired} 
+                setVisible={setSessionExpired}
+            />
+            <Toast ref={toast} />
+            <div className="flex xl:flex-row flex-col xl:gap-0 gap-4 justify-between items-center mb-4">
+                <h2 className="text-2xl">Automation</h2>
+                <div className="flex md:flex-row flex-col gap-4 items-center">
+                    <IconField iconPosition="left" className='flex items-center'>
+                        <InputIcon className="pi pi-search" />
+                        <InputText
+                            placeholder="Search..."
+                            value={searchQuery}
+                            className='px-10'
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </IconField>
+                    <Button
+                        label="Add new"
+                        icon="pi pi-plus"
+                        className="md:w-[unset] w-[100%]"
+                        onClick={() => setVisible(true)}
                     />
-                    <Toast ref={toast} />
-                    <div className="flex xl:flex-row flex-col xl:gap-0 gap-4 justify-between items-center mb-4">
-                        <h2 className="text-2xl">Automation</h2>
-                        <div className="flex md:flex-row flex-col gap-4 items-center">
-                            <IconField iconPosition="left" className='flex items-center'>
-                                <InputIcon className="pi pi-search" />
-                                <InputText
-                                    placeholder="Search..."
-                                    value={searchQuery}
-                                    className='px-10'
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </IconField>
+                </div>
+            </div>
+
+            <Dialog
+                header="Add New Scenario"
+                visible={visible}
+                style={{ width: '1000px' }}
+                onHide={() => setVisible(false)}
+                maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
+            >
+                <div className="flex flex-col gap-4">
+                    <div className="field">
+                        <label htmlFor="name">Scenario Name</label>
+                        <InputText
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                            className="w-full"
+                        />
+                    </div>
+
+                    <div className="field">
+                        <label htmlFor="scenarioTurnOn">Turn On Command</label>
+                        <InputText
+                            id="scenarioTurnOn"
+                            value={formData.scenarioTurnOn}
+                            onChange={(e) => setFormData(prev => ({ ...prev, scenarioTurnOn: e.target.value }))}
+                            className="w-full"
+                        />
+                    </div>
+
+                    <div className="field">
+                        <label htmlFor="scenarioTurnOff">Turn Off Command</label>
+                        <InputText
+                            id="scenarioTurnOff"
+                            value={formData.scenarioTurnOff}
+                            onChange={(e) => setFormData(prev => ({ ...prev, scenarioTurnOff: e.target.value }))}
+                            className="w-full"
+                        />
+                    </div>
+
+                    <div className="field">
+                        <label>Add Device</label>
+                        <div className="flex gap-2">
+                            <Dropdown
+                                value={newDevice.device}
+                                options={devices.filter(device => device.category !== 'Sensor' && device.status === 'active')}
+                                onChange={(e) => setNewDevice({ device: e.value, actions: {} })}
+                                optionLabel="label"
+                                placeholder="Select device"
+                                className="w-full"
+                            />
                             <Button
-                                label="Add new"
                                 icon="pi pi-plus"
-                                className="md:w-[unset] w-[100%]"
-                                onClick={() => setVisible(true)}
+                                onClick={handleAddDevice}
+                                disabled={!newDevice.device}
                             />
                         </div>
                     </div>
-        
-                    <Dialog
-                        header="Add New Scenario"
-                        visible={visible}
-                        style={{ width: '1000px' }}
-                        onHide={() => setVisible(false)}
-                        maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
-                    >
-                        <div className="flex flex-col gap-4">
-                            <div className="field">
-                                <label htmlFor="name">Scenario Name</label>
-                                <InputText
-                                    id="name"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                    className="w-full"
-                                />
-                            </div>
-        
-                            <div className="field">
-                                <label htmlFor="scenarioTurnOn">Turn On Command</label>
-                                <InputText
-                                    id="scenarioTurnOn"
-                                    value={formData.scenarioTurnOn}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, scenarioTurnOn: e.target.value }))}
-                                    className="w-full"
-                                />
-                            </div>
-        
-                            <div className="field">
-                                <label htmlFor="scenarioTurnOff">Turn Off Command</label>
-                                <InputText
-                                    id="scenarioTurnOff"
-                                    value={formData.scenarioTurnOff}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, scenarioTurnOff: e.target.value }))}
-                                    className="w-full"
-                                />
-                            </div>
-        
-                            <div className="field">
-                                <label>Add Device</label>
-                                <div className="flex gap-2">
-                                    <Dropdown
-                                        value={newDevice.device}
-                                        options={devices}
-                                        onChange={(e) => setNewDevice({ device: e.value, actions: {} })}
-                                        optionLabel="label"
-                                        placeholder="Select a device"
-                                        className="w-full"
-                                    />
+
+                    {renderDeviceActions()}
+
+                    <div className="field mt-4">
+                        <label>Device list</label>
+                        <div className="flex flex-col gap-2">
+                            {formData.devices.map((device, index) => (
+                                <div key={index} className="p-2 rounded flex justify-between items-center">
+                                    <span>{device.label}</span>
                                     <Button
-                                        icon="pi pi-plus"
-                                        onClick={handleAddDevice}
-                                        disabled={!newDevice.device}
+                                        icon="pi pi-trash"
+                                        className="p-button-danger p-button-text"
+                                        onClick={() => setFormData(prev => ({
+                                            ...prev,
+                                            devices: prev.devices.filter((_, i) => i !== index)
+                                        }))}
                                     />
-                                </div>
-                            </div>
-        
-                            {renderDeviceActions()}
-        
-                            <div className="field mt-4">
-                                <label>Devices list</label>
-                                <div className="flex flex-col gap-2">
-                                    {formData.devices.map((device, index) => (
-                                        <div key={index} className="p-2 rounded flex justify-between items-center">
-                                            <span>{device.label}</span>
-                                            <Button
-                                                icon="pi pi-trash"
-                                                className="p-button-danger p-button-text"
-                                                onClick={() => setFormData(prev => ({
-                                                    ...prev,
-                                                    devices: prev.devices.filter((_, i) => i !== index)
-                                                }))}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-        
-                            <div className="flex justify-end gap-2">
-                                <Button
-                                    label="Cancel"
-                                    className="p-button-text"
-                                    onClick={() => setVisible(false)}
-                                />
-                                <Button
-                                    label="Save"
-                                    onClick={handleSave}
-                                />
-                            </div>
-                        </div>
-                    </Dialog>
-        
-                    <Dialog
-                        header="Edit Scenario"
-                        visible={editDialogVisible}
-                        style={{ width: '600px' }}
-                        onHide={() => {
-                            setEditDialogVisible(false);
-                            setEditingScenario(null);
-                        }}
-                        maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
-                    >
-                        {editingScenario && (
-                            <div className="flex flex-col gap-4">
-                                <div className="field">
-                                    <label htmlFor="edit-name">Scenario Name</label>
-                                    <InputText
-                                        id="edit-name"
-                                        value={editingScenario.name}
-                                        onChange={(e) => setEditingScenario(prev => ({ ...prev, name: e.target.value }))}
-                                        className="w-full"
-                                    />
-                                </div>
-        
-                                <div className="field">
-                                    <label htmlFor="edit-turnOn">Turn On Command</label>
-                                    <InputText
-                                        id="edit-turnOn"
-                                        value={editingScenario.scenarioTurnOn}
-                                        onChange={(e) => setEditingScenario(prev => ({ ...prev, scenarioTurnOn: e.target.value }))}
-                                        className="w-full"
-                                    />
-                                </div>
-        
-                                <div className="field">
-                                    <label htmlFor="edit-turnOff">Turn Off Command</label>
-                                    <InputText
-                                        id="edit-turnOff"
-                                        value={editingScenario.scenarioTurnOff}
-                                        onChange={(e) => setEditingScenario(prev => ({ ...prev, scenarioTurnOff: e.target.value }))}
-                                        className="w-full"
-                                    />
-                                </div>
-        
-                                <div className="flex justify-end gap-2">
-                                    <Button
-                                        label="Cancel"
-                                        className="p-button-text"
-                                        onClick={() => {
-                                            setEditDialogVisible(false);
-                                            setEditingScenario(null);
-                                        }}
-                                    />
-                                    <Button
-                                        label="Save"
-                                        onClick={handleEditSave}
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    </Dialog>
-        
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
-                        {scenarios
-                            .filter(scenario => 
-                                scenario.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                            .map(scenario => (
-                                <div key={scenario._id} className="bg-[#1E1E1C] rounded-xl p-6 hover:bg-[#252523] transition-all duration-200">
-                                    <div className="flex justify-between items-start">
-                                        <div className="flex-1">
-                                            <h3 className="text-xl font-medium text-gray-100">{scenario.name}</h3>
-                                            <p className="text-sm text-gray-400 mt-1">
-                                                {formatDate(scenario.createdAt)}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Button
-                                                icon="pi pi-pencil"
-                                                className="p-button-text p-button-sm"
-                                                onClick={() => handleEditClick(scenario)}
-                                            />
-                                            <Button
-                                                icon="pi pi-trash"
-                                                className="p-button-text p-button-sm p-button-danger"
-                                                onClick={() => handleDeleteClick(scenario._id, scenario.name)}
-                                            />
-                                            <InputSwitch
-                                                checked={scenariosStates[scenario._id] ?? false}
-                                                onChange={(e) => handleScenarioToggle(scenario._id, e.value, scenario.devices)}
-                                                className="ml-2"
-                                            />
-                                        </div>
-                                    </div>
-        
-                                    <div className="mt-6 space-y-4">
-                                        <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-400">Voice Commands</p>
-                                            <div className="space-y-2 bg-[#151513] rounded-lg p-3">
-                                                <div className="flex items-center text-sm gap-4">
-                                                    <span className="text-green-500 w-8">ON: </span>
-                                                    <span className="text-gray-400">{scenario.scenarioTurnOn}</span>
-                                                </div>
-                                                <div className="flex items-center text-sm gap-4">
-                                                    <span className="text-red-500 w-8">OFF: </span>
-                                                    <span className="text-gray-400">{scenario.scenarioTurnOff}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-        
-                                        <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-400">Devices</p>
-                                            <div className="space-y-2">
-                                                {scenario.devices
-                                                    .sort((a, b) => b.actions.state - a.actions.state)
-                                                    .map((device, index) => (
-                                                        <div 
-                                                            key={index} 
-                                                            className="flex items-center justify-between bg-[#151513] rounded-lg p-3 text-sm hover:bg-[#1A1A18] transition-colors"
-                                                        >
-                                                            <div className="flex items-center gap-3">
-                                                                <i className={`pi ${getCategoryIcon(device.category)} text-gray-400`}></i>
-                                                                {device.actions.state === 1 ? (
-                                                                    <div className={`w-2 h-2 rounded-full bg-green-500`}></div>
-                                                                ) : (
-                                                                    <div className={`w-2 h-2 rounded-full bg-red-500`}></div>
-                                                                )}
-                                                                <span className="text-gray-200">{device.label}</span>
-                                                            </div>
-                                                            <div className='flex flex-row gap-4 items-center'>
-                                                                <span className="text-xs px-2 py-1 rounded-full bg-[#2A2A28] text-gray-400">
-                                                                    {device.category}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2">
+                        <Button
+                            label="Cancel"
+                            className="p-button-text"
+                            onClick={() => setVisible(false)}
+                        />
+                        <Button
+                            label="Save"
+                            onClick={handleSave}
+                        />
                     </div>
                 </div>
-            );
-        }
+            </Dialog>
+
+            <Dialog
+                header="Edit Scenario"
+                visible={editDialogVisible}
+                style={{ width: '600px' }}
+                onHide={() => {
+                    setEditDialogVisible(false);
+                    setEditingScenario(null);
+                }}
+                maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
+            >
+                {editingScenario && (
+                    <div className="flex flex-col gap-4">
+                        <div className="field">
+                            <label htmlFor="edit-name">Scenario Name</label>
+                            <InputText
+                                id="edit-name"
+                                value={editingScenario.name}
+                                onChange={(e) => setEditingScenario(prev => ({ ...prev, name: e.target.value }))}
+                                className="w-full"
+                            />
+                        </div>
+
+                        <div className="field">
+                            <label htmlFor="edit-turnOn">Turn On Command</label>
+                            <InputText
+                                id="edit-turnOn"
+                                value={editingScenario.scenarioTurnOn}
+                                onChange={(e) => setEditingScenario(prev => ({ ...prev, scenarioTurnOn: e.target.value }))}
+                                className="w-full"
+                            />
+                        </div>
+
+                        <div className="field">
+                            <label htmlFor="edit-turnOff">Turn Off Command</label>
+                            <InputText
+                                id="edit-turnOff"
+                                value={editingScenario.scenarioTurnOff}
+                                onChange={(e) => setEditingScenario(prev => ({ ...prev, scenarioTurnOff: e.target.value }))}
+                                className="w-full"
+                            />
+                        </div>
+
+                        <div className="flex justify-end gap-2">
+                            <Button
+                                label="Cancel"
+                                className="p-button-text"
+                                onClick={() => {
+                                    setEditDialogVisible(false);
+                                    setEditingScenario(null);
+                                }}
+                            />
+                            <Button
+                                label="Save"
+                                onClick={handleEditSave}
+                            />
+                        </div>
+                    </div>
+                )}
+            </Dialog>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+                {scenarios
+                    .filter(scenario => 
+                        scenario.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map(scenario => (
+                        <div key={scenario._id} className="bg-[#1E1E1C] rounded-xl p-6 hover:bg-[#252523] transition-all duration-200">
+                            <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                    <h3 className="text-xl font-medium text-gray-100">{scenario.name}</h3>
+                                    <p className="text-sm text-gray-400 mt-1">
+                                        {formatDate(scenario.createdAt)}
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        icon="pi pi-pencil"
+                                        className="p-button-text p-button-sm"
+                                        onClick={() => handleEditClick(scenario)}
+                                    />
+                                    <Button
+                                        icon="pi pi-trash"
+                                        className="p-button-text p-button-sm p-button-danger"
+                                        onClick={() => handleDeleteClick(scenario._id, scenario.name)}
+                                    />
+                                    <InputSwitch
+                                        checked={scenariosStates[scenario._id] ?? false}
+                                        onChange={(e) => handleScenarioToggle(scenario._id, e.value, scenario.devices)}
+                                        className="ml-2"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="mt-6 space-y-4">
+                                <div className="space-y-2">
+                                    <p className="text-sm font-medium text-gray-400">Voice Commands</p>
+                                    <div className="space-y-2 bg-[#151513] rounded-lg p-3">
+                                        <div className="flex items-center text-sm gap-4">
+                                            <span className="text-green-500 w-8">ON: </span>
+                                            <span className="text-gray-400">{scenario.scenarioTurnOn}</span>
+                                        </div>
+                                        <div className="flex items-center text-sm gap-4">
+                                            <span className="text-red-500 w-8">OFF: </span>
+                                            <span className="text-gray-400">{scenario.scenarioTurnOff}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <p className="text-sm font-medium text-gray-400">Devices</p>
+                                    <div className="space-y-2">
+                                        {scenario.devices
+                                            .sort((a, b) => b.actions.state - a.actions.state)
+                                            .map((device, index) => (
+                                                <div 
+                                                    key={index} 
+                                                    className="flex items-center justify-between bg-[#151513] rounded-lg p-3 text-sm hover:bg-[#1A1A18] transition-colors"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <i className={`pi ${getCategoryIcon(device.category)} text-gray-400`}></i>
+                                                        {device.actions.state === 1 ? (
+                                                            <div className={`w-2 h-2 rounded-full bg-green-500`}></div>
+                                                        ) : (
+                                                            <div className={`w-2 h-2 rounded-full bg-red-500`}></div>
+                                                        )}
+                                                        <span className="text-gray-200">{device.label}</span>
+                                                    </div>
+                                                    <div className='flex flex-row gap-4 items-center'>
+                                                        <span className="text-xs px-2 py-1 rounded-full bg-[#2A2A28] text-gray-400">
+                                                            {device.category}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+            </div>
+        </div>
+    );
+}
