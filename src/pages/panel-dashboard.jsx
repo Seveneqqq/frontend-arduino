@@ -19,6 +19,7 @@ import StatisticCompomnent from '../components/statisticCompomnent';
 import FrontGateComponent from '../components/frontGateComponent';
 import { Toast } from 'primereact/toast';
 import SessionTimedOut from '../components/sessionTimedOut';
+import HeatPumpController from '../components/heatPumpController';
 
 const DeviceItem = React.memo(({ 
     device, 
@@ -29,10 +30,30 @@ const DeviceItem = React.memo(({
 }) => {
     const debouncedKnobChange = React.useCallback(
         _.debounce((newValue) => {
-            onKnobChange(device, true, newValue, false);
+            if (device.name !== 'HEAT_PUMP') {
+                onKnobChange(device, true, newValue, false);
+            }
         }, 200),
         [device, onKnobChange]
     );
+
+    const handleSwitchChange = (e) => {
+        if (device.name === 'HEAT_PUMP') {
+            onSwitchChange(device, e.value, deviceState?.temperature, true);
+        } else {
+            onSwitchChange(device, e.value, device.category === 'Light' ? deviceState?.brightness : deviceState?.temperature);
+        }
+    };
+
+    const handleKnobChange = (e) => {
+        const newValue = e.value;
+        if (device.name === 'HEAT_PUMP') {
+            onKnobChange(device, true, newValue, true);
+        } else {
+            onKnobChange(device, true, newValue, true);
+            debouncedKnobChange(newValue);
+        }
+    };
 
     return (
         <div 
@@ -49,18 +70,14 @@ const DeviceItem = React.memo(({
                 {device.status === 'active' && device.category !== 'Sensor' && (
                     <InputSwitch 
                         checked={deviceState?.isOn || false}
-                        onChange={(e) => onSwitchChange(device, e.value, device.category === 'Light' ? deviceState?.brightness : deviceState?.temperature)}
+                        onChange={handleSwitchChange}
                     />
                 )}
                 {dialogCategory === 'Light' && (
                     <div className="flex items-center">
                         <Knob 
                             value={deviceState?.brightness || 100}
-                            onChange={(e) => {
-                                const newValue = e.value;
-                                onKnobChange(device, true, newValue, true);
-                                debouncedKnobChange(newValue);
-                            }}
+                            onChange={handleKnobChange}
                             valueTemplate="{value}%"
                             size={70}
                             strokeWidth={8}
@@ -73,11 +90,7 @@ const DeviceItem = React.memo(({
                     <div className="flex items-center">
                         <Knob 
                             value={deviceState?.temperature || 20}
-                            onChange={(e) => {
-                                const newValue = e.value;
-                                onKnobChange(device, true, newValue, true);
-                                debouncedKnobChange(newValue);
-                            }}
+                            onChange={handleKnobChange}
                             valueTemplate="{value}°C"
                             min={15}
                             max={30}
@@ -450,6 +463,7 @@ useEffect(() => {
     };
 
     const updateDeviceState = useCallback(async (device, newState, newValue, isLocalUpdate = false) => {
+        // Zawsze aktualizuj stan lokalny
         setDeviceStates(prev => ({
             ...prev,
             [device.device_id]: {
@@ -464,7 +478,13 @@ useEffect(() => {
             }
         }));
       
-        if (isLocalUpdate || device.status !== 'active') return;
+        // Nie wysyłaj sygnału jeśli:
+        // - to jest aktualizacja lokalna
+        // - urządzenie nie jest aktywne
+        // - to jest pompa ciepła (nią zarządza HeatPumpController)
+        if (isLocalUpdate || device.status !== 'active' || device.name === 'HEAT_PUMP') {
+            return;
+        }
         
         try {
             const actionValue = device.category === 'Heating' ? 
@@ -503,7 +523,7 @@ useEffect(() => {
                 setSessionExpired(true);
                 return;
             }
-
+    
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -999,6 +1019,12 @@ useEffect(() => {
                         <SessionTimedOut 
                             visible={sessionExpired} 
                             setVisible={setSessionExpired}
+                        />
+                        <HeatPumpController 
+                            devices={devices}
+                            deviceStates={deviceStates}
+                            sensorValue={sensorValue}
+                            onUpdateDeviceState={updateDeviceState}
                         />
                         <div
                             ref={scrollRef}
