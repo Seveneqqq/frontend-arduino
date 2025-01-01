@@ -936,7 +936,7 @@ export default function AddNewAppHome(){
                     </DataTable>
                   </>
                 ) : (
-                  <p className="text-xl">Please fill in the required fields.</p>
+                  <p className="text-xl">Please fill in the required fields. </p>
                 )}
               </div>
             </div>
