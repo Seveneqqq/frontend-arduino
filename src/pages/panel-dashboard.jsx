@@ -547,7 +547,7 @@ useEffect(() => {
                     ? [`wyłącz ${device.label}`]
                     : [];
     
-                // Komendy ustawiania wartości tylko dla świateł i ogrzewania
+                
                 let setCommands = [];
                 if (device.category === 'Light' || device.category === 'Heating') {
                     setCommands = [`${device.label} ustaw`];
