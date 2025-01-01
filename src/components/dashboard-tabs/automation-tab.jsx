@@ -350,6 +350,56 @@ export default function AutomationTab({ devices, deviceStates }) {
         if (!newDevice.device) return null;
 
         switch (newDevice.device.category) {
+            case 'Heating':
+            return (
+                <div className="flex flex-col gap-4">
+                    <div className="field flex flex-col">
+                        <label>State</label>
+                        <Dropdown
+                            value={newDevice.actions.state}
+                            options={[
+                                { label: 'Turn On', value: 1 },
+                                { label: 'Turn Off', value: 0 }
+                            ]}
+                            onChange={(e) => {
+                                const newState = e.value;
+                                setNewDevice(prev => ({
+                                    ...prev,
+                                    actions: {
+                                        ...prev.actions,
+                                        state: newState,
+                                        temperature: newState === 0 ? 15 : (prev.actions.temperature || 20)
+                                    }
+                                }));
+                            }}
+                            placeholder="Select state"
+                            className="w-full"
+                        />
+                    </div>
+                    {newDevice.actions.state === 1 && (
+                        <div className="field flex flex-col gap-4">
+                            <label>Temperature: {newDevice.actions.temperature || 20}°C</label>
+                            <div className="flex gap-4 items-center">
+                                <Slider 
+                                    value={newDevice.actions.temperature || 20} 
+                                    onChange={(e) => {
+                                        setNewDevice(prev => ({
+                                            ...prev,
+                                            actions: {
+                                                ...prev.actions,
+                                                temperature: e.value
+                                            }
+                                        }));
+                                    }}
+                                    min={15} 
+                                    max={36}
+                                    className="w-full" 
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
             case 'Light':
                 return (
                     <div className="flex flex-col gap-4">

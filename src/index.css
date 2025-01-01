@@ -81,3 +81,81 @@ code {
 .p-datatable-emptymessage{
   background-color: transparent;
 }
+
+
+
+
+@keyframes slideRight {
+  from {
+      opacity: 0;
+      transform: translateX(-1rem);
+  }
+  to {
+      opacity: 1;
+      transform: translateX(0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+      opacity: 0;
+      transform: translateX(1rem);
+  }
+  to {
+      opacity: 1;
+      transform: translateX(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+      opacity: 0;
+      transform: translateY(1rem);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+.animate-slideRight {
+  animation: slideRight 0.8s ease-out forwards;
+  animation-delay: 500ms; 
+}
+
+.animate-slideLeft {
+  animation: slideLeft 0.8s ease-out forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.8s ease-out forwards;
+  animation-delay: 500ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 700ms;  
+}
+
+.animation-delay-300 {
+  animation-delay: 900ms;  
+}
+
+.animation-delay-400 {
+  animation-delay: 1100ms;
+}
+
+.animation-delay-500 {
+  animation-delay: 1300ms; 
+}
+
+.animation-delay-600 {
+  animation-delay: 1500ms; 
+}
+
+.animation-delay-700 {
+  animation-delay: 1700ms; 
+}
+
+.animation-delay-final {
+  animation-delay: 2000ms; 
+}
