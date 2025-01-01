@@ -129,22 +129,23 @@ export default function AddNewAppHome(){
 
                 case 'Zigbee':
                     return zigbeeProtocol();
-                break;
+                
                 case 'Wifi':
                     return wifiProtocol();
-                break;
+                
                 case 'Bluetooth':
                     return bluetoothProtocol();
-                break;
+                
                 case 'Z-Wave':
                     return zwaveProtocol();
-                break;
+                
                 case 'MQTT':
                     return mqttProtocol();
-                break;
+                
             
             }
         }
+        return null;
     };
 
     const zigbeeProtocol = () =>{
