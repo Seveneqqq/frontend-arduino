@@ -960,8 +960,7 @@ export default function AddNewAppHome(){
           </StepperPanel>
         </Stepper>
       </div>
-    );
-}
+
     )
 }
 
