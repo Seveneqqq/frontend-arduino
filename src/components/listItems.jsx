@@ -17,14 +17,14 @@ const items = [
         path: "/home"
     },
     {
+        text: "Details",
+        img: database,
+        path: "/details"
+    },
+    {
         text: "Author",
         img: author,
         path: "/author"
-    },
-    {
-        text: "Speech Api",
-        img: mic,
-        path: "/speech-api"
     },
     {
         text: "Stack",
@@ -32,13 +32,11 @@ const items = [
         path: "/stack"
     },
     {
-        text: "Database",
-        img: database,
-        path: "/database"
-    },
+        text: "Mockup",
+        img: mic,
+        path: "/mockup"
+    }
 ];
-
-//<img className="fill-white h-[48%]" src={item.img} alt={item.text}/>
 
 
 export default function ListItem() {
