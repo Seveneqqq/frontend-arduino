@@ -673,6 +673,8 @@ export default function AddNewAppHome(){
         } catch (error) {
             console.error('Error:', error);
             showError();
+            console.log(error);
+
         }
     }
 
@@ -958,5 +960,7 @@ export default function AddNewAppHome(){
           </StepperPanel>
         </Stepper>
       </div>
+
     )
 }
+
