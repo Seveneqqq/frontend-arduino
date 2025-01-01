@@ -141,7 +141,9 @@ export default function AddNewAppHome(){
                 
                 case 'MQTT':
                     return mqttProtocol();
-                
+
+                default:
+                    return null;
             
             }
         }
