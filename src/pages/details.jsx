@@ -137,6 +137,44 @@ export default function Details() {
                                     Secured API with JWT Authentication
                                 </li>
                             </ul>
+                            <div className="mt-8">
+                                <h3 className="text-xl font-bold text-blue-400 mb-6">Project Repositories</h3>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <a 
+                                        href="https://github.com/Seveneqqq/frontend-arduino" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="border border-blue-400 text-blue-400 px-6 py-2 rounded-lg hover:bg-blue-400 hover:text-white transition-colors text-center whitespace-nowrap"
+                                    >
+                                        Frontend
+                                    </a>
+                                    <a 
+                                        href="https://github.com/Seveneqqq/backend-arduino" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="border border-blue-400 text-blue-400 px-6 py-2 rounded-lg hover:bg-blue-400 hover:text-white transition-colors text-center whitespace-nowrap"
+                                    >
+                                        Backend
+                                    </a>
+                                    <a 
+                                        href="https://github.com/Seveneqqq/smarthome-code-arduino" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="border border-blue-400 text-blue-400 px-6 py-2 rounded-lg hover:bg-blue-400 hover:text-white transition-colors text-center whitespace-nowrap"
+                                    >
+                                        Arduino Code
+                                    </a>
+                                    <a 
+                                        href="https://github.com/Seveneqqq/3d-models-arduino" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="border border-blue-400 text-blue-400 px-6 py-2 rounded-lg hover:bg-blue-400 hover:text-white transition-colors text-center whitespace-nowrap"
+                                    >
+                                        3D Models
+                                    </a>
+
+                                </div>
+                                </div>
                         </div>
                     </div>
 
