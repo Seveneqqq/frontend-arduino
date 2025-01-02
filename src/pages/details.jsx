@@ -87,7 +87,7 @@ export default function Details() {
                         <div className="bg-[#1e2039] p-6 rounded-xl opacity-0 animate-slideRight animation-delay-400">
                             <h2 className="text-2xl font-bold text-blue-400 mb-4">About the System</h2>
                             <p className="text-gray-300 leading-relaxed">
-                                The Smart Home System offers comprehensive home automation with advanced features like customizable scenarios for different situations and detailed device management with room assignment capabilities. The integrated security system includes camera connectivity and multi-level user roles for enhanced access control. What makes this system unique is its intelligent assistant powered by Gemini AI, which provides personalized guidance and recommendations to users. The system supports both voice control for devices and scenarios, making it intuitive and hands-free to use. Through its modern web interface, users can easily monitor and control all aspects of their smart home, from device states to automation scenarios.
+                            The Smart Home System offers comprehensive home automation with advanced features like customizable scenarios for different situations and detailed device management with room assignment capabilities. The integrated security system includes camera connectivity and multi-level user roles for enhanced access control. All API endpoints are secured using JWT (JSON Web Token) authentication and protected by custom middleware that verifies token validity for each request, ensuring secure access to system resources. What makes this system unique is its intelligent assistant powered by Gemini AI, which provides personalized guidance and recommendations to users. The system supports both voice control for devices and scenarios, making it intuitive and hands-free to use. Through its modern web interface, users can easily monitor and control all aspects of their smart home, from device states to automation scenarios.
                             </p>
                         </div>
 
@@ -129,6 +129,12 @@ export default function Details() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                                     </svg>
                                     Multi-level User Roles
+                                </li>
+                                <li className="flex items-center">
+                                    <svg className="w-5 h-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Secured API with JWT Authentication
                                 </li>
                             </ul>
                         </div>
