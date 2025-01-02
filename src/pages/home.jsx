@@ -1,8 +1,7 @@
-import { Tag } from 'primereact/tag';
 import { Toast } from 'primereact/toast';
 import { useRef } from 'react';
 import Header from '../components/header.jsx';
-const uno = require('../img/uno-r4.png');
+
 
 export default function HomePage() {
     const toast = useRef(null);
@@ -92,7 +91,7 @@ export default function HomePage() {
                         </div>
 
                         <div className="w-full flex items-center justify-end mt-8 md:mt-0 opacity-0 translate-x-4 animate-slideLeft animation-delay-final">
-                            <img src={uno} className='w-full md:w-[70%] h-auto' alt="Arduino Board" />
+                            <img src={'img/uno-r4.png'} className='w-full md:w-[70%] h-auto' alt="Arduino Board" />
                         </div>
                     </div>
                 </div>
