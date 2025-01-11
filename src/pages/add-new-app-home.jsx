@@ -92,6 +92,8 @@ export default function AddNewAppHome(){
         'Childrens room', 
         'Garage', 
         'Office',
+        'Bedroom',
+        'Hall'
     ];
     const categories = [
         'Light',
@@ -483,9 +485,11 @@ export default function AddNewAppHome(){
             'Living room',
             'Bathroom',
             'Garden',
-            'Children\'s room',
+            'Childrens room',
             'Garage',
-            'Office'
+            'Office',
+            'Bedroom',
+            'Hall'
           ];
 
         const room_id = rooms.indexOf(selectedRoom);
@@ -524,9 +528,11 @@ export default function AddNewAppHome(){
             'Living room',
             'Bathroom',
             'Garden',
-            'Children\'s room',
+            'Childrens room',
             'Garage',
-            'Office'
+            'Office',
+            'Bedroom',
+            'Hall'
           ];
 
         const room_id = rooms.indexOf(selectedRoom);
