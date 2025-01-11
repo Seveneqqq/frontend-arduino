@@ -129,9 +129,11 @@ export default function DevicesTab({
         'Living room',
         'Bathroom',
         'Garden',
-        'Children\'s room',
+        'Childrens room',
         'Garage',
-        'Office'
+        'Office',
+        'Bedroom',
+        'Hall'
     ];
 
     const categories = [

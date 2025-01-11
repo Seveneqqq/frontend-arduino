@@ -51,6 +51,8 @@ function DevicesTab() {
         'Childrens room', 
         'Garage', 
         'Office',
+        'Bedroom',
+        'Hall'
     ];
 
     useEffect(() => {
