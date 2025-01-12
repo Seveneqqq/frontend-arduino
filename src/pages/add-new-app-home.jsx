@@ -156,10 +156,10 @@ export default function AddNewAppHome(){
         return(
             <>
                 {clearFields}
-                <InputText placeholder="Zigbee ID" value={zigbeeId} maxLength={15} onChange={(event) => setZigbeeId(event.target.value)} />
-                <InputText placeholder="Zigbee channel" value={zigbeeChannel} maxLength={30} onChange={(event) => setZigbeeChannel(event.target.value)} />
-                <InputText placeholder="Zigbee group ID" value={zigbeeGroupId} maxLength={15} onChange={(event) => setZigbeeGroupId(event.target.value)} />
-                <InputText placeholder="Zigbee binding central hub" value={zigbeeHub} maxLength={30} onChange={(event) => setZigbeeHub(event.target.value)} />
+                <InputText placeholder="Zigbee ID" className="!w-64" value={zigbeeId} maxLength={15} onChange={(event) => setZigbeeId(event.target.value)} />
+                <InputText placeholder="Zigbee channel" className="!w-64" value={zigbeeChannel} maxLength={30} onChange={(event) => setZigbeeChannel(event.target.value)} />
+                <InputText placeholder="Zigbee group ID" className="!w-64" value={zigbeeGroupId} maxLength={15} onChange={(event) => setZigbeeGroupId(event.target.value)} />
+                <InputText placeholder="Zigbee binding central hub" className="!w-64" value={zigbeeHub} maxLength={30} onChange={(event) => setZigbeeHub(event.target.value)} />
             </>
         );
     }
@@ -168,10 +168,10 @@ export default function AddNewAppHome(){
         return(
             <>
                 {clearFields}
-                <InputText placeholder="WiFi IP address" value={ipAddress} maxLength={50} onChange={(event) => setIpAddress(event.target.value)} />
-                <InputText placeholder="WiFi MAC address" value={macAddress} maxLength={50} onChange={(event) => setMacAddress(event.target.value)} />
-                <InputText placeholder="WiFi SSID" value={ssid} maxLength={50} onChange={(event) => setSsid(event.target.value)} />
-                <InputText placeholder="WiFi password" value={password} maxLength={50} onChange={(event) => setPassword(event.target.value)} />
+                <InputText placeholder="WiFi IP address" className="!w-64" value={ipAddress} maxLength={50} onChange={(event) => setIpAddress(event.target.value)} />
+                <InputText placeholder="WiFi MAC address" className="!w-64" value={macAddress} maxLength={50} onChange={(event) => setMacAddress(event.target.value)} />
+                <InputText placeholder="WiFi SSID" className="!w-64" value={ssid} maxLength={50} onChange={(event) => setSsid(event.target.value)} />
+                <InputText placeholder="WiFi password" className="!w-64" value={password} maxLength={50} onChange={(event) => setPassword(event.target.value)} />
             </>
         );
     }
@@ -179,8 +179,8 @@ export default function AddNewAppHome(){
         return(
             <>
                 {clearFields}
-                <InputText placeholder="Bluetooth BLE UUID" value={bleUuid} maxLength={30} onChange={(event) => setBleUuid(event.target.value)} />
-                <InputText placeholder="Bluetooth connection" value={bleConnection} maxLength={30} onChange={(event) => setBleConnection(event.target.value)} />
+                <InputText placeholder="Bluetooth BLE UUID" className="!w-64" value={bleUuid} maxLength={30} onChange={(event) => setBleUuid(event.target.value)} />
+                <InputText placeholder="Bluetooth connection" className="!w-64" value={bleConnection} maxLength={30} onChange={(event) => setBleConnection(event.target.value)} />
             </>
         );
     }
@@ -188,9 +188,9 @@ export default function AddNewAppHome(){
         return(
             <>
                 {clearFields}
-                <InputText placeholder="Z-wave device ID" value={zwaveDeviceId} maxLength={15} onChange={(event) => setZwaveDeviceId(event.target.value)} />
-                <InputText placeholder="Z-wave network key" value={zwaveNetworkKey} maxLength={30} onChange={(event) => setZwaveNetworkKey(event.target.value)} />
-                <InputText placeholder="Z-wave group ID" value={zwaveGroupId} maxLength={15} onChange={(event) => setZwaveGroupId(event.target.value)} />
+                <InputText placeholder="Z-wave device ID" className="!w-64" value={zwaveDeviceId} maxLength={15} onChange={(event) => setZwaveDeviceId(event.target.value)} />
+                <InputText placeholder="Z-wave network key" className="!w-64" value={zwaveNetworkKey} maxLength={30} onChange={(event) => setZwaveNetworkKey(event.target.value)} />
+                <InputText placeholder="Z-wave group ID" className="!w-64" value={zwaveGroupId} maxLength={15} onChange={(event) => setZwaveGroupId(event.target.value)} />
             </>
         );
     }
@@ -198,10 +198,10 @@ export default function AddNewAppHome(){
         return(
             <>
                 {clearFields}
-                <InputText placeholder="MQTT broker URL" value={mqttBrokerUrl} maxLength={150} onChange={(event) => setMqttBrokerUrl(event.target.value)} />
-                <InputText placeholder="MQTT topic ON" value={mqttTopicOn} maxLength={50} onChange={(event) => setMqttTopicOn(event.target.value)} />
-                <InputText placeholder="MQTT topic OFF" value={mqttTopicOff} maxLength={50} onChange={(event) => setMqttTopicOff(event.target.value)} />
-                <InputText placeholder="MQTT device ID" value={mqttDeviceId} maxLength={15} onChange={(event) => setMqttDeviceId(event.target.value)} />
+                <InputText placeholder="MQTT broker URL" className="!w-64" value={mqttBrokerUrl} maxLength={150} onChange={(event) => setMqttBrokerUrl(event.target.value)} />
+                <InputText placeholder="MQTT topic ON" className="!w-64" value={mqttTopicOn} maxLength={50} onChange={(event) => setMqttTopicOn(event.target.value)} />
+                <InputText placeholder="MQTT topic OFF" className="!w-64" value={mqttTopicOff} maxLength={50} onChange={(event) => setMqttTopicOff(event.target.value)} />
+                <InputText placeholder="MQTT device ID" className="!w-64" value={mqttDeviceId} maxLength={15} onChange={(event) => setMqttDeviceId(event.target.value)} />
             </>
         );
     }
@@ -870,7 +870,7 @@ export default function AddNewAppHome(){
             <>
                 {formVisible ? <p className="font-semibold">Set your devices - {name}</p> : <p className="font-semibold">Select device</p>}
 
-                <InputText placeholder="label" id="label" value={label} onChange={(e)=>onChangeSetLabel(e)} />
+                <InputText placeholder="label" id="label" className="!w-64" value={label} onChange={(e)=>onChangeSetLabel(e)} />
 
                 <Dropdown value={selectedRoom} onChange={(e) => setSelectedRoom(e.value)} options={rooms} id="room_id" optionLabel="Room" 
                     placeholder="Select room" className="!w-64" />
