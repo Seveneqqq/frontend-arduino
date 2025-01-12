@@ -166,59 +166,59 @@ export default function DevicesTab({
                 return (
                     <>
                         <InputText placeholder="Zigbee ID" value={zigbeeId} maxLength={15} 
-                            onChange={(e) => setZigbeeId(e.target.value)} />
+                            className="!w-64" onChange={(e) => setZigbeeId(e.target.value)} />
                         <InputText placeholder="Zigbee channel" value={zigbeeChannel} maxLength={30} 
-                            onChange={(e) => setZigbeeChannel(e.target.value)} />
+                            className="!w-64" onChange={(e) => setZigbeeChannel(e.target.value)} />
                         <InputText placeholder="Zigbee group ID" value={zigbeeGroupId} maxLength={15} 
-                            onChange={(e) => setZigbeeGroupId(e.target.value)} />
+                            className="!w-64" onChange={(e) => setZigbeeGroupId(e.target.value)} />
                         <InputText placeholder="Zigbee binding central hub" value={zigbeeHub} maxLength={30} 
-                            onChange={(e) => setZigbeeHub(e.target.value)} />
+                            className="!w-64" onChange={(e) => setZigbeeHub(e.target.value)} />
                     </>
                 );
             case 'Wifi':
                 return (
                     <>
                         <InputText placeholder="WiFi IP address" value={ipAddress} maxLength={50} 
-                            onChange={(e) => setIpAddress(e.target.value)} />
+                            className="!w-64" onChange={(e) => setIpAddress(e.target.value)} />
                         <InputText placeholder="WiFi MAC address" value={macAddress} maxLength={50} 
-                            onChange={(e) => setMacAddress(e.target.value)} />
+                            className="!w-64" onChange={(e) => setMacAddress(e.target.value)} />
                         <InputText placeholder="WiFi SSID" value={ssid} maxLength={50} 
-                            onChange={(e) => setSsid(e.target.value)} />
+                            className="!w-64" onChange={(e) => setSsid(e.target.value)} />
                         <InputText placeholder="WiFi password" value={password} maxLength={50} 
-                            onChange={(e) => setPassword(e.target.value)} />
+                            className="!w-64" onChange={(e) => setPassword(e.target.value)} />
                     </>
                 );
             case 'Bluetooth':
                 return (
                     <>
                         <InputText placeholder="Bluetooth BLE UUID" value={bleUuid} maxLength={30} 
-                            onChange={(e) => setBleUuid(e.target.value)} />
+                            className="!w-64" onChange={(e) => setBleUuid(e.target.value)} />
                         <InputText placeholder="Bluetooth connection" value={bleConnection} maxLength={30} 
-                            onChange={(e) => setBleConnection(e.target.value)} />
+                            className="!w-64" onChange={(e) => setBleConnection(e.target.value)} />
                     </>
                 );
             case 'Z-Wave':
                 return (
                     <>
                         <InputText placeholder="Z-wave device ID" value={zwaveDeviceId} maxLength={15} 
-                            onChange={(e) => setZwaveDeviceId(e.target.value)} />
+                            className="!w-64" onChange={(e) => setZwaveDeviceId(e.target.value)} />
                         <InputText placeholder="Z-wave network key" value={zwaveNetworkKey} maxLength={30} 
-                            onChange={(e) => setZwaveNetworkKey(e.target.value)} />
+                            className="!w-64" onChange={(e) => setZwaveNetworkKey(e.target.value)} />
                         <InputText placeholder="Z-wave group ID" value={zwaveGroupId} maxLength={15} 
-                            onChange={(e) => setZwaveGroupId(e.target.value)} />
+                            className="!w-64" onChange={(e) => setZwaveGroupId(e.target.value)} />
                     </>
                 );
             case 'MQTT':
                 return (
                     <>
                         <InputText placeholder="MQTT broker URL" value={mqttBrokerUrl} maxLength={150} 
-                            onChange={(e) => setMqttBrokerUrl(e.target.value)} />
+                            className="!w-64" onChange={(e) => setMqttBrokerUrl(e.target.value)} />
                         <InputText placeholder="MQTT topic ON" value={mqttTopicOn} maxLength={50} 
-                            onChange={(e) => setMqttTopicOn(e.target.value)} />
+                            className="!w-64" onChange={(e) => setMqttTopicOn(e.target.value)} />
                         <InputText placeholder="MQTT topic OFF" value={mqttTopicOff} maxLength={50} 
-                            onChange={(e) => setMqttTopicOff(e.target.value)} />
+                            className="!w-64" onChange={(e) => setMqttTopicOff(e.target.value)} />
                         <InputText placeholder="MQTT device ID" value={mqttDeviceId} maxLength={15} 
-                            onChange={(e) => setMqttDeviceId(e.target.value)} />
+                            className="!w-64" onChange={(e) => setMqttDeviceId(e.target.value)} />
                     </>
                 );
             default:
