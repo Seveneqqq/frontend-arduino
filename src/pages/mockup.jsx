@@ -1,30 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { Galleria } from 'primereact/galleria';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import Header from '../components/header.jsx';
 
 const ImageZoomModal = ({ image, onClose }) => {
-  const handleContentClick = (e) => {
-    e.stopPropagation();
+    const handleContentClick = (e) => {
+      e.stopPropagation();
+    };
+  
+    return (
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div className="relative max-w-7xl w-full" onClick={handleContentClick}>
+          <Button
+            icon="pi pi-times"
+            className="absolute -top-12 right-0 p-button-rounded p-button-text text-white hover:bg-white hover:bg-opacity-20"
+            onClick={onClose}
+          />
+          <div className="relative">
+            <Button
+              icon="pi pi-times"
+              className="absolute top-4 right-4 p-button-rounded p-button-text bg-black bg-opacity-50 text-white hover:bg-opacity-70"
+              onClick={onClose}
+            />
+            <img 
+              src={image.itemImageSrc} 
+              alt={image.alt} 
+              className="max-h-screen w-full object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+    );
   };
 
+const ImageWithLoader = ({ src, alt, className, onClick }) => {
+  const [loading, setLoading] = useState(true);
+
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <div className="relative max-w-7xl w-full" onClick={handleContentClick}>
-        <Button
-          icon="pi pi-times"
-          className="absolute -top-12 right-0 p-button-rounded p-button-text text-white"
-          onClick={onClose}
-        />
-        <img 
-          src={image.itemImageSrc} 
-          alt={image.alt} 
-          className="max-h-[90vh] w-full object-contain rounded-lg"
-        />
-      </div>
+    <div className="relative">
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 rounded-lg">
+          <ProgressSpinner style={{ width: '50px', height: '50px' }} />
+        </div>
+      )}
+      <img 
+        src={src} 
+        alt={alt} 
+        className={className}
+        onLoad={() => setLoading(false)}
+        onClick={onClick}
+      />
     </div>
   );
 };
@@ -44,6 +73,11 @@ const devices = [
                 itemImageSrc: '/img/mockup/3d-models/brama2.png',
                 thumbnailImageSrc: '/img/mockup/3d-models/brama2.png',
                 alt: 'Gate View 2'
+            },
+            {
+                itemImageSrc: '/img/mockup/devices/servo.webp',
+                thumbnailImageSrc: '/img/mockup/devices/servo.webp',
+                alt: 'Servo Motor'
             }
         ]
     },
@@ -99,11 +133,6 @@ const devices = [
         description: 'Smart lighting system with the ability to create light scenes and schedules. Controlled by servo motors and optimized with diodes for status indication.',
         images: [
             {
-                itemImageSrc: '/img/mockup/devices/servo.webp',
-                thumbnailImageSrc: '/img/mockup/devices/servo.webp',
-                alt: 'Servo Motor'
-            },
-            {
                 itemImageSrc: '/img/mockup/devices/diode.png',
                 thumbnailImageSrc: '/img/mockup/devices/diode.png',
                 alt: 'LED Diode'
@@ -112,15 +141,53 @@ const devices = [
     }
 ];
 
-const schemas = [
+const mockupPhotos = [
     {
-        itemImageSrc: '/img/mockup/schemas/01.png',
-        thumbnailImageSrc: '/img/mockup/schemas/01.png',
-        alt: 'Schema 1'
+        itemImageSrc: '/img/mockup/mockup/home_1.jpeg',
+        thumbnailImageSrc: '/img/mockup/mockup/home_1.jpeg',
+        alt: 'Scale Model Photo 1'
     },
+    {
+        itemImageSrc: '/img/mockup/mockup/home_2.jpeg',
+        thumbnailImageSrc: '/img/mockup/mockup/home_2.jpeg',
+        alt: 'Scale Model Photo 2'
+    },
+    {
+        itemImageSrc: '/img/mockup/mockup/home_3.jpeg',
+        thumbnailImageSrc: '/img/mockup/mockup/home_3.jpeg',
+        alt: 'Scale Model Photo 3'
+    },
+    {
+        itemImageSrc: '/img/mockup/mockup/home_4.jpeg',
+        thumbnailImageSrc: '/img/mockup/mockup/home_4.jpeg',
+        alt: 'Scale Model Photo 4'
+    },
+    {
+        itemImageSrc: '/img/mockup/mockup/home_5.jpeg',
+        thumbnailImageSrc: '/img/mockup/mockup/home_5.jpeg',
+        alt: 'Scale Model Photo 5'
+    },
+    {
+        itemImageSrc: '/img/mockup/mockup/home_6.jpeg',
+        thumbnailImageSrc: '/img/mockup/mockup/home_6.jpeg',
+        alt: 'Scale Model Photo 6'
+    },
+    {
+        itemImageSrc: '/img/mockup/mockup/home_7.jpeg',
+        thumbnailImageSrc: '/img/mockup/mockup/home_7.jpeg',
+        alt: 'Scale Model Photo 7'
+    }
+];
+
+const schemas = [
     {
         itemImageSrc: '/img/mockup/schemas/02.png',
         thumbnailImageSrc: '/img/mockup/schemas/02.png',
+        alt: 'Schema 1'
+    },
+    {
+        itemImageSrc: '/img/mockup/schemas/01.png',
+        thumbnailImageSrc: '/img/mockup/schemas/01.png',
         alt: 'Schema 2'
     }
 ];
@@ -128,18 +195,14 @@ const schemas = [
 export default function Mockup() {
     const [openDevice, setOpenDevice] = useState(null);
     const [zoomedImage, setZoomedImage] = useState(null);
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsInitialLoad(false);
-        }, 2000); 
-
-        return () => clearTimeout(timer);
+        setLoaded(true);
     }, []);
 
     const getAnimationClass = (animation, delay = '') => {
-        return isInitialLoad ? `${animation} ${delay}` : '';
+        return loaded ? `${animation} ${delay}` : 'opacity-0';
     };
 
     const responsiveOptions = [
@@ -159,12 +222,11 @@ export default function Mockup() {
 
     const itemTemplate = (item) => {
         return (
-            <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
-                <img 
+            <div className="flex justify-center p-4" onClick={(e) => e.stopPropagation()}>
+                <ImageWithLoader 
                     src={item.itemImageSrc} 
                     alt={item.alt} 
-                    className="max-h-96 object-contain rounded-lg cursor-zoom-in hover:opacity-90 transition-opacity"
-                    style={{ maxWidth: '600px' }}
+                    className="w-full h-[500px] object-contain rounded-lg cursor-zoom-in hover:opacity-90 transition-opacity"
                     onClick={(e) => {
                         e.stopPropagation();
                         setZoomedImage(item);
@@ -176,10 +238,10 @@ export default function Mockup() {
 
     const thumbnailTemplate = (item) => {
         return (
-            <img 
+            <ImageWithLoader 
                 src={item.thumbnailImageSrc} 
                 alt={item.alt} 
-                className="w-16 h-16 object-cover rounded"
+                className="w-20 h-20 object-cover rounded"
             />
         );
     };
@@ -188,7 +250,7 @@ export default function Mockup() {
         <div className="bg-[#1E1E2F] items-center w-full min-h-screen flex flex-col">
             <Header />
             <div className="mt-8 md:mt-16 px-4 md:px-24 max-w-7xl mx-auto w-full">
-                <div className={`text-center mb-12 ${getAnimationClass('animate-slideDown')}`}>
+                <div className={`text-center mb-12 transition-all duration-1000 ${getAnimationClass('translate-y-0 opacity-100', '')} ${!loaded ? '-translate-y-4' : ''}`}>
                     <h1 className="text-4xl md:text-5xl font-bold text-blue-400 mb-4">
                         Smart Home Scale Model
                     </h1>
@@ -197,7 +259,7 @@ export default function Mockup() {
                     </p>
                 </div>
 
-                <div className={`mb-16 text-gray-300 text-lg leading-relaxed ${getAnimationClass('animate-slideRight')}`}>
+                <div className={`mb-16 text-gray-300 text-lg leading-relaxed transition-all duration-1000 ${getAnimationClass('translate-x-0 opacity-100', 'delay-100')} ${!loaded ? 'translate-x-4' : ''}`}>
                     <p className="mb-4">
                         The smart home scale model project was developed to provide a physical demonstration of home automation system capabilities. It represents a complete solution that combines modern technologies with practical applications in everyday life.
                     </p>
@@ -206,7 +268,7 @@ export default function Mockup() {
                     </p>
                 </div>
 
-                <div className={`flex justify-center mb-16 ${getAnimationClass('animate-slideLeft', 'animation-delay-200')}`}>
+                <div className={`flex justify-center mb-16 transition-all duration-1000 ${getAnimationClass('translate-x-0 opacity-100', 'delay-200')} ${!loaded ? '-translate-x-4' : ''}`}>
                     <a
                         href="https://github.com/Seveneqqq/3d-models-arduino"
                         target="_blank"
@@ -218,27 +280,47 @@ export default function Mockup() {
                     </a>
                 </div>
 
-                <div className={`mb-16 ${getAnimationClass('animate-slideRight', 'animation-delay-300')}`}>
+                <div className={`mb-16 transition-all duration-1000 ${getAnimationClass('translate-x-0 opacity-100', 'delay-300')} ${!loaded ? 'translate-x-4' : ''}`}>
                     <h2 className="text-3xl font-bold text-blue-400 mb-8 text-center">
-                        Technical Documentation
+                        Scale Model Photos
                     </h2>
-                    <div className="bg-[#1e2039] p-6 rounded-xl flex justify-center">
+                    <div className="bg-[#1e2039] p-6 rounded-xl">
                         <Galleria 
-                            value={schemas}
+                            value={mockupPhotos}
                             responsiveOptions={responsiveOptions}
                             numVisible={5}
-                            style={{ maxWidth: '700px' }}
-                            containerClassName="flex justify-center"
+                            style={{ maxWidth: '1000px' }}
+                            className="custom-galleria mx-auto"
                             item={itemTemplate}
                             thumbnail={thumbnailTemplate}
                             showThumbnails
                             showIndicators
-                            className="custom-galleria"
+                            containerClassName="flex justify-center"
                         />
                     </div>
                 </div>
 
-                <div className={`mb-12 ${getAnimationClass('animate-slideLeft', 'animation-delay-400')}`}>
+                <div className={`mb-16 transition-all duration-1000 ${getAnimationClass('translate-x-0 opacity-100', 'delay-400')} ${!loaded ? '-translate-x-4' : ''}`}>
+                    <h2 className="text-3xl font-bold text-blue-400 mb-8 text-center">
+                        Fence Schema
+                    </h2>
+                    <div className="bg-[#1e2039] p-6 rounded-xl">
+                        <Galleria 
+                            value={schemas}
+                            responsiveOptions={responsiveOptions}
+                            numVisible={5}
+                            style={{ maxWidth: '1000px' }}
+                            className="custom-galleria mx-auto"
+                            item={itemTemplate}
+                            thumbnail={thumbnailTemplate}
+                            showThumbnails
+                            showIndicators
+                            containerClassName="flex justify-center"
+                        />
+                    </div>
+                </div>
+
+                <div className={`mb-12 transition-all duration-1000 ${getAnimationClass('translate-x-0 opacity-100', 'delay-500')} ${!loaded ? 'translate-x-4' : ''}`}>
                     <h2 className="text-3xl font-bold text-blue-400 mb-8 text-center">
                         Model Components
                     </h2>
@@ -250,9 +332,9 @@ export default function Mockup() {
                         {devices.map((device, index) => (
                             <div 
                                 key={device.id}
-                                className={`bg-[#1e2039] rounded-xl overflow-hidden ${
-                                    getAnimationClass('animate-slideRight', `animation-delay-${(index + 5) * 100}`)
-                                }`}
+                                className={`bg-[#1e2039] rounded-xl overflow-hidden transition-all duration-1000 
+                                    ${getAnimationClass('translate-x-0 opacity-100', `delay-${(index + 6) * 100}`)} 
+                                    ${!loaded ? 'translate-x-4 opacity-0' : ''}`}
                             >
                                 <Button
                                     onClick={() => setOpenDevice(openDevice === device.id ? null : device.id)}
@@ -264,18 +346,19 @@ export default function Mockup() {
                                 </Button>
                                 
                                 {openDevice === device.id && (
-                                    <div className="px-6 py-4">
+                                    <div className="px-6 py-4 animate-fadeIn">
                                         <p className="text-gray-300 mb-4">{device.description}</p>
                                         <Galleria 
                                             value={device.images}
                                             responsiveOptions={responsiveOptions}
                                             numVisible={5}
-                                            style={{ maxWidth: '100%' }}
+                                            style={{ maxWidth: '1000px' }}
+                                            className="custom-galleria mx-auto"
                                             item={itemTemplate}
                                             thumbnail={thumbnailTemplate}
                                             showThumbnails
                                             showIndicators
-                                            className="custom-galleria"
+                                            containerClassName="flex justify-center"
                                         />
                                     </div>
                                 )}
