@@ -1,73 +1,270 @@
-# Presentation
-[Youtube shorts](https://www.youtube.com/shorts/l88tk7wHQCE)
+# 🏠 Smart Home System Frontend
 
+> **Bachelor's Engineering Thesis Project**  
+> A comprehensive web-based frontend for managing and controlling smart home devices with real-time monitoring and automation capabilities.
 
+[![Demo](https://img.shields.io/badge/Demo-YouTube%20Shorts-red)](https://www.youtube.com/shorts/l88tk7wHQCE)
+[![React](https://img.shields.io/badge/React-18.2.0-blue)](https://reactjs.org/)
+[![PrimeReact](https://img.shields.io/badge/PrimeReact-10.7.0-orange)](https://primereact.org/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4.1-cyan)](https://tailwindcss.com/)
+[![Socket.IO](https://img.shields.io/badge/Socket.IO-4.8.1-black)](https://socket.io/)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 📋 Table of Contents
 
-## Available Scripts
+- [Overview](#overview)
+- [Features](#features)
+- [Technologies](#technologies)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Components](#components)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
-In the project directory, you can run:
+## 🎯 Overview
 
-### `npm start`
+This Smart Home System frontend is a modern, responsive web application designed to provide comprehensive control and monitoring of various smart home devices. Built as part of a Bachelor's Engineering Thesis, it demonstrates advanced web development techniques and IoT integration patterns.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The application features a sleek, dark-themed interface with real-time device control, automation scenarios, security monitoring, and detailed analytics. It communicates with Arduino-based hardware and backend services through WebSocket connections for instant updates.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## ✨ Features
 
-### `npm test`
+### 🎛️ Device Management
+- **Smart Lighting Control** - Brightness adjustment and on/off switching
+- **Heat Pump Controller** - Temperature regulation and scheduling
+- **Sensor Monitoring** - Real-time environmental data tracking
+- **Camera Integration** - Live video streaming and security monitoring
+- **Front Gate Control** - Access management and visitor monitoring
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🤖 Automation & Intelligence
+- **Scenario Management** - Custom automation rules and triggers
+- **Task Scheduling** - Automated device operations
+- **Activity Monitoring** - Comprehensive system activity logs
+- **Statistics Dashboard** - Usage analytics and performance metrics
 
-### `npm run build`
+### 💬 Communication & Alerts
+- **Real-time Chat** - Integrated communication system
+- **Alarm System** - Security alerts and notifications
+- **Session Management** - Secure user authentication and timeout handling
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 📱 User Experience
+- **Responsive Design** - Optimized for desktop and mobile devices
+- **Dark Theme** - Modern, eye-friendly interface
+- **Real-time Updates** - Instant device status synchronization
+- **Intuitive Navigation** - Clean, organized dashboard layout
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🛠️ Technologies
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Frontend Framework
+- **React 18.2.0** - Modern React with hooks and functional components
+- **Create React App** - Development toolchain and build system
 
-### `npm run eject`
+### UI/UX Libraries
+- **PrimeReact 10.7.0** - Comprehensive React UI component library
+- **PrimeIcons 7.0.0** - Rich icon set for consistent visual language
+- **PrimeFlex 3.3.1** - CSS utility library for responsive layouts
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Styling & Design
+- **Tailwind CSS 3.4.1** - Utility-first CSS framework
+- **Tailwind Merge** - Conditional class merging utility
+- **Inter Font** - Modern, readable typography
+- **Custom Color Palette** - Branded design system with `larablue` accent
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Real-time Communication
+- **Socket.IO Client 4.8.1** - WebSocket communication for live updates
+- **Real-time Device Control** - Instant command execution and status updates
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Navigation & Routing
+- **React Router DOM 6.24.0** - Client-side routing and navigation
+- **Multi-page Application** - Organized route structure
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Calendar & Scheduling
+- **FullCalendar 6.1.15** - Advanced calendar functionality
+- **Core & DayGrid** - Comprehensive scheduling features
 
-## Learn More
+### Utilities & Enhancement
+- **Lodash** - Utility functions for data manipulation and debouncing
+- **React Transition Group** - Smooth animations and transitions
+- **Querystring ES3** - URL parameter parsing
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Development & Testing
+- **Testing Library** - Comprehensive testing utilities
+  - Jest DOM
+  - React Testing Library
+  - User Event Testing
+- **ESLint** - Code quality and consistency
+- **Web Vitals** - Performance monitoring
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📁 Project Structure
 
-### Code Splitting
+```
+frontend-arduino/
+├── public/
+│   ├── certificates/      # SSL certificates
+│   ├── details/          # Project documentation assets
+│   ├── img/              # Static images and assets
+│   └── manifest.json     # PWA configuration
+├── src/
+│   ├── components/       # Reusable React components
+│   │   ├── dashboard-tabs/      # Dashboard tab components
+│   │   ├── cameraStreamComponent.jsx
+│   │   ├── chatComponent.jsx
+│   │   ├── dashboard-header.jsx
+│   │   ├── frontGateComponent.jsx
+│   │   ├── heatPumpController.jsx
+│   │   ├── scenarioComponent.jsx
+│   │   ├── sensorAlarmComponent.jsx
+│   │   ├── statisticCompomnent.jsx
+│   │   └── tasksComponents.jsx
+│   ├── pages/           # Application pages/routes
+│   │   ├── home.jsx             # Landing page
+│   │   ├── panel-dashboard.jsx  # Main dashboard
+│   │   ├── login-app-home.jsx   # Authentication
+│   │   ├── add-new-app-home.jsx # Device setup
+│   │   ├── author.jsx           # Author information
+│   │   ├── details.jsx          # Project details
+│   │   ├── stack.jsx            # Technology stack
+│   │   └── mockup.jsx           # Design mockups
+│   ├── styles/          # Global styles and utilities
+│   ├── scripts/         # Utility scripts
+│   ├── downloads/       # Downloadable assets
+│   └── icons/           # Custom icon components
+├── tailwind.config.js   # Tailwind CSS configuration
+└── package.json         # Dependencies and scripts
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🚀 Installation
 
-### Analyzing the Bundle Size
+### Prerequisites
+- **Node.js** (v14 or higher)
+- **npm** or **yarn** package manager
+- **Arduino/IoT Backend** (for full functionality)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Setup
 
-### Making a Progressive Web App
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Seveneqqq/frontend-arduino.git
+   cd frontend-arduino
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-### Advanced Configuration
+3. **Start development server**
+   ```bash
+   npm start
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+4. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-### Deployment
+### Build for Production
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+npm run build
+```
 
-### `npm run build` fails to minify
+The optimized production build will be created in the `build/` directory.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 📖 Usage
+
+### Development Mode
+```bash
+npm start
+```
+- Runs the app in development mode
+- Hot reload enabled for instant updates
+- Open [http://localhost:3000](http://localhost:3000) to view
+
+### Testing
+```bash
+npm test
+```
+- Launches the test runner in interactive watch mode
+- Includes unit tests for components and utilities
+
+### Production Build
+```bash
+npm run build
+```
+- Creates optimized production bundle
+- Minified and optimized for deployment
+- Ready for hosting on any static server
+
+## 🧩 Components
+
+### Core Dashboard Components
+- **HeaderDashboard** - Navigation and user controls
+- **DevicesTab** - Device management interface
+- **ActivityTab** - System activity monitoring
+- **AutomationTab** - Scenario and automation rules
+- **SettingsTab** - System configuration
+- **AccountTab** - User account management
+
+### Device Control Components
+- **HeatPumpController** - Temperature control interface
+- **CameraStreamComponent** - Live video streaming
+- **FrontGateComponent** - Access control system
+- **SensorAlarmComponent** - Security monitoring
+
+### Utility Components
+- **ChatComponent** - Real-time communication
+- **ScenarioComponent** - Automation management
+- **StatisticComponent** - Analytics dashboard
+- **TasksComponent** - Scheduled operations
+- **SessionTimedOut** - Security timeout handling
+
+## 🔧 Development
+
+### Code Style
+- **ESLint** configuration included
+- **Prettier** recommended for formatting
+- **React hooks** and functional components preferred
+- **Tailwind CSS** for styling consistency
+
+### Real-time Features
+- WebSocket connection management
+- Device state synchronization
+- Live data streaming
+- Instant UI updates
+
+### Responsive Design
+- Mobile-first approach
+- Tailwind CSS breakpoints
+- Flexible layouts with PrimeFlex
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+- Follow existing code style and patterns
+- Add tests for new functionality
+- Update documentation as needed
+- Ensure responsive design compatibility
+
+## 📄 License
+
+This project is part of a Bachelor's Engineering Thesis. Please respect academic integrity guidelines when using or referencing this work.
+
+## 👤 Author
+
+**Paweł Boroń**
+- Email: pawel.boron01@interia.pl
+- Project: Bachelor's Engineering Thesis - Smart Home System
+
+## 🎥 Demo
+
+Check out the [YouTube Shorts demonstration](https://www.youtube.com/shorts/l88tk7wHQCE) to see the system in action!
+
+---
+
+*Built with ❤️ using React, PrimeReact, and Tailwind CSS*
