@@ -203,25 +203,6 @@ npm run build
 - **TasksComponent** - Scheduled operations
 - **SessionTimedOut** - Security timeout handling
 
-## 🔧 Development
-
-### Code Style
-- **ESLint** configuration included
-- **Prettier** recommended for formatting
-- **React hooks** and functional components preferred
-- **Tailwind CSS** for styling consistency
-
-### Real-time Features
-- WebSocket connection management
-- Device state synchronization
-- Live data streaming
-- Instant UI updates
-
-### Responsive Design
-- Mobile-first approach
-- Tailwind CSS breakpoints
-- Flexible layouts with PrimeFlex
-
 ## 👤 Author
 
 **Paweł Boroń**
