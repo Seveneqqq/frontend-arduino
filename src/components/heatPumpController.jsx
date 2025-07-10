@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const HeatPumpController = ({ devices, deviceStates, sensorValue, onUpdateDeviceState }) => {
   const [heatPump, setHeatPump] = useState(null);

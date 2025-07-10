@@ -28,20 +28,19 @@ export default function ActivityTab() {
                 onTabChange={(e) => setActiveIndex(e.index)}
             />
             <div className="tab-content">
-                {activeIndex === 0 && <AlarmsTab />}
-                {activeIndex === 1 && <DevicesTab />}
-                {activeIndex === 2 && <ScenariosTab />}
-                {activeIndex === 3 && <UsersTab />}
+                {activeIndex === 0 && <AlarmsTab setSessionExpired={setSessionExpired} />}
+                {activeIndex === 1 && <DevicesTab setSessionExpired={setSessionExpired} />}
+                {activeIndex === 2 && <ScenariosTab setSessionExpired={setSessionExpired} />}
+                {activeIndex === 3 && <UsersTab setSessionExpired={setSessionExpired} />}
             </div>
         </div>
     );
 }
 
-function DevicesTab() {
+function DevicesTab({ setSessionExpired }) {
 
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sessionExpired, setSessionExpired] = useState(false);
 
     const rooms = [
         'Kitchen',
@@ -158,10 +157,9 @@ function DevicesTab() {
     );
 }
 
-function ScenariosTab() {
+function ScenariosTab({ setSessionExpired }) {
     const [scenarios, setScenarios] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchScenariosHistory();
@@ -251,10 +249,9 @@ function ScenariosTab() {
     );
 }
 
-function UsersTab() {
+function UsersTab({ setSessionExpired }) {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchUsersHistory();
@@ -326,10 +323,9 @@ function UsersTab() {
     );
 }
 
-function AlarmsTab() {
+function AlarmsTab({ setSessionExpired }) {
     const [alarms, setAlarms] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sessionExpired, setSessionExpired] = useState(false);
 
     useEffect(() => {
         fetchAlarmHistory();

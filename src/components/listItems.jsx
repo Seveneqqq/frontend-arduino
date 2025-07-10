@@ -3,7 +3,7 @@ import code from "../icons/code.svg";
 import database from "../icons/database.svg";
 import home from "../icons/home.svg";
 import mic from "../icons/mic.svg";
-import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { useState } from "react";

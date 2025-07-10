@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
 
 const CameraStreamComponent = ({cameraAdded, cameraAddress, onSaveAddress, onDeleteCamera}) => {

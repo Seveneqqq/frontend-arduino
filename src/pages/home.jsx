@@ -81,10 +81,10 @@ export default function HomePage() {
                             </div>
 
                             <div className="flex gap-4 opacity-0 -translate-x-4 animate-slideRight animation-delay-700">
-                                <a href="https://github.com/Seveneqqq" target="_blank" aria-label="Visit my GitHub profile" className="p-3 rounded-full bg-blue-900/20 text-white hover:bg-blue-800/30 transition-all">
+                                <a href="https://github.com/Seveneqqq" target="_blank" rel="noreferrer" aria-label="Visit my GitHub profile" className="p-3 rounded-full bg-blue-900/20 text-white hover:bg-blue-800/30 transition-all">
                                     <i className="pi pi-github" style={{ fontSize: '1.25rem' }}></i>
                                 </a>
-                                <a href="https://www.linkedin.com/in/seveneqqq" target="_blank" aria-label="Connect with me on LinkedIn" className="p-3 rounded-full bg-blue-900/20 text-white hover:bg-blue-800/30 transition-all">
+                                <a href="https://www.linkedin.com/in/seveneqqq" target="_blank" rel="noreferrer" aria-label="Connect with me on LinkedIn" className="p-3 rounded-full bg-blue-900/20 text-white hover:bg-blue-800/30 transition-all">
                                     <i className="pi pi-linkedin" style={{ fontSize: '1.25rem' }}></i>
                                 </a>
                             </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Badge } from 'primereact/badge';
 

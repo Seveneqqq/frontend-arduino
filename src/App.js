@@ -1,5 +1,4 @@
 import React from "react";
-import Header from './components/header.jsx';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home.jsx";
 import AddNewAppHome from "./pages/add-new-app-home.jsx";
@@ -10,10 +9,6 @@ import Details from "./pages/details.jsx";
 import Stack from "./pages/stack.jsx";
 import Mockup from "./pages/mockup.jsx";
 import '@fontsource/inter';
-
-import { Button } from 'primereact/button';
-import { Calendar } from 'primereact/calendar';
-import { useState } from 'react';
 
 export default function App() {
 

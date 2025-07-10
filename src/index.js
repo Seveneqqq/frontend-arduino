@@ -10,8 +10,6 @@ import 'primeicons/primeicons.css';
 //import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-dark-blue/theme.css'
 
-import Tailwind from 'primereact/passthrough/tailwind';
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
