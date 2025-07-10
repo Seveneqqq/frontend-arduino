@@ -244,7 +244,7 @@ export default function AddNewAppHome(){
         const userId = sessionStorage.getItem('UserId');
         const homeName = valueHomeName;
 
-        if(userDevices.length == 0 ){
+        if(userDevices.length === 0 ){
             console.log('przerwano');
             noAddedDevicesError();
             return;
@@ -411,7 +411,7 @@ export default function AddNewAppHome(){
 
             let data = await response.json();
 
-            if(data.connection == true){
+            if(data.connection === true){
                 
                 setDevices(data.devices);
 
@@ -605,7 +605,7 @@ export default function AddNewAppHome(){
     useEffect(() => {
         console.log('Updated userDevices:', userDevices);
 
-        if(userDevices.length == devices.length && devices.length != 0) {
+        if(userDevices.length === devices.length && devices.length !== 0) {
             
             setPanelVisible1(false);
 
@@ -812,7 +812,7 @@ export default function AddNewAppHome(){
     onHide={() => {if (!panelVisible1) return; setPanelVisible1(false); }}>
     <div className="flex flex-row">
         <div className="w-[40%]">
-            {devices=="" ? 
+            {devices==="" ? 
                 <h1>Loading...</h1> 
                 :
                 <>
@@ -853,7 +853,7 @@ export default function AddNewAppHome(){
     onHide={() => {if (!panelVisible2) return; setPanelVisible2(false); }}>
     <div className="flex flex-row">
         <div className="w-[40%]">
-            {devicesList=="" ? 
+            {devicesList==="" ? 
                 <h1>Loading...</h1> 
                 :
                 <>

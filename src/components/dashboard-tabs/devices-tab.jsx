@@ -3,12 +3,9 @@ import { InputSwitch } from 'primereact/inputswitch';
 import { Knob } from 'primereact/knob';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dropdown } from 'primereact/dropdown';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';
-import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
 import _ from 'lodash';
 import SessionTimedOut from '../sessionTimedOut';
@@ -26,9 +23,6 @@ export default function DevicesTab({
     updateDeviceState
 }) {
     const toast = useRef(null);
-    const [isClicked, clickedButton] = useState(false);
-    const [valueHomeName, setValueOfHomeName] = useState('');
-    const [inviteCode, setInviteCode] = useState('');
     const [loading, setLoading] = useState('hidden');
     const [blur, setBlur] = useState('');
     const [newDevices, setNewDevices] = useState('');
@@ -68,7 +62,7 @@ export default function DevicesTab({
 
     const [panelVisible1, setPanelVisible1] = useState(false);
     const [panelVisible2, setPanelVisible2] = useState(false);
-    const [userDevices, setUserDevices] = useState([]);
+    const [userDevices] = useState([]);
     const [devicesList, setDevicesList] = useState([]);
     
     const [editDialog, setEditDialog] = useState(false);
@@ -513,6 +507,9 @@ export default function DevicesTab({
                     mqttTopicOff,
                     mqttDeviceId
                 };
+                break;
+            default:
+                // Handle unknown protocol
                 break;
         }
 

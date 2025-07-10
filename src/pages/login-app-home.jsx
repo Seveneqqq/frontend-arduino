@@ -1,4 +1,4 @@
-import React, { useState,useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from 'primereact/button';
 import { useNavigate } from "react-router-dom";
 import SessionTimedOut from "../components/sessionTimedOut";
@@ -33,7 +33,7 @@ export default function LoginAppHome(){
             setLoading(false);
         };
         getDataFromApi();
-    },[]);
+    },[]); // eslint-disable-line react-hooks/exhaustive-deps
  
     if(loading){
         return(
@@ -89,9 +89,3 @@ export default function LoginAppHome(){
 
     )
 }
-
-
-{/* <h1>Select account</h1>
-<h1>Or</h1>
-<h1>Continue register</h1>
-<Button label="Continue " icon="pi pi-user" onClick={()=>goToRegister()}/> */}

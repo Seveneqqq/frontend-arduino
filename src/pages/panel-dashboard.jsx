@@ -174,7 +174,6 @@ export default function PanelDashboard() {
     const [visible, setVisible] = useState(false);
     const [dialogCategory, setDialogCategory] = useState();
     const [deviceStates, setDeviceStates] = useState({});
-    const [selectedDevice, setSelectedDevice] = useState(null);
     const [sensorValue, setSensorValue] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
     const [temperatureRange, setTemperatureRange] = useState([]);
@@ -183,7 +182,6 @@ export default function PanelDashboard() {
     const [alarmReasons, setAlarmReasons] = useState({});
     const [cameraAdded, setCameraAdded] = useState(false);
     const [cameraAddress, setCameraAddress] = useState("");
-    const [isCameraEditing, setIsCameraEditing] = useState(false);
     const [sessionExpired, setSessionExpired] = useState(false);
     
     const [scenarios, setScenarios] = useState([]);
@@ -824,18 +822,7 @@ useEffect(() => {
         setNotificationsActivatedColor(newState ? 'bg-[#5E85ED]' : 'bg-[#080808]');
     }
 
-    const handleSwitchChange = useCallback(
-        (device, newState, newBrightness, isLocalUpdate) => {
-          updateDeviceState(device, newState, newBrightness, isLocalUpdate);
-        },
-        [updateDeviceState]
-      );
-    
-      const handleKnobChange = (device, newState, newBrightness, isLocalUpdate) => {
-        updateDeviceState(device, newState, newBrightness, isLocalUpdate);
-      };
-    
-      const handleEditDevice = async (device) => {
+    const handleEditDevice = async (device) => {
         const response = await fetch(`http://localhost:4000/api/devices/${device.device_id}`, {
             method: 'PUT',
             headers: {
@@ -901,18 +888,6 @@ useEffect(() => {
         }
     };
 
-      const handleEditScenario = (scenario) => {
-        //setSelectedScenario(scenario);
-        // edytowanie scenariuszy
-        console.log("Edit scenario");
-      };
-
-      const handleDeleteScenario = (scenario) => {
-         //setSelectedScenario(scenario);
-        // usuwanie scenariuszy
-        console.log("Delete scenario");
-      };
-
       const handleDeleteCamera = async () => {
         try {
           const response = await fetch(`http://localhost:4000/api/mongodb/camera/${sessionStorage.getItem('selected-home-id')}`, {
@@ -952,7 +927,7 @@ useEffect(() => {
           const data = await response.json();
 
           if (data) {
-            if(data.error == "Camera not found"){
+            if(data.error === "Camera not found"){
                 setCameraAdded(false);
                 setCameraAddress('');
             }
