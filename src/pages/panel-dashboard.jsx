@@ -28,8 +28,8 @@ const DeviceItem = React.memo(({
     onKnobChange, 
     dialogCategory 
 }) => {
-    const debouncedKnobChange = React.useCallback(
-        _.debounce((newValue) => {
+    const debouncedKnobChange = React.useMemo(
+        () => _.debounce((newValue) => {
             if (device.name !== 'HEAT_PUMP') {
                 onKnobChange(device, true, newValue, false);
             }
@@ -175,17 +175,17 @@ export default function PanelDashboard() {
     const [dialogCategory, setDialogCategory] = useState();
     const [deviceStates, setDeviceStates] = useState({});
     const [sensorValue, setSensorValue] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
+    const [, setIsConnected] = useState(false);
     const [temperatureRange, setTemperatureRange] = useState([]);
     const [humidityRange, setHumidityRange] = useState([]);
-    const [alarmActivated, setAlarmActivated] = useState(false);
+    const [, setAlarmActivated] = useState(false);
     const [alarmReasons, setAlarmReasons] = useState({});
     const [cameraAdded, setCameraAdded] = useState(false);
     const [cameraAddress, setCameraAddress] = useState("");
     const [sessionExpired, setSessionExpired] = useState(false);
     
     const [scenarios, setScenarios] = useState([]);
-    const [scenariosStates, setScenariosStates] = useState({});
+    const [, setScenariosStates] = useState({});
 
 useEffect(() => {
     const socket = io('http://localhost:4000', {

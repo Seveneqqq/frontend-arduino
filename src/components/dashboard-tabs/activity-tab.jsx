@@ -56,7 +56,7 @@ function DevicesTab({ setSessionExpired }) {
 
     useEffect(() => {
         fetchDevicesHistory();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fetchDevicesHistory = async () => {
         try {
@@ -163,7 +163,7 @@ function ScenariosTab({ setSessionExpired }) {
 
     useEffect(() => {
         fetchScenariosHistory();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fetchScenariosHistory = async () => {
         try {
@@ -255,7 +255,7 @@ function UsersTab({ setSessionExpired }) {
 
     useEffect(() => {
         fetchUsersHistory();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fetchUsersHistory = async () => {
         try {
@@ -329,7 +329,7 @@ function AlarmsTab({ setSessionExpired }) {
 
     useEffect(() => {
         fetchAlarmHistory();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fetchAlarmHistory = async () => {
         try {

@@ -28,7 +28,6 @@ export default function DevicesTab({
     const [newDevices, setNewDevices] = useState('');
     const [name, setName] = useState('');
     const [status, setStatus] = useState('');
-    const [category, setCategory] = useState('');
     const [label, setLabel] = useState('');
     const [command_on, setCommand_on] = useState('');
     const [command_off, setCommand_off] = useState('');
@@ -381,13 +380,12 @@ export default function DevicesTab({
         }
     }
 
-    function setFields(name, status, category) {
+    function setFields(name, status) {
         setFormVisible(true);
         setSelectedRoom(null);
         setSelectedProtocol('');
         setName(name);
         setStatus(status);
-        setCategory(category);
     }
 
     const saveDevice = async () => {
@@ -850,7 +848,7 @@ export default function DevicesTab({
                                             {devicesList.map(el => (
                                                 <div 
                                                     className="grid grid-cols-2 px-2 gap-6 py-2 border-y-[1px] border-slate-600 hover:bg-slate-700"
-                                                    onClick={() => setFields(el.name, "not-active", el.category)}
+                                                    onClick={() => setFields(el.name, "not-active")}
                                                 >
                                                     <p>{el.name}</p>
                                                     <p>{el.category}</p>

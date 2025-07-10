@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Galleria } from 'primereact/galleria';
 import Header from '../components/header.jsx';
 
@@ -12,7 +12,7 @@ export default function Details() {
         { breakpoint: '575px', numVisible: 1 }
     ];
 
-    const galleryImages = [
+    const galleryImages = useMemo(() => [
         {
             itemImageSrc: '/details/1.png',
             thumbnailImageSrc: '/details/1.png',
@@ -49,11 +49,11 @@ export default function Details() {
             alt: 'System Settings',
             title: 'Advanced System Configuration'
         }
-    ];
+    ], []);
 
     useEffect(() => {
         setImages(galleryImages);
-    }, []);
+    }, [galleryImages]);
 
     const itemTemplate = (item) => {
         return (
